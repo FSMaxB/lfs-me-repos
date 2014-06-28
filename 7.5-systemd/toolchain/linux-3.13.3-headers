@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgname=linux
+pkgver=3.13.3
+pkgver_postfix=headers
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.xz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}-${pkgver}
+
+    make mrproper
+}
+
+pkg_build() {
+    make headers_check
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make INSTALL_HDR_PATH=dest headers_install
+    mkdir -pv ${fakeroot_dir}/tools/include
+    cp -rv dest/include/* ${fakeroot_dir}/tools/include
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
