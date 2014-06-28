@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=glibc
+pkgver=2.19
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.xz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}-${pkgver}
+
+    mkdir -v ../${pkgname}-build
+    cd ../${pkgname}-build
+
+    ../glibc-2.19/configure                             \
+          --prefix=/tools                               \
+          --host=$LFS_TGT                               \
+          --build=$(../${pkgname}-${pkgver}/scripts/config.guess) \
+          --disable-profile                             \
+          --enable-kernel=2.6.32                        \
+          --with-headers=/tools/include                 \
+          libc_cv_forced_unwind=yes                     \
+          libc_cv_ctors_header=yes                      \
+          libc_cv_c_cleanup=yes
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make install_root=${fakeroot_dir} install
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
