@@ -1,4 +1,4 @@
 *.tar.*
-*/PKGBUILD
-*/PKGBUILD.proto
+**/PKGBUILD
+**/PKGBUILD.proto
 *.pkg
