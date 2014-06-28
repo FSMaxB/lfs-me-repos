@@ -1,0 +1,43 @@
+#!/bin/bash
+pkgname=binutils
+pkgver=2.24
+pkgver_postfix=pass1
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.bz2 -C ${build_dir}
+
+    mkdir -v ${build_dir}/${pkgname}-build
+    cd ${build_dir}/${pkgname}-build
+
+    ../${pkgname}-${pkgver}/configure     \
+        --prefix=/tools                   \
+        --with-sysroot=$LFS               \
+        --with-lib-path=/tools/lib        \
+        --target=$LFS_TGT                 \
+        --disable-nls                     \
+        --disable-werror    
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" install
+    case $(uname -m) in
+      x86_64) mkdir -pv ${fakeroot_dir}/tools/lib && ln -sv lib ${fakeroot_dir}/tools/lib64;;
+    esac
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
