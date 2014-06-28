@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=binutils
+pkgver=2.24
+pkgver_postfix=pass2
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.bz2 -C ${build_dir}
+
+    mkdir -pv ${build_dir}/${pkgname}-build
+    cd ${build_dir}/${pkgname}-build
+
+    CC=$LFS_TGT-gcc                       \
+    AR=$LFS_TGT-ar                        \
+    RANLIB=$LFS_TGT-ranlib                \
+    ../${pkgname}-${pkgver}/configure     \
+        --prefix=/tools                   \
+        --disable-nls                     \
+        --with-lib-path=/tools/lib        \
+        --with-sysroot
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" install
+
+    make -C ld clean
+    make -C ld LIB_PATH=/usr/lib:/lib
+    cp -v ld/ld-new ${fakeroot_dir}/tools/bin
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
