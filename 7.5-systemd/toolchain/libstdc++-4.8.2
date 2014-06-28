@@ -1,0 +1,44 @@
+#!/bin/bash
+pkgname=libstdc++
+pkgver=4.8.2
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf gcc-${pkgver}.tar.bz2 -C ${build_dir}
+
+    cd ${build_dir}/gcc-${pkgver}
+    
+    mkdir -pv ../${pkgname}-build
+    cd ../${pkgname}-build
+
+    ../gcc-${pkgver}/${pkgname}-v3/configure \
+        --host=$LFS_TGT                 \
+        --prefix=/tools                 \
+        --disable-multilib              \
+        --disable-shared                \
+        --disable-nls                   \
+        --disable-libstdcxx-threads     \
+        --disable-libstdcxx-pch         \
+        --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/${pkgver}
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" install
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
