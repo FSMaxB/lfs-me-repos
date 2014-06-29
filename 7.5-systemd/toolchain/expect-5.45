@@ -1,0 +1,38 @@
+#!/bin/bash
+pkgname=expect
+pkgver=5.45
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}${pkgver}.tar.gz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}${pkgver}
+
+    cp -v configure{,.orig}
+    sed 's:/usr/local/bin:/bin:' configure.orig > configure
+
+    ./configure --prefix=/tools       \
+                --with-tcl=/tools/lib \
+                --with-tclinclude=/tools/include
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" SCRIPTS="" install
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
