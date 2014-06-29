@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=bzip2
+pkgver=1.0.6
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.gz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}-${pkgver}
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make PREFIX="${fakeroot_dir}/tools" install
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
