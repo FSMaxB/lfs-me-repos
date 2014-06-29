@@ -1,0 +1,36 @@
+#!/bin/bash
+pkgname=util-linux
+pkgver=2.24.1
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.xz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}-${pkgver}
+
+    ./configure --prefix=/tools                \
+                --disable-makeinstall-chown    \
+                --without-systemdsystemunitdir \
+                        PKG_CONFIG=""
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" install
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
