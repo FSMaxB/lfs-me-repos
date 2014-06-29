@@ -1,0 +1,38 @@
+#!/bin/bash
+pkgname=perl
+pkgver=5.18.2
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.bz2 -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}-${pkgver}
+
+    patch -Np1 -i ${dir}/${pkgname}-${pkgver}-libc-1.patch
+
+    sh Configure -des -Dprefix=/tools
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    mkdir -pv ${fakeroot_dir}/tools/bin
+    cp -v perl cpan/podlators/pod2man ${fakeroot_dir}/tools/bin
+    mkdir -pv ${fakeroot_dir}/tools/lib/${pkgname}5/${pkgver}
+    cp -Rv lib/* ${fakeroot_dir}/tools/lib/${pkgname}5/${pkgver}
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
