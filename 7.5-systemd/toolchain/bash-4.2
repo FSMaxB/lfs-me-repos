@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgname=bash
+pkgver=4.2
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.gz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}-${pkgver}
+    patch -Np1 -i ${dir}/bash-4.2-fixes-12.patch
+
+    ./configure --prefix=/tools --without-bash-malloc
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" install
+    ln -sv bash ${fakeroot_dir}/tools/bin/sh
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
