@@ -1,0 +1,36 @@
+#!/bin/bash
+pkgname=tcl
+pkgver=8.6.1
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}${pkgver}-src.tar.gz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}${pkgver}/unix
+
+    ./configure --prefix=/tools
+}
+
+pkg_build() {
+    make
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" install
+    chmod -v u+w ${fakeroot_dir}/tools/lib/libtcl8.6.so
+    make DESTDIR="${fakeroot_dir}" install-private-headers
+    ln -sv tclsh8.6 ${fakeroot_dir}/tools/bin/tclsh
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
