@@ -1,0 +1,33 @@
+#!/bin/bash
+pkgname=dejagnu
+pkgver=1.5.1
+pkgver_postfix=
+
+pkg_prepare() {
+    #extract
+    tar -xf ${pkgname}-${pkgver}.tar.gz -C ${build_dir}
+
+    cd ${build_dir}/${pkgname}-${pkgver}
+
+    ./configure --prefix=/tools
+}
+
+pkg_build() {
+    return
+}
+
+pkg_check() {
+    return
+}
+
+pkg_install() {
+    make DESTDIR="${fakeroot_dir}" install
+}
+
+pkg_postinstall() {
+    return
+}
+
+pkg_remove() {
+    return
+}
