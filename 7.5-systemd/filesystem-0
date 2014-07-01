@@ -77,6 +77,8 @@ pkg_install() {
     cp passwd group ${fakeroot_dir}/etc/
 
     touch ${fakeroot_dir}/var/log/{btmp,lastlog,wtmp}
+    chmod -v 664  ${fakeroot_dir}/var/log/lastlog
+    chmod -v 600  ${fakeroot_dir}/var/log/btmp
 }
 
 pkg_postinstall() {
@@ -84,9 +86,7 @@ pkg_postinstall() {
     mknod -m 666 ${install_prefix}/dev/null c 1 3
 
     #GID 13 corresponds with the group utmp ( see group file above )
-    chmod -v :13 utmp ${install_prefix}/var/log/lastlog
-    chmod -v 664  ${install_prefix}/var/log/lastlog
-    chmod -v 600  ${install_prefix}/var/log/btmp
+    chown -v :13 utmp ${install_prefix}/var/log/lastlog
 }
 
 pkg_remove() {
