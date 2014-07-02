@@ -3,11 +3,15 @@ pkgname=binutils
 pkgver=2.24
 pkgver_postfix=pass1
 
-pkg_prepare() {
-    #extract
-    tar -xf ${pkgname}-${pkgver}.tar.bz2 -C ${build_dir}
+#package specific variables
+LFS=/mnt/lfs
+LFS_TGT=$(uname -m)-lfs-linux-gnu
 
-    mkdir -v ${build_dir}/${pkgname}-build
+lfs_me_prepare() {
+    #extract
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "${build_dir}"
+
+    mkdir -v "${build_dir}/${pkgname}-build"
     cd ${build_dir}/${pkgname}-build
 
     ../${pkgname}-${pkgver}/configure     \
@@ -19,25 +23,13 @@ pkg_prepare() {
         --disable-werror    
 }
 
-pkg_build() {
-    make
-}
-
-pkg_check() {
+lfs_me_check() {
     return
 }
 
-pkg_install() {
+lfs_me_install() {
     make DESTDIR="${fakeroot_dir}" install
     case $(uname -m) in
-      x86_64) mkdir -pv ${fakeroot_dir}/tools/lib && ln -sv lib ${fakeroot_dir}/tools/lib64;;
+      x86_64) mkdir -pv "${fakeroot_dir}/tools/lib" && ln -sv lib "${fakeroot_dir}/tools/lib64";;
     esac
-}
-
-pkg_postinstall() {
-    return
-}
-
-pkg_remove() {
-    return
 }
