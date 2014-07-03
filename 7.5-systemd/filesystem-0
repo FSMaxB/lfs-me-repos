@@ -3,93 +3,95 @@ pkgname=filesystem
 pkgver=0
 pkgver_postfix=
 
-pkg_prepare() {
+lfs_me_prepare() {
     cd ${build_dir}
 }
 
-pkg_build() {
+lfs_me_build() {
     echo "root:x:0:0:root:/root:/bin/bash
-bin:x:1:1:bin:/dev/null:/bin/false
-messagebus:x:18:18:D-Bus Message Daemon User:/var/run/dbus:/bin/false
-nobody:x:99:99:Unprivileged User:/dev/null:/bin/false" > passwd
+          bin:x:1:1:bin:/dev/null:/bin/false
+          messagebus:x:18:18:D-Bus Message Daemon User:/var/run/dbus:/bin/false
+          nobody:x:99:99:Unprivileged User:/dev/null:/bin/false" > passwd
+    sed -i -e 's/^\s*//' passwd #remove whitespaces at beginning of lines
 
     echo "root:x:0:
-bin:x:1:
-sys:x:2:
-kmem:x:3:
-tape:x:4:
-tty:x:5:
-daemon:x:6:
-floppy:x:7:
-disk:x:8:
-lp:x:9:
-dialout:x:10:
-audio:x:11:
-video:x:12:
-utmp:x:13:
-usb:x:14:
-cdrom:x:15:
-adm:x:16:
-messagebus:x:18:
-systemd-journal:x:23:
-mail:x:34:
-nogroup:x:99:" > group
+          bin:x:1:
+          sys:x:2:
+          kmem:x:3:
+          tape:x:4:
+          tty:x:5:
+          daemon:x:6:
+          floppy:x:7:
+          disk:x:8:
+          lp:x:9:
+          dialout:x:10:
+          audio:x:11:
+          video:x:12:
+          utmp:x:13:
+          usb:x:14:
+          cdrom:x:15:
+          adm:x:16:
+          messagebus:x:18:
+          systemd-journal:x:23:
+          mail:x:34:
+          nogroup:x:99:" > group
+    sed -i -e 's/^\s*//' group #remove whitespaces at beginning of lines 
 }
 
-pkg_check() {
+lfs_me_check() {
     return
 }
 
-pkg_install() {
-    mkdir -pv ${fakeroot_dir}/{dev,proc,sys,run}
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}"/{dev,proc,sys,run}
 
-    mkdir -pv ${fakeroot_dir}/{bin,boot,etc/{opt,sysconfig},home,lib,mnt,opt}
-    mkdir -pv ${fakeroot_dir}/{media/{floppy,cdrom},sbin,srv,var}
-    install -dv -m 0750 ${fakeroot_dir}/root
-    install -dv -m 1777 ${fakeroot_dir}/tmp ${fakeroot_dir}/var/tmp
-    mkdir -pv ${fakeroot_dir}/usr/{,local/}{bin,include,lib,sbin,src}
-    mkdir -pv ${fakeroot_dir}/usr/{,local/}share/{color,dict,doc,info,locale,man}
-    mkdir -v  ${fakeroot_dir}/usr/{,local/}share/{misc,terminfo,zoneinfo}
-    mkdir -v  ${fakeroot_dir}/usr/libexec
-    mkdir -pv ${fakeroot_dir}/usr/{,local/}share/man/man{1..8}
+    mkdir -pv "${fakeroot_dir}"/{bin,boot,etc/{opt,sysconfig},home,lib,mnt,opt}
+    mkdir -pv "${fakeroot_dir}"/{media/{floppy,cdrom},sbin,srv,var}
+    install -dv -m 0750 "${fakeroot_dir}"/root
+    install -dv -m 1777 "${fakeroot_dir}"/tmp "${fakeroot_dir}"/var/tmp
+    mkdir -pv "${fakeroot_dir}"/usr/{,local/}{bin,include,lib,sbin,src}
+    mkdir -pv "${fakeroot_dir}"/usr/{,local/}share/{color,dict,doc,info,locale,man}
+    mkdir -v  "${fakeroot_dir}"/usr/{,local/}share/{misc,terminfo,zoneinfo}
+    mkdir -v  "${fakeroot_dir}"/usr/libexec
+    mkdir -pv "${fakeroot_dir}"/usr/{,local/}share/man/man{1..8}
 
     case $(uname -m) in
-         x86_64) ln -sv lib ${fakeroot_dir}/lib64     && 
-                 ln -sv lib ${fakeroot_dir}/usr/lib64 && 
-                 ln -sv lib ${fakeroot_dir}/usr/local/lib64 ;;
+         x86_64) ln -sv lib "${fakeroot_dir}"/lib64     && 
+                 ln -sv lib "${fakeroot_dir}"/usr/lib64 && 
+                 ln -sv lib "${fakeroot_dir}"/usr/local/lib64 ;;
     esac
 
-    mkdir -v ${fakeroot_dir}/var/{log,mail,spool}
-    ln -sv /run ${fakeroot_dir}/var/run
-    ln -sv /run/lock ${fakeroot_dir}/var/lock
-    mkdir -pv ${fakeroot_dir}/var/{opt,cache,lib/{color,misc,locate},local}
+    mkdir -v "${fakeroot_dir}"/var/{log,mail,spool}
+    ln -sv /run "${fakeroot_dir}"/var/run
+    ln -sv /run/lock "${fakeroot_dir}"/var/lock
+    mkdir -pv "${fakeroot_dir}"/var/{opt,cache,lib/{color,misc,locate},local}
 
 
-    ln -sv /tools/bin/{bash,cat,echo,pwd,stty} ${fakeroot_dir}/bin
-    ln -sv /tools/bin/perl ${fakeroot_dir}/usr/bin
-    ln -sv /tools/lib/libgcc_s.so{,.1} ${fakeroot_dir}/usr/lib
-    ln -sv /tools/lib/libstdc++.so{,.6} ${fakeroot_dir}/usr/lib
-    sed 's/tools/usr/' /tools/lib/libstdc++.la > ${fakeroot_dir}/usr/lib/libstdc++.la
-    ln -sv bash ${fakeroot_dir}/bin/sh
+    ln -sv /tools/bin/{bash,cat,echo,pwd,stty} "${fakeroot_dir}"/bin
+    ln -sv /tools/bin/perl "${fakeroot_dir}"/usr/bin
+    ln -sv /tools/lib/libgcc_s.so{,.1} "${fakeroot_dir}"/usr/lib
+    ln -sv /tools/lib/libstdc++.so{,.6} "${fakeroot_dir}"/usr/lib
+    sed 's/tools/usr/' /tools/lib/libstdc++.la > "${fakeroot_dir}"/usr/lib/libstdc++.la
+    ln -sv bash "${fakeroot_dir}"/bin/sh
 
-    ln -sv /proc/self/mounts ${fakeroot_dir}/etc/mtab
+    ln -sv /proc/self/mounts "${fakeroot_dir}"/etc/mtab
 
-    cp passwd group ${fakeroot_dir}/etc/
+    cp passwd group "${fakeroot_dir}"/etc/
 
-    touch ${fakeroot_dir}/var/log/{btmp,lastlog,wtmp}
-    chmod -v 664  ${fakeroot_dir}/var/log/lastlog
-    chmod -v 600  ${fakeroot_dir}/var/log/btmp
+    touch "${fakeroot_dir}"/var/log/{btmp,lastlog,wtmp}
+    chmod -v 664  "${fakeroot_dir}"/var/log/lastlog
+    chmod -v 600  "${fakeroot_dir}"/var/log/btmp
 }
 
-pkg_postinstall() {
-    mknod -m 600 ${install_prefix}/dev/console c 5 1
-    mknod -m 666 ${install_prefix}/dev/null c 1 3
+lfs_me_postinstall() {
+    mknod -m 600 "${install_prefix}"/dev/console c 5 1
+    mknod -m 666 "${install_prefix}"/dev/null c 1 3
 
     #GID 13 corresponds with the group utmp ( see group file above )
-    chown -v :13 utmp ${install_prefix}/var/log/lastlog
+    chown -v :13 "${install_prefix}"/var/log/lastlog
 }
 
-pkg_remove() {
-    rm ${install_prefix}/dev/console
-    rm ${install_prefix}/dev/null
+lfs_me_postremove() {
+    rm "${install_prefix}"/dev/console
+    rm "${install_prefix}"/dev/null
 }
