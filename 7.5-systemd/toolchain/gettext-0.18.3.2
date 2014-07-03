@@ -3,17 +3,17 @@ pkgname=gettext
 pkgver=0.18.3.2
 pkgver_postfix=
 
-pkg_prepare() {
+lfs_me_prepare() {
     #extract
-    tar -xf ${pkgname}-${pkgver}.tar.gz -C ${build_dir}
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 
-    cd ${build_dir}/${pkgname}-${pkgver}
+    cd "${build_dir}/${pkgname}-${pkgver}"
 
-    cd ${pkgname}-tools
+    cd "${pkgname}-tools"
     EMACS="no" ./configure --prefix=/tools --disable-shared
 }
 
-pkg_build() {
+lfs_me_build() {
     make -C gnulib-lib
     make -C src msgfmt
     make -C src msgmerge
@@ -21,19 +21,11 @@ pkg_build() {
 
 }
 
-pkg_check() {
+lfs_me_check() {
     return
 }
 
-pkg_install() {
-    mkdir -pv ${fakeroot_dir}/tools/bin
-    cp -v src/{msgfmt,msgmerge,xgettext} ${fakeroot_dir}/tools/bin/
-}
-
-pkg_postinstall() {
-    return
-}
-
-pkg_remove() {
-    return
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/tools/bin"
+    cp -v src/{msgfmt,msgmerge,xgettext} "${fakeroot_dir}/tools/bin/"
 }

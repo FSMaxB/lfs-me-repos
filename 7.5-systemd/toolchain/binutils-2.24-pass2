@@ -3,12 +3,17 @@ pkgname=binutils
 pkgver=2.24
 pkgver_postfix=pass2
 
-pkg_prepare() {
-    #extract
-    tar -xf ${pkgname}-${pkgver}.tar.bz2 -C ${build_dir}
 
-    mkdir -pv ${build_dir}/${pkgname}-build
-    cd ${build_dir}/${pkgname}-build
+#package specific variables
+LFS=/mnt/lfs
+LFS_TGT=$(uname -m)-lfs-linux-gnu
+
+lfs_me_prepare() {
+    #extract
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    mkdir -pv "${build_dir}/${pkgname}-build"
+    cd "${build_dir}/${pkgname}-build"
 
     CC=$LFS_TGT-gcc                       \
     AR=$LFS_TGT-ar                        \
@@ -20,26 +25,14 @@ pkg_prepare() {
         --with-sysroot
 }
 
-pkg_build() {
-    make
-}
-
-pkg_check() {
+lfs_me_check() {
     return
 }
 
-pkg_install() {
+lfs_me_install() {
     make DESTDIR="${fakeroot_dir}" install
 
     make -C ld clean
     make -C ld LIB_PATH=/usr/lib:/lib
-    cp -v ld/ld-new ${fakeroot_dir}/tools/bin
-}
-
-pkg_postinstall() {
-    return
-}
-
-pkg_remove() {
-    return
+    cp -v ld/ld-new "${fakeroot_dir}/tools/bin"
 }

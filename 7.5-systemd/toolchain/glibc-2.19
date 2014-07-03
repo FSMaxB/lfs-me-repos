@@ -3,43 +3,43 @@ pkgname=glibc
 pkgver=2.19
 pkgver_postfix=
 
-pkg_prepare() {
+#package specific variables
+LFS=/mnt/lfs
+LFS_TGT=$(uname -m)-lfs-linux-gnu
+
+lfs_me_prepare() {
     #extract
-    tar -xf ${pkgname}-${pkgver}.tar.xz -C ${build_dir}
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 
-    cd ${build_dir}/${pkgname}-${pkgver}
+    cd "${build_dir}/${pkgname}-${pkgver}"
 
-    mkdir -v ../${pkgname}-build
-    cd ../${pkgname}-build
+    mkdir -v "../${pkgname}-build"
+    cd "../${pkgname}-build"
 
-    ../glibc-2.19/configure                             \
-          --prefix=/tools                               \
-          --host=$LFS_TGT                               \
+    ../${pkgname}-${pkgver}/configure                             \
+          --prefix=/tools                                         \
+          --host=$LFS_TGT                                         \
           --build=$(../${pkgname}-${pkgver}/scripts/config.guess) \
-          --disable-profile                             \
-          --enable-kernel=2.6.32                        \
-          --with-headers=/tools/include                 \
-          libc_cv_forced_unwind=yes                     \
-          libc_cv_ctors_header=yes                      \
+          --disable-profile                                       \
+          --enable-kernel=2.6.32                                  \
+          --with-headers=/tools/include                           \
+          libc_cv_forced_unwind=yes                               \
+          libc_cv_ctors_header=yes                                \
           libc_cv_c_cleanup=yes
 }
 
-pkg_build() {
-    make
-}
-
-pkg_check() {
+lfs_me_check() {
     return
 }
 
-pkg_install() {
+lfs_me_install() {
     make install_root=${fakeroot_dir} install
 }
 
-pkg_postinstall() {
-    return
-}
-
-pkg_remove() {
-    return
+lfs_me_postinstall() {
+    echo -e "${color_bblue}You should see something like \"/tools/lib/ld-linux.so.2\" in the following output!${color_reset}"
+    cd "$build_dir"
+    echo 'main(){}' > dummy.c
+    $LFS_TGT-gcc dummy.c
+    readelf -l a.out | grep ': /tools'
 }

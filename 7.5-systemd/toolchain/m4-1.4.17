@@ -3,31 +3,15 @@ pkgname=m4
 pkgver=1.4.17
 pkgver_postfix=
 
-pkg_prepare() {
+lfs_me_prepare() {
     #extract
-    tar -xf ${pkgname}-${pkgver}.tar.xz -C ${build_dir}
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 
-    cd ${build_dir}/${pkgname}-${pkgver}
+    cd "${build_dir}/${pkgname}-${pkgver}"
 
     ./configure --prefix=/tools
 }
 
-pkg_build() {
-    make
-}
-
-pkg_check() {
-    return
-}
-
-pkg_install() {
-    make DESTDIR="${fakeroot_dir}" install
-}
-
-pkg_postinstall() {
-    return
-}
-
-pkg_remove() {
+lfs_me_check() {
     return
 }

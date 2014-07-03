@@ -3,31 +3,24 @@ pkgname=dejagnu
 pkgver=1.5.1
 pkgver_postfix=
 
-pkg_prepare() {
+lfs_me_prepare() {
     #extract
-    tar -xf ${pkgname}-${pkgver}.tar.gz -C ${build_dir}
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 
-    cd ${build_dir}/${pkgname}-${pkgver}
+    cd $"${build_dir}/${pkgname}-${pkgver}"
 
     ./configure --prefix=/tools
 }
 
-pkg_build() {
+lfs_me_build() {
     return
 }
 
-pkg_check() {
+lfs_me_check() {
     return
 }
 
-pkg_install() {
+lfs_me_install() {
     make DESTDIR="${fakeroot_dir}" install
-}
-
-pkg_postinstall() {
-    return
-}
-
-pkg_remove() {
-    return
+    make check
 }

@@ -3,14 +3,18 @@ pkgname=libstdc++
 pkgver=4.8.2
 pkgver_postfix=
 
-pkg_prepare() {
-    #extract
-    tar -xf gcc-${pkgver}.tar.bz2 -C ${build_dir}
+#package specific variables
+LFS=/mnt/lfs
+LFS_TGT=$(uname -m)-lfs-linux-gnu
 
-    cd ${build_dir}/gcc-${pkgver}
+lfs_me_prepare() {
+    #extract
+    tar -xf "${sources_dir}/gcc-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/gcc-${pkgver}"
     
-    mkdir -pv ../${pkgname}-build
-    cd ../${pkgname}-build
+    mkdir -pv "../${pkgname}-build"
+    cd "../${pkgname}-build"
 
     ../gcc-${pkgver}/${pkgname}-v3/configure \
         --host=$LFS_TGT                 \
@@ -20,25 +24,9 @@ pkg_prepare() {
         --disable-nls                   \
         --disable-libstdcxx-threads     \
         --disable-libstdcxx-pch         \
-        --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/${pkgver}
+        --with-gxx-include-dir="/tools/$LFS_TGT/include/c++/${pkgver}"
 }
 
-pkg_build() {
-    make
-}
-
-pkg_check() {
-    return
-}
-
-pkg_install() {
-    make DESTDIR="${fakeroot_dir}" install
-}
-
-pkg_postinstall() {
-    return
-}
-
-pkg_remove() {
+lfs_me_check() {
     return
 }
