@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=binutils
+pkgver=2.24
+pkgver_postfix=
+
+# All the following functions are already provided and you only need them if they differ
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    rm -fv etc/standards.info
+    sed -i.bak '/^INFO/s/standards.info //' etc/Makefile.in
+
+    mkdir -v "../${pkgname}-build"
+    cd "../${pkgname}-build"
+
+    ../${pkgname}-${pkgver}/configure --prefix=/usr --enable-shared
+}
+
+lfs_me_build() {
+    make tooldir=/usr
+}
+
+lfs_me_install() {
+    make DESTDIR="${fakeroot_dir}" tooldir=/usr install
+}
