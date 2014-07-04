@@ -1,0 +1,128 @@
+#!/bin/bash
+pkgname=glibc
+pkgver=2.19
+pkgver_postfix=
+
+#package specific variables
+toolchain_dir="/tools/"
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    mkdir -v "${build_dir}/tzdata"
+    tar -xf "${sources_dir}/tzdata2013i.tar.gz" -C "${build_dir}/tzdata"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's/\\$$(pwd)/`pwd`/' timezone/Makefile
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fhs-1.patch"
+
+    mkdir -v "../${pkgname}-build"
+    cd "../${pkgname}-build"
+
+    ../${pkgname}-${pkgver}/configure    \
+        --prefix=/usr                    \
+        --disable-profile                \
+        --enable-kernel=2.6.32           \
+        --enable-obsolete-rpc
+}
+
+lfs_me_build() {
+    make
+
+    echo "# Begin /etc/nsswitch.conf
+
+    passwd: files
+    group: files
+    shadow: files
+
+    hosts: files dns myhostname
+    networks: files
+
+    protocols: files
+    services: files
+    ethers: files
+    rpc: files
+
+    # End /etc/nsswitch.conf" > nsswitch.conf
+    sed -i -e 's/^\s//' nsswitch.conf #remove whitespaces at beginning of line
+
+    echo "# Begin /etc/ld.so.conf
+    /usr/local/lib
+    /opt/lib
+
+    # Add an include directory
+    include /etc/ld.so.conf.d/*.conf
+
+    " > ld.so.conf
+    sed -i -e 's/^\s//' ld.so.conf #remove whitespaces at beginning of line
+}
+
+lfs_me_check() {
+    make -k check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+    grep Error "${current_dir}/${pkgname}-check-log" > "${current_dir}/${pkgname}-check-errors"
+
+}
+
+lfs_me_install() {
+    touch "${fakeroot_dir}/etc/ld.so.conf"
+    make install_root="${fakeroot_dir}" install
+
+    mkdir -pv "${fakeroot_dir}/etc"
+    cp -v "../${pkgname}-${pkgver}/nscd/nscd.conf" "${fakeroot_dir}/etc/nscd.conf"
+    mkdir -pv "${fakeroot_dir}/var/cache/nscd"
+
+    install -v -Dm644 "../${pkgname}-${pkgver}/nscd/nscd.tmpfiles" "${fakeroot_dir}/usr/lib/tmpfiles.d/nscd.conf"
+    install -v -Dm644 "../${pkgname}-${pkgver}/nscd/nscd.service" "${fakeroot_dir}/lib/systemd/system/nscd.service"
+
+    cp -v nsswitch.conf "${fakeroot_dir}/etc/"
+    cp -v ld.so.conf "${fakeroot_dir}/etc/"
+    mkdir -v ${fakeroot_dir}/etc/ld.so.conf.d
+
+    cd "${build_dir}/tzdata"
+    ZONEINFO=/usr/share/zoneinfo
+    mkdir -pv "${fakeroot_dir}/${ZONEINFO}"/{posix,right}
+
+    for tz in etcetera southamerica northamerica europe africa antarctica  \
+                  asia australasia backward pacificnew systemv; do
+        "${toolchain_dir}/sbin/zic" -L /dev/null   -d "${fakeroot_dir}/${ZONEINFO}"       -y "sh yearistype.sh" ${tz}
+        "${toolchain_dir}/sbin/zic" -L /dev/null   -d "${fakeroot_dir}/${ZONEINFO}/posix" -y "sh yearistype.sh" ${tz}
+        "${toolchain_dir}/sbin/zic" -L leapseconds -d "${fakeroot_dir}/${ZONEINFO}/right" -y "sh yearistype.sh" ${tz}
+    done
+
+    cp -v zone.tab iso3166.tab "${fakeroot_dir}/${ZONEINFO}"
+    "${toolchain_dir}/sbin/zic" -d "${fakeroot_dir}/${ZONEINFO}" -p America/New_York
+    unset ZONEINFO
+}
+
+lfs_me_postinstall() {
+    mkdir -pv /usr/lib/locale
+    localedef -i cs_CZ -f UTF-8 cs_CZ.UTF-8
+    localedef -i de_DE -f ISO-8859-1 de_DE
+    localedef -i de_DE@euro -f ISO-8859-15 de_DE@euro
+    localedef -i de_DE -f UTF-8 de_DE.UTF-8
+    localedef -i en_GB -f UTF-8 en_GB.UTF-8
+    localedef -i en_HK -f ISO-8859-1 en_HK
+    localedef -i en_PH -f ISO-8859-1 en_PH
+    localedef -i en_US -f ISO-8859-1 en_US
+    localedef -i en_US -f UTF-8 en_US.UTF-8
+    localedef -i es_MX -f ISO-8859-1 es_MX
+    localedef -i fa_IR -f UTF-8 fa_IR
+    localedef -i fr_FR -f ISO-8859-1 fr_FR
+    localedef -i fr_FR@euro -f ISO-8859-15 fr_FR@euro
+    localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+    localedef -i it_IT -f ISO-8859-1 it_IT
+    localedef -i it_IT -f UTF-8 it_IT.UTF-8
+    localedef -i ja_JP -f EUC-JP ja_JP
+    localedef -i ru_RU -f KOI8-R ru_RU.KOI8-R
+    localedef -i ru_RU -f UTF-8 ru_RU.UTF-8
+    localedef -i tr_TR -f UTF-8 tr_TR.UTF-8
+    localedef -i zh_CN -f GB18030 zh_CN.GB18030
+
+    echo -e "${color_bred}Now create a symlink to set your timezone: \"ln -sfv /usr/share/zoneinfo/<xxx> /etc/localtime\" where <xxx> is your timezone ( e.g. \"Europe/Berlin\" ).${color_reset}"
+}
+
+lfs_me_postremove() {
+    rm -rf /usr/lib/locale
+}
