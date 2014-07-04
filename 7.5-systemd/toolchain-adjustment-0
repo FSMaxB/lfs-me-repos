@@ -1,0 +1,60 @@
+#!/bin/bash
+pkgname=toolchain-adjustment
+pkgver=0
+pkgver_postfix=
+
+lfs_me_prepare() {
+    return
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/tools/bin"
+    mkdir -pv "${fakeroot_dir}/tools/$(gcc -dumpmachine)/bin"
+
+    cp -v /tools/bin/ld "${fakeroot_dir}/tools/bin/ld-old"
+    cp -v "/tools/$(gcc -dumpmachine)/bin/ld" "${fakeroot_dir}/tools/$(gcc -dumpmachine)/ld-old"
+    cp -v /tools/bin/ld-new "${fakeroot_dir}/tools/bin/ld"
+    ln -sv /tools/bin/ld "${fakeroot_dir}/tools/$(gcc -dumpmachine)/bin/ld"
+
+    mkdir -pv "$fakeroot_dir"/`dirname $(gcc --print-libgcc-file-name)`
+
+    gcc -dumpspecs | sed -e 's@/tools@@g'                   \
+        -e '/\*startfile_prefix_spec:/{n;s@.*@/usr/lib/ @}' \
+        -e '/\*cpp:/{n;s@$@ -isystem /usr/include@}' >      \
+        "$fakeroot_dir"`dirname $(gcc --print-libgcc-file-name)`/specs
+}
+
+lfs_me_postinstall() {
+    cd "$build_dir"
+    echo 'main(){}' > dummy.c
+    cc dummy.c -v -Wl,--verbose &> dummy.log
+    echo -e "${color_bblue}You should see something like \"/lib/ld-linux.so.2\" in the following output!${color_reset}"
+    readelf -l a.out | grep ': /lib'
+
+    echo -e "${color_bblue}You should see something like \"/usr/lib/crt1.o succeeded\", \"/usr/lib/crti.o succeeded\" and \"/usr/lib/crtn.o succeeded\" in the following output!${color_reset}"
+    grep -o '/usr/lib.*/crt[1in].*succeeded' dummy.log
+
+    echo -e "${color_bblue}You should see something like \"#include <...> search starts here:  /usr/include\" in the following output!${color_reset}"
+    grep -B1 '^ /usr/include' dummy.log
+
+    echo -e "${color_bblue}You should see something like \"SEARCH_DIR(\"/usr/lib\")\" and \"SEARCH_DIR(\"/lib\");\" in the following output!${color_reset}"
+    grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g'
+
+    echo -e "${color_bblue}You should see something like \"attempt to open /lib/libc.so.6 succeeded\" in the following output!${color_reset}"
+    grep "/lib.*/libc.so.6 " dummy.log
+
+    echo -e "${color_bblue}You should see something like \"found ld-linux.so.2 at /lib/ld-linux.so.2\" in the following output!${color_reset}"
+    grep found dummy.log
+}
+
+lfs_me_postremove() {
+    return
+}
