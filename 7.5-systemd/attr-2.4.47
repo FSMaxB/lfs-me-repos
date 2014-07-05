@@ -23,6 +23,7 @@ lfs_me_install() {
     make DESTDIR="$fakeroot_dir" install install-dev install-lib
     chmod -v 755 "${fakeroot_dir}/usr/lib/libattr.so"
 
-    mv -v /usr/lib/libattr.so.* "${fakeroot_dir}/lib"
-    ln -sfv ../../lib/$(readlink /usr/lib/libattr.so) "${fakeroot_dir}/usr/lib/libattr.so"
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libattr.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink ${fakeroot_dir}/usr/lib/libattr.so) "${fakeroot_dir}/usr/lib/libattr.so"
 }
