@@ -1,0 +1,44 @@
+#!/bin/bash
+pkgname=coreutils
+pkgver=8.22
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-i18n-4.patch"
+
+    FORCE_UNSAFE_CONFIGURE=1 ./configure \
+                --prefix=/usr            \
+                --enable-no-install-program=kill,uptime
+}
+
+lfs_me_check() {
+    make NON_ROOT_USERNAME=nobody check-root 2>&1 | tee -a "${current_dir}/${pkgname}-check-log"
+
+
+    echo "dummy:x:1000:nobody" >> /etc/group
+
+    chown -Rv nobody . 
+
+    su nobody -s /bin/bash \
+              -c "PATH=$PATH make RUN_EXPENSIVE_TESTS=yes check" 2>&1 | tee -a "${current_dir}/${pkgname}-check-log"
+
+    sed -i '/dummy/d' /etc/group
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/usr/sbin"
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/bin"
+    mkdir -pv "${fakeroot_dir}/usr/share/man/man8"
+    mv -v "$fakeroot_dir"/usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} "${fakeroot_dir}/bin"
+    mv -v "$fakeroot_dir"/usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} "${fakeroot_dir}/bin"
+    mv -v "$fakeroot_dir"/usr/bin/{rmdir,stty,sync,true,uname} "${fakeroot_dir}/bin"
+    mv -v "${fakeroot_dir}/usr/bin/chroot" "${fakeroot_dir}/usr/sbin"
+    mv -v "${fakeroot_dir}/usr/share/man/man1/chroot.1" "${fakeroot_dir}/usr/share/man/man8/chroot.8"
+    sed -i s/\"1\"/\"8\"/1 "${fakeroot_dir}/usr/share/man/man8/chroot.8"
+}
