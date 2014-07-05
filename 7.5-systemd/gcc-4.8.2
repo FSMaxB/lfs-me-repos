@@ -1,0 +1,79 @@
+#!/bin/bash
+pkgname=gcc
+pkgver=4.8.2
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    case `uname -m` in
+          i?86) sed -i 's/^T_CFLAGS =$/& -fomit-frame-pointer/' gcc/Makefile.in ;;
+    esac
+
+    sed -i -e /autogen/d -e /check.sh/d fixincludes/Makefile.in 
+    mv -v libmudflap/testsuite/libmudflap.c++/pass41-frag.cxx{,.disable}
+
+    mkdir -v "../${pkgname}-build"
+    cd "../${pkgname}-build"
+
+    SED=sed                             \
+    ../${pkgname}-${pkgver}/configure   \
+         --prefix=/usr                  \
+         --enable-shared                \
+         --enable-threads=posix         \
+         --enable-__cxa_atexit          \
+         --enable-clocale=gnu           \
+         --enable-languages=c,c++       \
+         --disable-multilib             \
+         --disable-bootstrap            \
+         --with-system-zlib
+}
+
+lfs_me_check() {
+    ulimit -s 32768
+    make -k check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+    ../${pkgname}-${pkgver}/contrib/test_summary >> "${current_dir}/${pkgname}-check-summary"
+}
+
+lfs_me_install() {
+    make DESTDIR="${fakeroot_dir}" install
+
+    ln -sv ../usr/bin/cpp "${fakeroot_dir}/lib"
+    ln -sv gcc "${fakeroot_dir}/usr/bin/cc"
+    
+    mkdir -pv "${fakeroot_dir}/usr/share/gdb/auto-load/usr/lib"
+    mv -v "$fakeroot_dir"/usr/lib/*gdb.py "${fakeroot_dir}/usr/share/gdb/auto-load/usr/lib"
+
+    echo -e "${color_bblue}Test suite summary ( see more details in \"${current_dir}/${pkgname}-check-log\" and \"${current_dir}/${pkgname}-check-summary\" ):${color_reset}"
+    cat "${current_dir}/${pkgname}-check-summary" | grep -A7 Summ
+}
+
+lfs_me_postinstall() {
+    cd "$build_dir"
+
+    echo -e "${color_bblue}You should see something like \"/lib/ld-linux.so.2\" in the following output!${color_reset}"
+    echo 'main(){}' > dummy.c
+    cc dummy.c -v -Wl,--verbose &> dummy.log
+    readelf -l a.out | grep ': /lib'
+
+    echo -e "${color_bblue}You should see something like \"/usr/lib/gcc/i686-pc-linux-gnu/4.8.2/../../../crt1.o succeeded\" in the following output with the file being \"crt1.o\", \"crti.o\" and \"crtn.o\"!${color_reset}"
+    grep -o '/usr/lib.*/crt[1in].*succeeded' dummy.log
+
+    echo -e "${color_bblue}You should see something like \"#include <...> search starts here: /usr/lib/gcc/i686-pc-linux-gnu/4.8.2/include /usr/local/include /usr/lib/gcc/i686-pc-linux-gnu/4.8.2/include-fixed /usr/include\" in the following output!${color_reset}"
+    grep -B4 '^ /usr/include' dummy.log
+
+    echo -e "${color_bblue}You should see something like 'SEARCH_DIR(\"/usr/i686-pc-linux-gnu/lib\") SEARCH_DIR(\"/usr/local/lib\") SEARCH_DIR(\"/lib\") SEARCH_DIR(\"/usr/lib\");' in the following output (with some more on x86_64)!${color_reset}"
+    grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g'
+
+    echo -e "${color_bblue}You should see something like \"attempt to open /lib/libc.so.6 succeeded\" in the following output!${color_reset}"
+    grep "/lib.*/libc.so.6 " dummy.log
+
+    echo -e "${color_bblue}You should see something like \"found ld-linux.so.2 at /lib/ld-linux.so.2\" in the following output!${color_reset}"
+    grep found dummy.log
+}
+
+lfs_me_postremove() {
+    return
+}
