@@ -1,0 +1,48 @@
+#!/bin/bash
+pkgname=ncurses
+pkgver=5.9
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr           \
+                --mandir=/usr/share/man \
+                --with-shared           \
+                --without-debug         \
+                --enable-pc-files       \
+                --enable-widec
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -v "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libncursesw.so.5* "${fakeroot_dir}/lib"
+
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libncursesw.so") "${fakeroot_dir}/usr/lib/libncursesw.so"
+
+    for lib in ncurses form panel menu ; do
+        rm -vf                    "${fakeroot_dir}/usr/lib/lib${lib}.so"
+        echo "INPUT(-l${lib}w)" > "${fakeroot_dir}/usr/lib/lib${lib}.so"
+        ln -sfv lib${lib}w.a      "${fakeroot_dir}/usr/lib/lib${lib}.a"
+        ln -sfv ${lib}w.pc        "${fakeroot_dir}/usr/lib/pkgconfig/${lib}.pc"
+    done
+
+    ln -sfv libncurses++w.a "${fakeroot_dir}/usr/lib/libncurses++.a"
+
+    rm -vf                     "${fakeroot_dir}/usr/lib/libcursesw.so"
+    echo "INPUT(-lncursesw)" > "${fakeroot_dir}/usr/lib/libcursesw.so"
+    ln -sfv libncurses.so      "${fakeroot_dir}/usr/lib/libcurses.so"
+    ln -sfv libncursesw.a      "${fakeroot_dir}/usr/lib/libcursesw.a"
+    ln -sfv libncurses.a       "${fakeroot_dir}/usr/lib/libcurses.a"
+
+    mkdir -pv       "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -v -R doc/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}

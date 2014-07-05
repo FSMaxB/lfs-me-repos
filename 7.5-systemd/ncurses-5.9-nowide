@@ -1,0 +1,30 @@
+#!/bin/bash
+pkgname=ncurses
+pkgver=5.9
+pkgver_postfix=nowide
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    make distclean
+    ./configure --prefix=/usr    \
+                --with-shared    \
+                --without-normal \
+                --without-debug  \
+                --without-cxx-binding
+}
+
+lfs_me_build() {
+    make sources libs
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/usr/lib"
+    cp -av lib/lib*.so.5* "${fakeroot_dir}/usr/lib"
+}
