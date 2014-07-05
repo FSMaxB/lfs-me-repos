@@ -1,0 +1,40 @@
+#!/bin/bash
+pkgname=flex
+pkgver=2.5.38
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e '/test-bison/d' tests/Makefile.in
+
+    ./configure --prefix=/usr --docdir=/usr/share/doc/${pkgname}-${pkgver}
+}
+
+lfs_me_build() {
+    make
+
+    echo "#!/bin/sh
+    # Begin /usr/bin/lex
+
+    exec /usr/bin/flex -l \"\$@\"
+
+    # End /usr/bin/lex" > lex
+    sed -i -e 's/^\s*//' lex
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -Dv -m 0755 lex "${fakeroot_dir}/usr/bin/lex"
+}
+
+lfs_me_postinstall() {
+    return
+}
+
+lfs_me_postremove() {
+    return
+}
