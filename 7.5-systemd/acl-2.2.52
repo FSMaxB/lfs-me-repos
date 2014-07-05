@@ -24,6 +24,6 @@ lfs_me_install() {
     chmod -v 755 "${fakeroot_dir}/usr/lib/libacl.so"
 
     mkdir -pv "${fakeroot_dir}/lib"
-    mv -v /usr/lib/libacl.so.* "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libacl.so.* "${fakeroot_dir}/lib"
     ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libacl.so") "${fakeroot_dir}/usr/lib/libacl.so"
 }
