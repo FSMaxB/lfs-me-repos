@@ -1,0 +1,36 @@
+#!/bin/bash
+pkgname=bzip2
+pkgver=1.0.6
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-install_docs-1.patch"
+
+    sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile
+
+    sed -i "s@(PREFIX)/man@(PREFIX)/share/man@g" Makefile
+
+    make -f Makefile-libbz2_so
+    make clean
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make PREFIX="${fakeroot_dir}/usr" install
+
+    mkdir -pv "${fakeroot_dir}/bin"
+    mkdir -pv "${fakeroot_dir}/lib"
+    cp -v bzip2-shared "${fakeroot_dir}/bin/bzip2"
+    cp -av libbz2.so* "${fakeroot_dir}/lib"
+    ln -sv ../../lib/libbz2.so.1.0 "${fakeroot_dir}/usr/lib/libbz2.so"
+    rm -v "${fakeroot_dir}/usr/bin/"{bunzip2,bzcat,bzip2}
+    ln -sv bzip2 "${fakeroot_dir}/bin/bunzip2"
+    ln -sv bzip2 "${fakeroot_dir}/bin/bzcat"
+}
