@@ -1,0 +1,48 @@
+#!/bin/bash
+pkgname=e2fsprogs
+pkgver=1.42.9
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e 's|^LD_LIBRARY_PATH.*|&:/tools/lib|' tests/test_config
+
+    mkdir -v build
+    cd build
+
+    LIBS=-L/tools/lib                    \
+    CFLAGS=-I/tools/include              \
+    PKG_CONFIG_PATH=/tools/lib/pkgconfig \
+    ../configure --prefix=/usr           \
+                 --with-root-prefix=""   \
+                 --enable-elf-shlibs     \
+                 --disable-libblkid      \
+                 --disable-libuuid       \
+                 --disable-uuidd         \
+                 --disable-fsck
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    make DESTDIR="$fakeroot_dir" install-libs
+
+    chmod -v u+w "$fakeroot_dir"/usr/lib/{libcom_err,libe2p,libext2fs,libss}.a
+
+    gunzip -v "${fakeroot_dir}/usr/share/info/libext2fs.info.gz"
+
+    makeinfo -o      doc/com_err.info ../lib/et/com_err.texinfo
+    install -v -m644 doc/com_err.info "${fakeroot_dir}/usr/share/info"
+}
+
+lfs_me_postinstall() {
+    install-info --dir-file=/usr/share/info/dir /usr/share/info/libext2fs.info
+    install-info --dir-file=/usr/share/info/dir /usr/share/info/com_err.info
+}
+
+lfs_me_postremove() {
+    return
+}
