@@ -3,7 +3,6 @@ pkgname=binutils
 pkgver=2.24
 pkgver_postfix=
 
-# All the following functions are already provided and you only need them if they differ
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
 
