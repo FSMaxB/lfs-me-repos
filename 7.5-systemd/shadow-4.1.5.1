@@ -1,0 +1,36 @@
+#!/bin/bash
+pkgname=shadow
+pkgver=4.1.5.1
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}_${pkgver}.orig.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's/groups$(EXEEXT) //' src/Makefile.in
+    find man -name Makefile.in -exec sed -i 's/groups\.1 / /' {} \;
+
+    sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
+               -e 's@/var/spool/mail@/var/mail@' etc/login.defs
+
+    ./configure --sysconfdir=/etc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/bin"
+    mv -v "${fakeroot_dir}/usr/bin/passwd" "${fakeroot_dir}/bin"
+}
+
+lfs_me_postinstall() {
+    pwconv
+    grpconv
+    
+    echo -e "${color_bblue}Set your root password with 'passwd root' !${color_reset}"
+}
