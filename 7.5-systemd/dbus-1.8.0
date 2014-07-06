@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=dbus
+pkgver=1.8.0
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                                  \
+                --sysconfdir=/etc                              \
+                --localstatedir=/var                           \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}" \
+                --with-console-auth-dir=/run/console/
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mv -v "$fakeroot_dir"/usr/lib/libdbus-1.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libdbus-1.so") "${fakeroot_dir}/usr/lib/libdbus-1.so"
+
+    ln -sv /etc/machine-id "${fakeroot_dir}/var/lib/dbus"
+}
