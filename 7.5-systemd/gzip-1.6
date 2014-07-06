@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=gzip
+pkgver=1.6
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --bindir=/bin
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/bin"
+    mv -v "$fakeroot_dir"/bin/{gzexe,uncompress,zcmp,zdiff,zegrep} "${fakeroot_dir}/usr/bin"
+    mv -v "$fakeroot_dir"/bin/{zfgrep,zforce,zgrep,zless,zmore,znew} "${fakeroot_dir}/usr/bin"
+}
