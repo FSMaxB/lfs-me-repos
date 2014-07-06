@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=groff
+pkgver=1.22.2
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    PAGE="A4" ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    ln -sv eqn "${fakeroot_dir}/usr/bin/geqn"
+    ln -sv tbl "${fakeroot_dir}/usr/bin/gtbl"
+}
