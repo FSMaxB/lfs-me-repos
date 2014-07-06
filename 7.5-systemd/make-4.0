@@ -1,0 +1,4 @@
+#!/bin/bash
+pkgname=make
+pkgver=4.0
+pkgver_postfix=
