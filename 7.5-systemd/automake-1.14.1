@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=automake
+pkgver=1.14.1
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+    sed -i "s:./configure:LEXLIB=/usr/lib/libfl.a &:" t/lex-{clean,depend}-cxx.sh
+    make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
