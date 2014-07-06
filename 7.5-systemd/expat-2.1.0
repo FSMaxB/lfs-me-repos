@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=expat
+pkgver=2.1.0
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 doc/*.{html,png,css} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
