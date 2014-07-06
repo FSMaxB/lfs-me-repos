@@ -1,0 +1,32 @@
+#!/bin/bash
+pkgname=kmod
+pkgver=16
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr          \
+                --bindir=/bin          \
+                --sysconfdir=/etc      \
+                --with-rootlibdir=/lib \
+                --disable-manpages     \
+                --with-xz              \
+                --with-zlib
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    make DESTDIR="$fakeroot_dir" -C man install
+
+    mkdir -pv "${fakeroot_dir}/sbin"
+    for target in depmod insmod modinfo modprobe rmmod; do
+        ln -sv ../bin/kmod "${fakeroot_dir}/sbin/${target}"
+    done
+
+    mkdir -pv "${fakeroot_dir}/bin"
+    ln -sv kmod "${fakroot_dir}/bin/lsmod"
+}
