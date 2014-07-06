@@ -1,0 +1,22 @@
+#!/bin/bash
+pkgname=xz
+pkgver=5.0.5
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/bin"
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v   "$fakeroot_dir"/usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} "${fakeroot_dir}/bin"
+    mv -v "$fakeroot_dir"/usr/lib/liblzma.so.* "${fakeroot_dir}/lib"
+    ln -svf ../../lib/$(readlink "${fakeroot_dir}/usr/lib/liblzma.so") "${fakeroot_dir}/usr/lib/liblzma.so"
+}
