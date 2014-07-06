@@ -1,0 +1,37 @@
+#!/bin/bash
+pkgname=readline
+pkgver=6.2
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i '/MV.*old/d' Makefile.in
+    sed -i '/{OLDSUFF}/c:' support/shlib-install
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-2.patch"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_build() {
+    make SHLIB_LIBS=-lncurses
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/lib{readline,history}.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libreadline.so") "${fakeroot_dir}/usr/lib/libreadline.so"
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libhistory.so" ) "${fakeroot_dir}/usr/lib/libhistory.so"
+
+    mkdir   -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 doc/*.{ps,pdf,html,dvi} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
