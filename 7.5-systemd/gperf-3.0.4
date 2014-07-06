@@ -1,0 +1,12 @@
+#!/bin/bash
+pkgname=gperf
+pkgver=3.0.4
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
