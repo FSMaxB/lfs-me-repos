@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=bash
+pkgver=4.2
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-12.patch"
+
+    ./configure --prefix=/usr                                 \
+                --bindir=/bin                                 \
+                --htmldir=/usr/share/doc/${pkgname}-${pkgver} \
+                --without-bash-malloc                         \
+                --with-installed-readline
+}
+
+lfs_me_check() {
+    chown -Rv nobody "$build_dir"
+
+    su nobody -s /bin/bash -c "PATH=$PATH make tests" 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
