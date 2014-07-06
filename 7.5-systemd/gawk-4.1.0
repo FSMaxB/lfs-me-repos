@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=gawk
+pkgver=4.1.0
+pkgver_postfix=
+
+# All the following functions are already provided and you only need them if they differ
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -v "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp    -v doc/{awkforai.txt,*.{eps,pdf,jpg}} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
