@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgname=perl
+pkgver=5.18.2
+pkgver_postfix=
+
+# All the following functions are already provided and you only need them if they differ
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    echo "127.0.0.1 localhost $(hostname)" > /etc/hosts
+
+    sed -i -e "s|BUILD_ZLIB\s*= True|BUILD_ZLIB = False|"           \
+               -e "s|INCLUDE\s*= ./zlib-src|INCLUDE    = /usr/include|" \
+                      -e "s|LIB\s*= ./zlib-src|LIB        = /usr/lib|"         \
+                          cpan/Compress-Raw-Zlib/config.in
+
+    sh Configure -des -Dprefix=/usr                 \
+                      -Dvendorprefix=/usr           \
+                      -Dman1dir=/usr/share/man/man1 \
+                      -Dman3dir=/usr/share/man/man3 \
+                      -Dpager="/usr/bin/less -isR"  \
+                      -Duseshrplib
+}
+
+lfs_me_check() {
+    make -k check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    echo -e "${color_bred}This package created '/etc/hosts' before building.${color_reset}"
+}
