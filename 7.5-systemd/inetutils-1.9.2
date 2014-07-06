@@ -1,0 +1,28 @@
+#!/bin/bash
+pkgname=inetutils
+pkgver=1.9.2
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    echo '#define PATH_PROCNET_DEV "/proc/net/dev"' >> ifconfig/system/linux.h 
+
+    ./configure --prefix=/usr          \
+                --localstatedir=/var   \
+                --disable-logger       \
+                --disable-syslogd      \
+                --disable-whois        \
+                --disable-servers
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/bin"
+    mkdir -pv "${fakeroot_dir}/sbin"
+    mv -v "$fakeroot_dir"/usr/bin/{hostname,ping,ping6,traceroute} "${fakeroot_dir}/bin"
+    mv -v "${fakeroot_dir}/usr/bin/ifconfig" "${fakeroot_dir}/sbin"
+}
