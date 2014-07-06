@@ -1,0 +1,34 @@
+#!/bin/bash
+pkgname=libdbus
+pkgver=1.8.0
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/dbus-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/dbus-${pkgver}"
+
+    ./configure --prefix=/usr     \
+                --sysconfdir=/etc \
+                --localstatedir=/var
+}
+
+lfs_me_build() {
+    make -C dbus libdbus-1.la
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" -C dbus lib_LTLIBRARIES=libdbus-1.la \
+             install-libLTLIBRARIES \
+                  install-dbusincludeHEADERS \
+                       install-nodist_dbusarchincludeHEADERS
+    make DESTDIR="$fakeroot_dir" install-pkgconfigDATA
+
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libdbus-1.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libdbus-1.so") "${fakeroot_dir}/usr/lib/libdbus-1.so"
+}
