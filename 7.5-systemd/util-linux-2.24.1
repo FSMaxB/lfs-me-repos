@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=util-linux
+pkgver=2.24.1
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e 's@etc/adjtime@var/lib/hwclock/adjtime@g' \
+              $(grep -rl '/etc/adjtime' .)
+
+    mkdir -pv "${fakeroot_dir}/var/lib/hwclock"
+
+    ./configure
+}
+
+lfs_me_build() {
+    make
+}
+
+lfs_me_check() {
+    chown -Rv nobody .
+    su nobody -s /bin/bash -c "PATH=$PATH make -k check" 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
