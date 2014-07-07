@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=tar
+pkgver=1.27.1
+pkgver_postfix=
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-manpage-1.patch"
+
+    FORCE_UNSAFE_CONFIGURE=1  \
+    ./configure --prefix=/usr \
+                --bindir=/bin
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    make DESTDIR="$fakeroot_dir" -C doc install-html docdir="/usr/share/doc/${pkgname}-${pkgver}"
+
+    mkdir -pv "${fakeroot_dir}/usr/share/man/man1"
+    perl tarman > "${fakeroot_dir}/usr/share/man/man1/tar.1"
+}
