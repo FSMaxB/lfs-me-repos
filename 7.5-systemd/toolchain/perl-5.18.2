@@ -3,8 +3,10 @@ pkgname=perl
 pkgver=5.18.2
 pkgver_postfix=
 
-sources=( "http://www.cpan.org/src/5.0/${pkgname}-${pkgver}.tar.bz2" )
-sha1sums=( 'b8b87ef46630b5a2287b86b6e0c69088da36adfd' )
+sources=( "http://www.cpan.org/src/5.0/${pkgname}-${pkgver}.tar.bz2" 
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-libc-1.patch" )
+sha1sums=( 'b8b87ef46630b5a2287b86b6e0c69088da36adfd'
+           '0b09be49bb6eb90453975bc2028d8f512b6b1ee0' )
 
 lfs_me_prepare() {
     #extract
