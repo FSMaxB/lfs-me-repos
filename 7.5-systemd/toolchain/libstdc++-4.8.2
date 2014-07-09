@@ -3,6 +3,9 @@ pkgname=libstdc++
 pkgver=4.8.2
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/gcc/gcc-${pkgver}/gcc-${pkgver}.tar.bz2" )
+sha1sums=( '810fb70bd721e1d9f446b6503afe0a9088b62986' )
+
 #package specific variables
 LFS=/mnt/lfs
 LFS_TGT=$(uname -m)-lfs-linux-gnu

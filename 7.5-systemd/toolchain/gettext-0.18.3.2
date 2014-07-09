@@ -3,6 +3,9 @@ pkgname=gettext
 pkgver=0.18.3.2
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'a2dc46d788edb0078ab20da7bd194bdb6da2f0d9' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"

@@ -1,0 +1,43 @@
+#!/bin/bash
+pkgname=nano
+pkgver=2.3.2
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '5d4bed4f15088fc3cba0650a89bd343b061f456d' )
+
+lfs_me_prepare() {
+    #extract
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/tools \
+                --enable-utf8
+}
+
+lfs_me_build() {
+    make
+
+    echo " set autoindent
+    set const
+    set fill 72
+    set historylog
+    set multibuffer
+    set nohelp
+    set regexp
+    set smooth
+    set suspend" > nanorc
+    sed -i -e '/^\s*//' nanorc  # remove whitespaces from the beginning of the lines
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/tools/etc"
+    cp nanorc "${fakeroot_dir}/tools/etc/"
+}

@@ -3,6 +3,9 @@ pkgname=glibc
 pkgver=2.19
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'b29e1f94b8a32e283e1cb66c9a913950c496fb51' )
+
 #package specific variables
 LFS=/mnt/lfs
 LFS_TGT=$(uname -m)-lfs-linux-gnu

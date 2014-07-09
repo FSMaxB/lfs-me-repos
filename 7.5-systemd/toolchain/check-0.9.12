@@ -3,6 +3,9 @@ pkgname=check
 pkgver=0.9.12
 pkgver_postfix=
 
+sources=( "http://sourceforge.net/projects/${pkgname}/files/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'eaa4c1c3273901b63c7bf054d402b554ad8dd9c9' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"

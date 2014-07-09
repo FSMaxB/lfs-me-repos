@@ -3,6 +3,9 @@ pkgname=fakeroot
 pkgver=1.18.4
 pkgver_postfix=
 
+sources=( "http://ftp.debian.org/debian/pool/main/f/${pkgname}/${pkgname}_${pkgver}.orig.tar.bz2" )
+sha1sums=( '60cdd12ea3a72f3676c0f3930ab908ff1f13b996' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}_${pkgver}.orig.tar.bz2" -C "$build_dir"

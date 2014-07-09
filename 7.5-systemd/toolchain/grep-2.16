@@ -3,6 +3,9 @@ pkgname=grep
 pkgver=2.16
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '4ab9c1f8a5934734d3e01dc32ee1a8ae0f974359' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"

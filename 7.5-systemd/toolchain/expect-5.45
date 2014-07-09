@@ -3,6 +3,9 @@ pkgname=expect
 pkgver=5.45
 pkgver_postfix=
 
+sources=( "http://prdownloads.sourceforge.net/${pkgname}/${pkgname}${pkgver}.tar.gz" )
+sha1sums=( 'e634992cab35b7c6931e1f21fbb8f74d464bd496' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}${pkgver}.tar.gz" -C "$build_dir"

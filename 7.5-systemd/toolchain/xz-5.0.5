@@ -3,6 +3,9 @@ pkgname=xz
 pkgver=5.0.5
 pkgver_postfix=
 
+sources=( "http://tukaani.org/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '56f1d78117f0c32bbb1cfd40117aa7f55bee8765' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"

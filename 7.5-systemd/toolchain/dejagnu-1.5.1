@@ -3,6 +3,9 @@ pkgname=dejagnu
 pkgver=1.5.1
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'eb16fb455690592a97f22acd17e8fc2f1b5c54c2' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
