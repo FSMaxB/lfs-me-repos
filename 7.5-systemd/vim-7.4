@@ -3,7 +3,9 @@ pkgname=vim
 pkgver=7.4
 pkgver_postfix=
 
-# All the following functions are already provided and you only need them if they differ
+sources=( "ftp://ftp.vim.org/pub/${pkgname}/unix/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '601abf7cc2b5ab186f40d8790e542f86afca86b7' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
 

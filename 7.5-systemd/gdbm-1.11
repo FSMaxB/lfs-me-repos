@@ -3,6 +3,9 @@ pkgname=gdbm
 pkgver=1.11
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'ce433d0f192c21d41089458ca5c8294efe9806b4' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

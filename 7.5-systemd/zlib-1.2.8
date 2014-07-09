@@ -3,7 +3,9 @@ pkgname=zlib
 pkgver=1.2.8
 pkgver_postfix=
 
-# All the following functions are already provided and you only need them if they differ
+sources=( "http://www.zlib.net/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'b598beb7acc96347cbd1020b71aef7871d374677' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

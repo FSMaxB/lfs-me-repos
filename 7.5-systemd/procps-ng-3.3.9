@@ -3,6 +3,9 @@ pkgname=procps-ng
 pkgver=3.3.9
 pkgver_postfix=
 
+sources=( "http://sourceforge.net/projects/${pkgname}/files/Production/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '088c77631745fc75ee41fc29c254a4069be4869a' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

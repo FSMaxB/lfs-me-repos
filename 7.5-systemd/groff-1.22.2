@@ -3,6 +3,9 @@ pkgname=groff
 pkgver=1.22.2
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '37223941e25bb504bf54631daaabb01b147dc1d3' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

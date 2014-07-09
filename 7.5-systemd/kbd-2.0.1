@@ -3,6 +3,11 @@ pkgname=kbd
 pkgver=2.0.1 
 pkgver_postfix=
 
+sources=( "http://ftp.altlinux.org/pub/people/legion/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-backspace-1.patch" )
+sha1sums=( '8d7d6f9fc95d8abb80156da0713a4cbc0dbfda97'
+           '44f2fb0ac18db4f717421db756db4897f88dc08c' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

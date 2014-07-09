@@ -3,7 +3,9 @@ pkgname=linux
 pkgver=3.13.3
 pkgver_postfix=
 
-# All the following functions are already provided and you only need them if they differ
+sources=( "http://www.kernel.org/pub/${pkgname}/kernel/v3.x/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'c2e217bc5b2865c5c2e74ee4964593875580caa8' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

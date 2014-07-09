@@ -3,7 +3,9 @@ pkgname=perl
 pkgver=5.18.2
 pkgver_postfix=
 
-# All the following functions are already provided and you only need them if they differ
+sources=( "http://www.cpan.org/src/5.0/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'b8b87ef46630b5a2287b86b6e0c69088da36adfd' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
 

@@ -3,6 +3,9 @@ pkgname=expat
 pkgver=2.1.0
 pkgver_postfix=
 
+sources=( "http://prdownloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'b08197d146930a5543a7b99e871cba3da614f6f0' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

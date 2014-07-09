@@ -3,6 +3,9 @@ pkgname=less
 pkgver=458
 pkgver_postfix=
 
+sources=( "http://www.greenwoodsoftware.com/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'd5b07180d3dad327ccc8bc66818a31577e8710a2' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

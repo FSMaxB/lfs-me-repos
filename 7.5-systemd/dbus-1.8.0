@@ -3,6 +3,9 @@ pkgname=dbus
 pkgver=1.8.0
 pkgver_postfix=
 
+sources=( "http://dbus.freedesktop.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'd14ab33e92e29fa732cdff69214913832181e737' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

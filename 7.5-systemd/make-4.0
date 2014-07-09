@@ -2,3 +2,6 @@
 pkgname=make
 pkgver=4.0
 pkgver_postfix=
+
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'c819622dc84e2290c351646b8a0ec4df0df12bb6' )

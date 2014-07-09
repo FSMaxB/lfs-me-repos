@@ -3,6 +3,9 @@ pkgname=binutils
 pkgver=2.24
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '7ac75404ddb3c4910c7594b51ddfc76d4693debb' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
 

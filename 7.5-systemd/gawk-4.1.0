@@ -3,6 +3,9 @@ pkgname=gawk
 pkgver=4.1.0
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'caabca3c1a59d05807c826c45a4639b82cad612a' )
+
 # All the following functions are already provided and you only need them if they differ
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"

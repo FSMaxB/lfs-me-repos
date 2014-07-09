@@ -3,6 +3,11 @@ pkgname=bash
 pkgver=4.2
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-fixes-12.patch" )
+sha1sums=( '487840ab7134eb7901fbb2e49b0ee3d22de15cb8'
+           '1721977bab0b2c1c693e3abb6e69dedc4eb41993' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

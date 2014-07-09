@@ -3,6 +3,9 @@ pkgname=mpc
 pkgver=1.0.2
 pkgver_postfix=
 
+sources=( "http://www.multiprecision.org/${pkgname}/download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '5072d82ab50ec36cc8c0e320b5c377adb48abe70' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

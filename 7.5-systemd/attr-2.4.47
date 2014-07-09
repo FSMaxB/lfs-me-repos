@@ -3,6 +3,9 @@ pkgname=attr
 pkgver=2.4.47
 pkgver_postfix=
 
+sources=( "http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver}.src.tar.gz" )
+sha1sums=( '5060f0062baee6439f41a433325b8b3671f8d2d8' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.src.tar.gz" -C "$build_dir"
 

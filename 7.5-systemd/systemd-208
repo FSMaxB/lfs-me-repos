@@ -3,6 +3,9 @@ pkgname=systemd
 pkgver=208
 pkgver_postfix=
 
+sources=( "http://www.freedesktop.org/software/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'e1a4e213d5d1e3498bca851347f2f07fdb9b4e1f' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

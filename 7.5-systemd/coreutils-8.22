@@ -3,6 +3,11 @@ pkgname=coreutils
 pkgver=8.22
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/coreutils/${pkgname}-${pkgver}.tar.xz"
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-i18n-4.patch" )
+sha1sums=( 'cc7fe47b21eb49dd2ee4cdb707570f42fb2c8cc6'
+           'd7b02700150e9136bf45d8827ce73c63208903f0' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

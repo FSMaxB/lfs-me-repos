@@ -3,6 +3,9 @@ pkgname=psmisc
 pkgver=22.20
 pkgver_postfix=
 
+sources=( "http://prdownloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'abdddc8d5c91251bba0f3190956ae9d05c058745' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

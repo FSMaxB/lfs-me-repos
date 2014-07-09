@@ -3,6 +3,9 @@ pkgname=e2fsprogs
 pkgver=1.42.9
 pkgver_postfix=
 
+sources=( "http://prdownloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'fb8e3662302bcab1682d567d6ee0ff051faa1bbd' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

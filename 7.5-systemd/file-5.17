@@ -3,6 +3,9 @@ pkgname=file
 pkgver=5.17
 pkgver_postfix=
 
+sources=( "ftp://ftp.astron.com/pub/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'f7e837a0d3e4f40a02ffe7da5e146b967448e0d8' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

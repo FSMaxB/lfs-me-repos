@@ -3,6 +3,9 @@ pkgname=XML-Parser
 pkgver=2.42_01
 pkgver_postfix=
 
+sources=( "http://search.cpan.org/CPAN/authors/id/T/TO/TODDR/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '2fd519619aa47c8c330365358c6783f4e5ed916c' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

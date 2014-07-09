@@ -3,6 +3,9 @@ pkgname=automake
 pkgver=1.14.1
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '2ced676f6b792a95c5919243f81790b1172c7f5b' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

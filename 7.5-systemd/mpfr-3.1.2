@@ -3,6 +3,9 @@ pkgname=mpfr
 pkgver=3.1.2
 pkgver_postfix=
 
+sources=( "http://www.mpfr.org/${pkgname}-${pkgver}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '03e593cc6e26639ef5e60be1af8dc527209e5172' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

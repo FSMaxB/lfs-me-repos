@@ -3,6 +3,11 @@ pkgname=readline
 pkgver=6.2
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-fixes-2.patch" )
+sha1sums=( 'a9761cd9c3da485eb354175fcc2fe35856bc43ac'
+           '6d844af5f66c6158f990ae7fb9e25c1aabc6860f' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

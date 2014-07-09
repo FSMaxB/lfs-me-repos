@@ -3,6 +3,9 @@ pkgname=libtool
 pkgver=2.4.2
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '22b71a8b5ce3ad86e1094e7285981cae10e6ff88' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

@@ -3,6 +3,9 @@ pkgname=man-pages
 pkgver=3.59
 pkgver_postfix=
 
+sources=( "http://www.kernel.org/pub/linux/docs/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '76eae3fb069a6df2195081408e7ea2784722385b' )
+
 lfs_me_prepare() {
     #extract
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"

@@ -3,6 +3,11 @@ pkgname=bzip2
 pkgver=1.0.6
 pkgver_postfix=
 
+sources=( "http://www.bzip.org/${pkgver}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-install_docs-1.patch" )
+sha1sums=( '3f89f861209ce81a6bab1fd1998c0ef311712002'
+           '86fa168b260bb12651ebfa6d47939e926e067036' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

@@ -3,6 +3,9 @@ pkgname=shadow
 pkgver=4.1.5.1
 pkgver_postfix=
 
+sources=( "http://cdn.debian.net/debian/pool/main/s/${pkgname}/${pkgname}_${pkgver}.orig.tar.gz" )
+sha1sums=( '6e4de75de58405d21b0377b926ae770afccd95bc' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}_${pkgver}.orig.tar.gz" -C "$build_dir"
 

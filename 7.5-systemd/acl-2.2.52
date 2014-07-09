@@ -3,6 +3,9 @@ pkgname=acl
 pkgver=2.2.52
 pkgver_postfix=
 
+sources=( "http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver}.src.tar.gz" )
+sha1sums=( '537dddc0ee7b6aa67960a3de2d36f1e2ff2059d9' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.src.tar.gz" -C "$build_dir"
 

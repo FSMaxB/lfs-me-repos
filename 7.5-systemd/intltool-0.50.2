@@ -3,6 +3,9 @@ pkgname=intltool
 pkgver=0.50.2
 pkgver_postfix=
 
+sources=( "http://launchpad.net/${pkgname}/trunk/${pkgver}/+download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '7fddbd8e1bf94adbf1bc947cbf3b8ddc2453f8ad' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

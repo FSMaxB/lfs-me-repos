@@ -3,6 +3,9 @@ pkgname=man-db
 pkgver=2.6.6
 pkgver_postfix=
 
+sources=( "http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ba27924ef024527ad562017d956ffd3375bccc8d' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

@@ -3,6 +3,9 @@ pkgname=lfs-network-scripts
 pkgver=20140214
 pkgver_postfix=
 
+sources=( "http://www.linuxfromscratch.org/lfs/downloads/7.5-systemd/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'b4266a40a62dea86241664658f22adac60dd3e0e' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
 

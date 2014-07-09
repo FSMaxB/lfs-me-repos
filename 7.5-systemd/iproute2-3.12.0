@@ -3,6 +3,9 @@ pkgname=iproute2
 pkgver=3.12.0
 pkgver_postfix=
 
+sources=( "http://www.kernel.org/pub/linux/utils/net/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '9397376e5d4dcbb1182745cd58625895fcdb868d' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

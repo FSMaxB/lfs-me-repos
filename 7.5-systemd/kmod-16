@@ -3,6 +3,9 @@ pkgname=kmod
 pkgver=16
 pkgver_postfix=
 
+sources=( "http://www.kernel.org/pub/linux/utils/kernel/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '1b3e8066208098b3b9593b63bff5838a41bbdfb0' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

@@ -3,6 +3,9 @@ pkgname=util-linux
 pkgver=2.24.1
 pkgver_postfix=
 
+sources=( "http://www.kernel.org/pub/linux/utils/${pkgname}/v2.24/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ecf75bbb77bba874fc11fc27423aa67b395b7ae5' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

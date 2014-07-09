@@ -3,6 +3,9 @@ pkgname=pkg-config
 pkgver=0.28
 pkgver_postfix=
 
+sources=( "http://pkgconfig.freedesktop.org/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '71853779b12f958777bffcb8ca6d849b4d3bed46' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 

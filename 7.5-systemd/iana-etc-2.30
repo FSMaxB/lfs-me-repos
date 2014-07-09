@@ -3,6 +3,9 @@ pkgname=iana-etc
 pkgver=2.30
 pkgver_postfix=
 
+sources=( "http://anduin.linuxfromscratch.org/sources/LFS/lfs-packages/conglomeration/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '218593bcb9264014c4e397d838b2c218eac9df06' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
 

@@ -3,6 +3,13 @@ pkgname=glibc
 pkgver=2.19
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+          "http://www.iana.org/time-zones/repository/releases/tzdata2013i.tar.gz"
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-fhs-1.patch" )
+sha1sums=( 'b29e1f94b8a32e283e1cb66c9a913950c496fb51'
+           '0fe77c8cca50b5f20d73e9c2a5b4fadca34c1504'
+           'd61e9ba795b64f1b1aa81023f3e45157cb426c93' )
+
 #package specific variables
 toolchain_dir="/tools/"
 

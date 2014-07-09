@@ -3,6 +3,9 @@ pkgname=bc
 pkgver=1.06.95
 pkgver_postfix=
 
+sources=( "http://alpha.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '18717e0543b1dda779a71e6a812f11b8261a705a' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
 

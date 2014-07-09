@@ -3,6 +3,11 @@ pkgname=tar
 pkgver=1.27.1
 pkgver_postfix=
 
+sources=( "http://ftp.gnu.org/gnu/tar/${pkgname}-${pkgver}.tar.xz"
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-manpage-1.patch" )
+sha1sums=( '5ce4233e1774e990b930f3c46990267b28448962'
+            'd37b63656c85ef93ea809e1001d6becd2a02ccb8' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 

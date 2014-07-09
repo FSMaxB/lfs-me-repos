@@ -3,6 +3,9 @@ pkgname=libpipeline
 pkgver=1.2.6
 pkgver_postfix=
 
+sources=( "http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '467d5eec21cf2f959c15866da76fcd50b7d02d64' )
+
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 
