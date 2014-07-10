@@ -1,0 +1,57 @@
+#!/bin/bash
+pkgname=Linux-PAM
+pkgver=1.1.8
+pkgver_postfix=
+
+sources=( "http://linux-pam.org/library/${pkgname}-${pkgver}.tar.bz2"
+          "http://linux-pam.org/documentation/${pkgname}-${pkgver}-docs.tar.bz2" )
+sha1sums=( 'f8ce53c67363f78d520392fa1c253c4978058be1'
+           'aa0c1cc23742091c2f3144af236108d9310d508b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}-docs.tar.bz2" --strip-components=1
+
+    ./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --libdir=/usr/lib \
+            --enable-securedir=/lib/security \
+            --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"# Begin /etc/pam.d/other
+
+auth            required        pam_unix.so     nullok
+account         required        pam_unix.so
+session         required        pam_unix.so
+password        required        pam_unix.so     nullok
+
+# End /etc/pam.d/other" > other
+}
+
+lfs_me_check() {
+    make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+    echo -e "${color_bred}This test doesn't work without '/etc/pam.d/other' installed!${color_reset}"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    chmod -v 4755 "${fakeroot_dir}/sbin/unix_chkpwd"
+
+    for file in pam pam_misc pamc
+    do
+        mv -v "$fakeroot_dir"/usr/lib/lib${file}.so.* "${fakeroot_dir}/lib"
+        ln -sfv ../../lib/$(readlink "$fakeroot_dir"/usr/lib/lib${file}.so) "${fakeroot_dir}/usr/lib/lib${file}.so"
+    done
+
+    install -v -m755 -d "${fakeroot_dir}/etc/pam.d"
+    cp other "${fakeroot_dir}/etc/pam.d/"
+}
