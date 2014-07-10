@@ -1,0 +1,28 @@
+#!/bin/bash
+pkgname=libtirpc
+pkgver=0.2.4
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/project/${pkgname}/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '1484e59eb9c0c6adf4b072f2b80ccb17465fd4a3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr     \
+                --sysconfdir=/etc \
+                --disable-static  \
+                --disable-gssapi
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    mv -v "$fakeroot_dir"/usr/lib/libtirpc.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/libtirpc.so.1.0.10 "${fakeroot_dir}/usr/lib/libtirpc.so"
+}
