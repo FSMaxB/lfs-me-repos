@@ -1,0 +1,37 @@
+#!/bin/bash
+pkgname=acl
+pkgver=2.2.52
+pkgver_postfix=
+
+sources=( "http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver}.src.tar.gz" )
+sha1sums=( '537dddc0ee7b6aa67960a3de2d36f1e2ff2059d9' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.src.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e 's|/@pkg_name@|&-@pkg_version@|' include/builddefs.in
+
+    sed -i "s:| sed.*::g" test/{sbits-restore,cp,misc}.test
+
+    INSTALL_USER=root \
+    INSTALL_GROUP=root \
+    ./configure --prefix=/usr --libexecdir=/usr/lib --disable-static
+}
+
+lfs_me_check() {
+    make tests 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install install-dev install-lib
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libacl.so"
+
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libacl.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libacl.so") "${fakeroot_dir}/usr/lib/libacl.so"
+
+    mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 doc/*.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
