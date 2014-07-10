@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgname=berkeley-db
+pkgver=6.0.20
+pkgver_postfix=
+
+sources=( "http://download.oracle.com/${pkgname}/db-${pkgver}.tar.gz" )
+sha1sums=( '03155e4ebdb6572a3cc684965f2ae307ac75a458' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/db-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/db-${pkgver}"
+
+    cd build_unix
+    ../dist/configure --prefix=/usr       \
+                      --enable-compat185  \
+                      --enable-dbm        \
+                      --disable-static    \
+                      --enable-tcl        \
+                      --with-tcl=/usr/lib \
+                      --enable-cxx
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" docdir="/usr/share/doc/db-${pkgver}" install
+    fakeroot chown -v -R root:root               \
+          "$fakeroot_dir"/usr/bin/db_*                          \
+          "$fakeroot_dir"/usr/include/db{,_185,_cxx}.h          \
+          "$fakeroot_dir"/usr/lib/libdb*.{so,la}                \
+          "${fakeroot_dir}/usr/share/doc/db-${pkgver}"
+}
