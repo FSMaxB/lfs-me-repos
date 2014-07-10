@@ -1,0 +1,32 @@
+#!/bin/bash
+pkgname=attr
+pkgver=2.4.47
+pkgver_postfix=
+
+sources=( "http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver}.src.tar.gz" )
+sha1sums=( '5060f0062baee6439f41a433325b8b3671f8d2d8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.src.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e 's|/@pkg_name@|&-@pkg_version@|' include/builddefs.in
+
+    INSTALL_USER=root  \
+    INSTALL_GROUP=root \
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    make tests root-tests ext-tests 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install install-dev install-lib
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libattr.so"
+
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libattr.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink ${fakeroot_dir}/usr/lib/libattr.so) "${fakeroot_dir}/usr/lib/libattr.so"
+}
