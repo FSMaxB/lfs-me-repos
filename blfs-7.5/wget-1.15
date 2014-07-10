@@ -22,4 +22,7 @@ lfs_me_check() {
 
 lfs_me_install() {
     make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/etc/wgetrc"
+    echo ca-directory=/etc/ssl/certs >> "${fakeroot_dir}/etc/wgetrc"
 }
