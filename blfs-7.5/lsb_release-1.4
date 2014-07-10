@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=lsb_release
+pkgver=1.4
+pkgver_postfix=
+
+sources=( "http://sourceforge.net/projects/lsb/files/${pkgname}/${pkgver}/lsb-release-${pkgver}.tar.gz" )
+sha1sums=( 'ecf883ada9bf4e1feca3f2e1494bd798792aee18' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/lsb-release-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/lsb-release-${pkgver}"
+
+    sed -i "s|n/a|unavailable|" lsb_release
+}
+
+lfs_me_build() {
+    ./help2man -N --include ./lsb_release.examples \
+                  --alt_version_key=program_version ./lsb_release > lsb_release.1
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/usr/share/man/man1"
+    mkdir -pv "${fakeroot_dir}/usr/bin"
+    install -v -m 644 lsb_release.1 "${fakeroot_dir}/usr/share/man/man1/lsb_release.1"
+    install -v -m 755 lsb_release "${fakeroot_dir}/usr/bin/lsb_release"
+}
