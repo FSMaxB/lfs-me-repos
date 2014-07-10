@@ -1,0 +1,37 @@
+#!/bin/bash
+pkgname=openssl
+pkgver=1.0.1h
+pkgver_postfix=
+
+sources=( "http://www.openssl.org/source/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/svn/${pkgname}-${pkgver}-fix_parallel_build-1.patch" )
+sha1sums=( 'b2239599c8bf8f7fc48590a55205c26abe560bf8'
+           '99ba88a953970aab83890fb98f2ea761dd71407b' )
+
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fix_parallel_build-1.patch"
+
+    ./config --prefix=/usr         \
+             --openssldir=/etc/ssl \
+             --libdir=lib          \
+             shared                \
+             zlib-dynamic
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    sed -i 's# libcrypto.a##;s# libssl.a##' Makefile
+
+    make INSTALL_PREFIX="$fakeroot_dir" MANDIR=/usr/share/man MANSUFFIX=ssl install
+    install -dv -m755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -vfr doc/*     "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+}
