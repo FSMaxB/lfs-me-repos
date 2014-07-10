@@ -46,6 +46,7 @@ lfs_me_install() {
 
     chmod -v 4755 "${fakeroot_dir}/sbin/unix_chkpwd"
 
+    mkdir -pv "${fakeroot_dir}/lib"
     for file in pam pam_misc pamc
     do
         mv -v "$fakeroot_dir"/usr/lib/lib${file}.so.* "${fakeroot_dir}/lib"
