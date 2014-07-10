@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=cyrus-sasl
+pkgver=2.1.26
+pkgver_postfix=
+
+sources=( "ftp://ftp.cyrusimap.org/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-fixes-1.patch" )
+sha1sums=( 'd6669fb91434192529bd13ee95737a8a5040241c'
+           '866ceb7c75690f9b8aa5c84d56a994572471b25e' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-1.patch"
+    autoreconf -fi
+    pushd saslauthd
+    autoreconf -fi
+    popd
+
+    ./configure --prefix=/usr        \
+                --sysconfdir=/etc    \
+                --enable-auth-sasldb \
+                --with-dbpath=/var/lib/sasl/sasldb2 \
+                --with-saslauthd=/var/run/saslauthd
+}
+
+lfs_me_build() {
+    make -j1
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644  doc/{*.{html,txt,fig},ONEWS,TODO} \
+    saslauthd/LDAP_SASLAUTHD "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -dm700 "${fakeroot_dir}/var/lib/sasl"
+
+}
