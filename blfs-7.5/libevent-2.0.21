@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=libevent
+pkgver=2.0.21
+pkgver_postfix=
+
+sources=( "https://github.com/downloads/${pkgname}/${pkgname}/${pkgname}-${pkgver}-stable.tar.gz" )
+sha1sums=( '3e6674772eb77de24908c6267c698146420ab699' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}-stable.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}-stable"
+
+    ./configure --prefix=/usr --disable-static
+}
