@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=libassuan
+pkgver=2.1.1
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '8bd3826de30651eb8f9b8673e2edff77cd70aca1' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
