@@ -1,0 +1,60 @@
+#!/bin/bash
+pkgname=sudo
+pkgver=1.8.9p5
+pkgver_postfix=
+
+sources=( "http://www.sudo.ws/sudo/dist/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '4e43dc054e4cdff5d34865eb77ec1305b7bb990b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                                  \
+                --libexecdir="/usr/lib/${pkgname}"             \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}" \
+                --with-timedir="/var/lib/${pkgname}"           \
+                --with-all-insults                             \
+                --with-env-editor                              \
+                --with-passprompt="[sudo] password for %p"
+}
+
+lfs_me_build() {
+    make
+    echo \
+"# Begin /etc/pam.d/sudo
+
+# include the default auth settings
+auth      include     system-auth
+
+# include the default account settings
+account   include     system-account
+
+# Set default environment variables for the service user
+session   required    pam_env.so
+
+# include system session defaults
+session   include     system-session
+
+# End /etc/pam.d/sudo" > pam-sudo
+}
+
+lfs_me_check() {
+    env LC_ALL=C make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/etc/pam.d"
+    cp -v pam-sudo "${fakeroot_dir}/etc/pam.d/sudo"
+}
+
+lfs_me_postinstall() {
+    groupadd -r wheel
+}
+
+lfs_me_postremove() {
+    groupdel wheel
+}
