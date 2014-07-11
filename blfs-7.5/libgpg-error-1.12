@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=libgpg-error
+pkgver=1.12
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '259f359cd1440b21840c3a78e852afd549c709b8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    install -v -m644 -D README "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/README"
+}
