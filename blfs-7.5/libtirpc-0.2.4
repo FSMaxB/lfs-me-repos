@@ -23,6 +23,7 @@ lfs_me_check() {
 
 lfs_me_install() {
     make DESTDIR="$fakeroot_dir" install
+    mkdir -pv "${fakeroot_dir}/lib"
     mv -v "$fakeroot_dir"/usr/lib/libtirpc.so.* "${fakeroot_dir}/lib"
     ln -sfv ../../lib/libtirpc.so.1.0.10 "${fakeroot_dir}/usr/lib/libtirpc.so"
 }
