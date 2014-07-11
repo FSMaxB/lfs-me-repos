@@ -1,0 +1,30 @@
+#!/bin/bash
+pkgname=pcre
+pkgver=8.34
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'e02257272c2c554b14bee723158d46da2b1ad72a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                                  \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}" \
+                --enable-unicode-properties                    \
+                --enable-pcre16                                \
+                --enable-pcre32                                \
+                --enable-pcregrep-libz                         \
+                --enable-pcregrep-libbz2                       \
+                --enable-pcretest-libreadline                  \
+                --disable-static 
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mv -v "$fakeroot_dir"/usr/lib/libpcre.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libpcre.so") "${fakeroot_dir}/usr/lib/libpcre.so"
+}
