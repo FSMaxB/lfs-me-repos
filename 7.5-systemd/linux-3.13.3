@@ -46,7 +46,7 @@ lfs_me_check() {
 }
 
 lfs_me_install() {
-    make DESTDIR="$fakeroot_dir" modules_install
+    make INSTALL_MOD_PATH="$fakeroot_dir" modules_install
 
     mkdir -v "${fakeroot_dir}/boot"
     cp -v arch/x86/boot/bzImage "${fakeroot_dir}/boot/vmlinuz-${pkgver}-lfs-7.5-systemd"
