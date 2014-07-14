@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=pinentry
+pkgver=0.8.3
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'fc0efe5d375568f90ddbb23ee68e173411a49d4a' )
+
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    #bash sucks!!!!!
+    #Removes 3 lines from the configure script so that it doesn't complain that X is missing
+    read -a linenos <<< $( sed -n '/if test "\$no_x"/=' configure )
+    lineno=${linenos[1]} #linenumber of second match
+    mv configure{,.old}
+    head -n $((${lineno}-1)) configure.old > configure
+    tail -n +$((${lineno}+3)) configure.old >> configure
+
+    chmod +x configure
+
+    ./configure --prefix=/usr
+}
+
+
+lfs_me_check() {
+    return
+}
