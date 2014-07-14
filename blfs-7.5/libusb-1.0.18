@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libusb
+pkgver=1.0.18
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '5f7bbf42a4d6e6b88d5e7666958c80f8455ee915' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
