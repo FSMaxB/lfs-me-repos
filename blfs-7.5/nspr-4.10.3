@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=nspr
+pkgver=4.10.3
+pkgver_postfix=
+
+sources=( "http://ftp.mozilla.org/pub/mozilla.org/${pkgname}/releases/v${pkgver}/src/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'afcb28ed2b159cb059141bdf5f2e001374a845cf' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    cd "$pkgname"
+    sed -ri 's#^(RELEASE_BINS =).*#\1#' pr/src/misc/Makefile.in
+    sed -i 's#$(LIBRARY) ##' config/rules.mk
+
+    ./configure --prefix=/usr \
+                --with-mozilla \
+                --with-pthreads \
+                $([ $(uname -m) = x86_64 ] && echo --enable-64bit)
+}
+
+lfs_me_check() {
+    return
+}
