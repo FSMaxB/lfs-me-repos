@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=libidn
+pkgver=1.28
+pkgver_postfix=
+
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '725587211b229c156e29fa2ad116b0ef71a7ca17' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    
+    find doc -name "Makefile*" -delete
+    rm -rf -v doc/{gdoc,idn.1,stamp-vti,man,texi}
+    mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -r -v doc/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
