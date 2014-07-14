@@ -11,7 +11,7 @@ lfs_me_prepare() {
 
     cd "${build_dir}/${pkgname}-${pkgver}"
 
-    #sed -i 's:LIBDIR:PAM_&:g' pam_cap/Makefile
+    #Fix installation of files outside fakeroot_dir
     sed -i 's:\$(LIBDIR):\$(DESTDIR)/\$(PAM_LIBDIR):g' pam_cap/Makefile
     sed -i 's:\$(SBINDIR):\$(DESTDIR)/\$(SBINDIR):g' progs/Makefile
 }
