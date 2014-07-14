@@ -1,0 +1,22 @@
+#!/bin/bash
+pkgname=libgcrypt
+pkgver=1.6.1
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'f03d9b63ac3b17a6972fc11150d136925b702f02' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --with-capabilities
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -dm755   "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644    README doc/{README.apichanges,fips*,libgcrypt*} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
