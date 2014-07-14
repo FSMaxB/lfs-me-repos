@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=curl
+pkgver=7.35.0
+pkgver_postfix=
+
+sources=( "http://curl.haxx.se/download/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '14d1bca35f611112da0db098b0469efb4a60c8a9' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr              \
+                --disable-static           \
+                --enable-threaded-resolver
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    find docs \( -name "Makefile*" -o -name "*.1" -o -name "*.3" \) -exec rm {} \;
+    install -v -d -m755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -v -R docs/*     "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
