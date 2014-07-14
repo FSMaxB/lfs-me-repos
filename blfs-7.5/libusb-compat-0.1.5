@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libusb-compat
+pkgver=0.1.5
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/libusb/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '062319276d913c753a4b1341036e6a2e42abccc9' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
