@@ -1,0 +1,7 @@
+#!/bin/bash
+pkgname=libksba
+pkgver=1.3.0
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '241afcb2dfbf3f3fc27891a53a33f12d9084d772' )
