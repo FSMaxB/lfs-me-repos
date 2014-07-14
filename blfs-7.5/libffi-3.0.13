@@ -1,0 +1,18 @@
+#!/bin/bash
+pkgname=libffi
+pkgver=3.0.13
+pkgver_postfix=
+
+sources=( "ftp://sourceware.org/pub/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-includedir-1.patch" )
+sha1sums=( 'f5230890dc0be42fb5c58fbf793da253155de106'
+           '38fb594e95085ec423a1c56811d98a432d819aca' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-includedir-1.patch"
+    ./configure --prefix=/usr --disable-static
+}
