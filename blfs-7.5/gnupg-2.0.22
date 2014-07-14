@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgname=gnupg
+pkgver=2.0.22
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '9ba9ee288e9bf813e0f1e25cbe06b58d3072d8b8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    make
+
+    makeinfo --html --no-split -o doc/gnupg_nochunks.html doc/gnupg.texi
+    makeinfo --plaintext       -o doc/gnupg.txt           doc/gnupg.texi
+
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    ln -sv gpg2  "${fakeroot_dir}/usr/bin/gpg"
+    ln -sv gpgv2 "${fakeroot_dir}/usr/bin/gpgv"
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/html"
+    install -v -m644    doc/gnupg_nochunks.html "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/gnupg.html"
+    install -v -m644    doc/*.texi doc/gnupg.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
