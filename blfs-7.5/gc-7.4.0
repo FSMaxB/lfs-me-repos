@@ -1,0 +1,28 @@
+#!/bin/bash
+pkgname=gc
+pkgver=7.4.0
+pkgver_postfix=
+
+sources=( "http://anduin.linuxfromscratch.org/sources/BLFS/7.5/g/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '82f031a5a6db004df3cf8f1b1e72dd6b313ab032' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's#pkgdata#doc#' doc/doc.am
+    autoreconf -fi
+    ./configure --prefix=/usr      \
+                --enable-cplusplus \
+                --disable-static   \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/share/man/man3"
+    install -v -m644 doc/gc.man "${fakeroot_dir}/usr/share/man/man3/gc_malloc.3"
+    ln -sfv gc_malloc.3 "${fakeroot_dir}/usr/share/man/man3/gc.3"
+}
