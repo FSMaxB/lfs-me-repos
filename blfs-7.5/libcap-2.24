@@ -1,0 +1,39 @@
+#!/bin/bash
+pkgname=libcap
+pkgver=2.24
+pkgver_postfix=
+
+sources=( "https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'b2754cddb614567de445ffdaac7a00b9671b858a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    #sed -i 's:LIBDIR:PAM_&:g' pam_cap/Makefile
+    sed -i 's:\$(LIBDIR):\$(DESTDIR)/\$(PAM_LIBDIR):g' pam_cap/Makefile
+    sed -i 's:\$(SBINDIR):\$(DESTDIR)/\$(SBINDIR):g' progs/Makefile
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/lib"
+    mkdir -pv "${fakeroot_dir}/usr/lib"
+    ln -sv lib "${fakeroot_dir}/lib64"
+    ln -sv lib "${fakeroot_dir}/usr/lib64"
+
+    make DESTDIR="$fakeroot_dir"    \
+         prefix=/usr                \
+         SBINDIR=/sbin              \
+         PAM_LIBDIR=/lib            \
+         RAISE_SETFCAP=no install
+
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libcap.so"
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libcap.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/libcap.so.2 "${fakeroot_dir}/usr/lib/libcap.so"
+}
