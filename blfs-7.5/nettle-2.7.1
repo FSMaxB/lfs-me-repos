@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=nettle
+pkgver=2.7.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'e7477df5f66e650c4c4738ec8e01c2efdb5d1211' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_install() {
+    sed -i '/^install-here/ s/install-static//' Makefile
+    make DESTDIR="$fakeroot_dir" install
+
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libhogweed.so.2.5" "${fakeroot_dir}/usr/lib/libnettle.so.4.7"
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 nettle.html "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
