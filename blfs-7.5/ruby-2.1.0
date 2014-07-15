@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=ruby
+pkgver=2.1.0
+pkgver_postfix=
+
+sources=( "http://cache.ruby-lang.org/pub/${pkgname}/2.1/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '34cd835ea03241354cf5676cca8e8db92f7f5654' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --docdir="/usr/share/doc/${pkgname}-${pkgver}" --enable-shared
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
