@@ -1,0 +1,41 @@
+#!/bin/bash
+pkgname=guile
+pkgver=2.0.9
+pkgver_postfix=
+
+sources=( "http://ftp.gnu.org/pub/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'a2275c23c4a03e8dbd5e500c47af694e14d2365b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr    \
+                --disable-static \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    make
+    makehtml
+
+    makeinfo --plaintext -o doc/r5rs/r5rs.txt doc/r5rs/r5rs.texi
+    makeinfo --plaintext -o doc/ref/guile.txt doc/ref/guile.texi
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    make DESTDIR="$fakeroot_dir" install-html
+
+    mv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/"{guile.html,ref}
+    mv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"/r5rs{.html,}
+
+    find examples -name "Makefile*" -delete
+    cp -vR examples   "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    for DIRNAME in r5rs ref; do
+        install -v -m644  doc/${DIRNAME}/*.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/${DIRNAME}"
+    done
+    unset DIRNAME
+}
