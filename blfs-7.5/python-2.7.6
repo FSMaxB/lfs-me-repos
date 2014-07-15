@@ -1,0 +1,36 @@
+#!/bin/bash
+pkgname=python
+pkgver=2.7.6
+pkgver_postfix=
+
+sources=( "http://www.python.org/ftp/${pkgname}/${pkgver}/Python-${pkgver}.tar.xz"
+          "http://docs.python.org/ftp/${pkgname}/doc/${pkgver}/${pkgname}-${pkgver}-docs-html.tar.bz2" )
+sha1sums=( '8321636af2acbeaa68fc635d7dda7369ed446a80'
+           '100d37364310927c43fb3d2db34fe15a22ff8933' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/Python-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/Python-${pkgver}"
+
+    ./configure --prefix=/usr       \
+                --enable-shared     \
+                --with-system-expat \
+                --with-system-ffi   \
+                --enable-unicode=ucs4
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libpython2.7.so.1.0"
+
+    install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    tar --strip-components=1 -C "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" --no-same-owner -xvf "${sources_dir}/${pkgname}-${pkgver}-docs-html.tar.bz2"
+    find "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" -type d -exec chmod 0755 {} \;
+    find "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" -type f -exec chmod 0644 {} \;
+}
