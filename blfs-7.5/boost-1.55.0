@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=boost
+pkgver=1.55.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}_1_55_0.tar.bz2" )
+sha1sums=( 'cef9a0cc7084b1d639e06cd3bc34e4251524c840' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}_1_55_0.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}_1_55_0"
+
+    ./bootstrap.sh --prefix=/usr
+}
+
+lfs_me_build() {
+    ./b2 stage threading=multi link=shared
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    ./b2 install --prefix="${fakeroot_dir}/usr" threading=multi link=shared
+}
