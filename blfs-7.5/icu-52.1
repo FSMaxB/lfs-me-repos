@@ -1,0 +1,16 @@
+#!/bin/bash
+pkgname=icu
+pkgver=52.1
+pkgver_postfix=
+
+sources=( "http://download.icu-project.org/files/icu4c/52.1/icu4c-52_1-src.tgz" )
+sha1sums=( '6de440b71668f1a65a9344cdaf7a437291416781' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/icu4c-52_1-src.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}"
+
+    cd source
+    CXX=g++ ./configure --prefix=/usr 
+}
