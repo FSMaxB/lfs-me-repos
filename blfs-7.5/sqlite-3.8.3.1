@@ -1,0 +1,34 @@
+#!/bin/bash
+pkgname=sqlite
+pkgver=3.8.3.1
+pkgver_postfix=
+
+sources=( "http://sqlite.org/2014/${pkgname}-autoconf-3080301.tar.gz"
+          "http://sqlite.org/2014/${pkgname}-doc-3080301.zip" )
+sha1sums=( 'a9b0a3d66fb5c2ae51ad2d8a512ca827adc7d59c'
+           '0fe468bbbd4d768b6bfa250739a79badb49f7235' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-autoconf-3080301.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-autoconf-3080301"
+
+    unzip -q "${sources_dir}/${pkgname}-doc-3080301.zip"
+
+    ./configure --prefix=/usr --disable-static        \
+                CFLAGS="-g -O2 -DSQLITE_ENABLE_FTS3=1 \
+                -DSQLITE_ENABLE_COLUMN_METADATA=1     \
+                -DSQLITE_ENABLE_UNLOCK_NOTIFY=1       \
+                -DSQLITE_SECURE_DELETE=1"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -v -R sqlite-doc-3080301/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
