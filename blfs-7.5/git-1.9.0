@@ -1,0 +1,47 @@
+#!/bin/bash
+pkgname=git
+pkgver=1.9.0
+pkgver_postfix=
+
+sources=( "https://www.kernel.org/pub/software/scm/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+          "https://www.kernel.org/pub/software/scm/${pkgname}/${pkgname}-manpages-${pkgver}.tar.xz"
+          "https://www.kernel.org/pub/software/scm/${pkgname}/${pkgname}-htmldocs-${pkgver}.tar.xz" )
+sha1sums=( '44e59fb9f5f8ac34d4db4430285be64a42d4cdd6'
+           '0d2a156b3a0396b976aa01a3dd579a8a732bfe11'
+           '9f4def52a95617d3b38ecc86008b0d8d25225b59' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr         \
+                --with-libpcre        \
+                --with-gitconfig=/etc/gitconfig
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/share/man"
+    tar -xf "${sources_dir}/${pkgname}-manpages-${pkgver}.tar.xz" -C "${fakeroot_dir}/usr/share/man" --no-same-owner --no-overwrite-dir
+    mkdir -p "$fakeroot_dir"/usr/share/doc/"$pkgname"-"$pkgver"/man-pages/{html,text}
+
+    tar -xf  "${sources_dir}/${pkgname}-htmldocs-${pkgver}.tar.xz" -C   "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" --no-same-owner --no-overwrite-dir
+
+    find "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" -type d -exec chmod 755 {} \;
+    find "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" -type f -exec chmod 644 {} \;
+
+    mv       "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/{git*.txt,man-pages/text}
+    mv       "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/{git*.,index.,man-pages/}html
+    mkdir    "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/technical/{html,text}
+    mv       "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/technical/{*.txt,text}
+    mv       "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/technical/{*.,}html
+    mkdir    "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/howto/{html,text}
+    mv       "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/howto/{*.txt,text}
+    mv       "$fakeroot_dir"/usr/share/doc/"${pkgname}"-"$pkgver"/howto/{*.,}html
+}
