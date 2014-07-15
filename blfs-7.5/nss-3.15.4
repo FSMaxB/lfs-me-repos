@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=nss
+pkgver=3.15.4
+pkgver_postfix=
+
+sources=( "http://ftp.mozilla.org/pub/mozilla.org/security/${pkgname}/releases/NSS_3_15_4_RTM/src/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-standalone-1.patch" )
+sha1sums=( 'c164fac83fcbaff010786767e2a858ca23a89a5b'
+           '767a423db66948c55c04c2a31a9626b7a95040e9' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-standalone-1.patch"
+    cd nss
+}
+
+lfs_me_build() {
+    make BUILD_OPT=1                      \
+      NSPR_INCLUDE_DIR=/usr/include/nspr  \
+      USE_SYSTEM_ZLIB=1                   \
+      ZLIB_LIBS=-lz                       \
+      $([ $(uname -m) = x86_64 ] && echo USE_64=1) \
+      $([ -f /usr/include/sqlite3.h ] && echo NSS_USE_SYSTEM_SQLITE=1) -j1
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd ../dist
+    mkdir -pv "${fakeroot_dir}/usr/lib/pkgconfig"
+    mkdir -pv "${fakeroot_dir}/usr/include/nss"
+    mkdir -pv "${fakeroot_dir}/usr/bin"
+    install -v -m755 Linux*/lib/*.so "${fakeroot_dir}/usr/lib"
+    install -v -m644 Linux*/lib/{*.chk,libcrmf.a} "${fakeroot_dir}/usr/lib"
+    install -v -m755 -d "${fakeroot_dir}/usr/include/nss"
+    cp -v -RL {public,private}/nss/* "${fakeroot_dir}/usr/include/nss"
+    chmod -v 644 "$fakeroot_dir"/usr/include/nss/*
+    install -v -m755 Linux*/bin/{certutil,nss-config,pk12util} "${fakeroot_dir}/usr/bin"
+    install -v -m644 Linux*/lib/pkgconfig/nss.pc  "${fakeroot_dir}/usr/lib/pkgconfig"
+}
