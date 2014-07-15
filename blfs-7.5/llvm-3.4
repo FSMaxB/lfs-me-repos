@@ -1,0 +1,52 @@
+#!/bin/bash
+pkgname=llvm
+pkgver=3.4
+pkgver_postfix=
+
+sources=( "http://llvm.org/releases/${pkgver}/${pkgname}-${pkgver}.src.tar.gz"
+          "http://llvm.org/releases/${pkgver}/clang-${pkgver}.src.tar.gz"
+          "http://llvm.org/releases/${pkgver}/compiler-rt-${pkgver}.src.tar.gz" )
+sha1sums=( '10b1fd085b45d8b19adb9a628353ce347bc136b8'
+           'a6a3c815dd045e9c13c7ae37d2cfefe65607860d'
+           'd644b1e4f306f7ad35df0a134d14a1123cd9f082' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.src.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    tar -xf "${sources_dir}/clang-${pkgver}.src.tar.gz" -C tools
+    tar -xf "${sources_dir}/compiler-rt-${pkgver}.src.tar.gz" -C projects
+
+    mv tools/clang-3.4 tools/clang
+    mv projects/compiler-rt-3.4 projects/compiler-rt
+
+    sed -e 's:\$(PROJ_prefix)/docs/llvm:$(PROJ_prefix)/share/doc/llvm-3.4:' -i Makefile.config.in &&
+    CC=gcc CXX=g++                         \
+    ./configure --prefix=/usr              \
+                --sysconfdir=/etc          \
+                --enable-libffi            \
+                --enable-optimized         \
+                --enable-shared            \
+                --disable-assertions 
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    for file in "$fakeroot_dir"/usr/lib/lib{clang,LLVM,LTO}*.a
+    do
+        test -f $file && chmod -v 644 $file
+    done
+
+    install -v -dm755 "${fakeroot_dir}/usr/lib/clang-analyzer"
+    for prog in scan-build scan-view
+    do
+        cp -rfv tools/clang/tools/$prog "${fakeroot_dir}/usr/lib/clang-analyzer/"
+        ln -sfv ../lib/clang-analyzer/$prog/$prog "${fakeroot_dir}/usr/bin/"
+    done
+    mkdir -pv "${fakeroot_dir}/usr/lib/clang-analyzer/scan-build/"
+    ln -sfv ../../../bin/clang "${fakeroot_dir}/usr/lib/clang-analyzer/scan-build/"
+    mkdir -pv "${fakeroot_dir}/usr/share/man/man1/"
+    mv -v "${fakeroot_dir}/usr/lib/clang-analyzer/scan-build/scan-build.1" "${fakeroot_dir}/usr/share/man/man1/"
+}
