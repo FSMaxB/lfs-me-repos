@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=apr-util
+pkgver=1.5.3
+pkgver_postfix=
+
+sources=( "http://archive.apache.org/dist/apr/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'de0184ee03dfdc6dec4d013970d1862251e86925' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr       \
+                --with-apr=/usr     \
+                --with-gdbm=/usr    \
+                --with-openssl=/usr \
+                --with-crypto
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
