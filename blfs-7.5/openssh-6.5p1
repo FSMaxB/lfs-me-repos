@@ -1,0 +1,65 @@
+#!/bin/bash
+pkgname=openssh
+pkgver=6.5p1
+pkgver_postfix=
+
+sources=( "http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/blfs/downloads/7.5/blfs-bootscripts-20140301.tar.bz2" )
+sha1sums=( '3363a72b4fee91b29cf2024ff633c17f6cd2f86d'
+           'be3bd33ee1bbd950b53f1707a409887c2c5d7721' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+    tar -xf "${sources_dir}/blfs-bootscripts-20140301.tar.bz2" -C "$build_dir"
+
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                     \
+                --sysconfdir=/etc/ssh             \
+                --with-md5-passwords              \
+                --with-pam                        \
+                --with-privsep-path=/var/lib/sshd
+}
+
+lfs_me_check() {
+    make tests 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/bin"
+    mkdir -pv "${fakeroot_dir}/usr/share/man/man1"
+    mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m755 contrib/ssh-copy-id "${fakeroot_dir}/usr/bin"
+    install -v -m644 contrib/ssh-copy-id.1 "${fakeroot_dir}/usr/share/man/man1"
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 INSTALL LICENCE OVERVIEW README* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    mkdir -pv "${fakeroot_dir}/etc/pam.d"
+    sed 's@d/login@d/sshd@g' /etc/pam.d/login > "${fakeroot_dir}/etc/pam.d/sshd"
+    chmod 644 "${fakeroot_dir}/etc/pam.d/sshd"
+    echo "UsePAM yes" >> "${fakeroot_dir}/etc/ssh/sshd_config"
+
+    cd "${build_dir}/blfs-bootscripts-20140301"
+    mv Makefile.systemd Makefile
+    make DESTDIR="$fakeroot_dir" install-sshd
+    echo -e "${color_blue}The warning about systemd-tmpfiles failing can be ignored.${color_reset}"
+}
+
+lfs_me_postinstall() {
+    install -v -m700 -d /var/lib/sshd
+    chown   -v root:sys /var/lib/sshd
+
+    groupadd -g 50 sshd
+    useradd -c 'sshd PrivSep' -d /var/lib/sshd -g sshd -s /bin/false -u 50 sshd
+
+    systemd-tmpfiles --create sshd.conf
+}
+
+lfs_me_postremove() {
+    rm -r /var/lib/sshd
+    groupdel sshd
+    userdel sshd
+}
