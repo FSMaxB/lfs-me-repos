@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=net-tools-CVS
+pkgver=20101030
+pkgver_postfix=
+
+sources=( "http://anduin.linuxfromscratch.org/sources/BLFS/svn/n/${pkgname}_${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}_${pkgver}-remove_dups-1.patch" )
+sha1sums=( '7a306bff7ac6d1434bd5609b9e357e7e6daef44e'
+           'f3b0e07e1b8d7e846287db52add63bc2a0e845b9' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}_${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}_${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}_${pkgver}-remove_dups-1.patch"
+
+    yes "" | make config
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" update
+}
