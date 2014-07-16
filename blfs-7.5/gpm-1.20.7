@@ -1,0 +1,54 @@
+#!/bin/bash
+pkgname=gpm
+pkgver=1.20.7
+pkgver_postfix=
+
+sources=( "http://www.nico.schottelius.org/software/${pkgname}/archives/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '08aaceddf7976b98ad3c43143012d3b89a296a40' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./autogen.sh
+    ./configure --prefix=/usr --sysconfdir=/etc
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"[Unit]
+Description=Virtual console mouse server
+
+[Service]
+Type=forking
+PIDFile=/run/gpm.pid
+ExecStart=/usr/sbin/gpm -m /dev/input/mice -t imps2
+
+[Install]
+WantedBy=multi-user.target" > gpm.service
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/share/info"
+    install-info --dir-file=/usr/share/info/dir "${fakeroot_dir}/usr/share/info/gpm.info"
+
+    ln -sfv libgpm.so.2.1.0 "${fakeroot_dir}/usr/lib/libgpm.so"
+    mkdir -pv "${fakeroot_dir}/etc"
+    install -v -m644 conf/gpm-root.conf "${fakeroot_dir}/etc"
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/support"
+    install -v -m644 doc/support/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/support"
+    install -v -m644 doc/{FAQ,HACK_GPM,README*} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    mkdir -pv "${fakeroot_dir}/lib/systemd/system"
+    cp -v gpm.service "${fakeroot_dir}/lib/systemd/system/"
+}
