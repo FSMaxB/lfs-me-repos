@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=gpgme
+pkgver=1.4.3
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'ffdb5e4ce85220501515af8ead86fd499525ef9a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr          \
+                --disable-fd-passing   \
+                --disable-gpgsm-test
+}
