@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=libxslt
+pkgver=1.1.28
+pkgver_postfix=
+
+sources=( "http://xmlsoft.org/sources/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '4df177de629b2653db322bfb891afa3c0d1fa221' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
