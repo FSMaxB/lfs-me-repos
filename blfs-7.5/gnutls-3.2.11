@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=gnutls
+pkgver=3.2.11
+pkgver_postfix=
+
+sources=( "ftp://ftp.gnutls.org/gcrypt/${pkgname}/v3.2/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '7204edeffc06ff4d60b181b65ea6ada5f4d31b24' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr    \
+                --disable-static \
+                --with-default-trust-store-file=/etc/ssl/ca-bundle.crt
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    make DESTDIR="$fakeroot_dir" -C doc/reference install-data-local
+}
