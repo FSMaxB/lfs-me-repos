@@ -1,0 +1,54 @@
+#!/bin/bash
+pkgname=lua
+pkgver=5.2.3
+pkgver_postfix=
+
+sources=( "http://www.lua.org/ftp/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-shared_library-1.patch" )
+sha1sums=( '926b7907bc8d274e063d42804666b40a3f3c124c'
+           'e92d2ab3a10cd93c92e4b4ef861b159da9ab1b6b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-shared_library-1.patch"
+    sed -i '/#define LUA_ROOT/s:/usr/local/:/usr/:' src/luaconf.h
+}
+
+lfs_me_build() {
+    make linux
+
+    echo \
+"V=5.2
+R=5.2.3
+
+prefix=/usr
+INSTALL_BIN=\${prefix}/bin
+INSTALL_INC=\${prefix}/include
+INSTALL_LIB=\${prefix}/lib
+INSTALL_MAN=\${prefix}/man/man1
+INSTALL_LMOD=\${prefix}/share/lua/\${V}
+INSTALL_CMOD=\${prefix}/lib/lua/\${V}
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
+includedir=\${prefix}/include
+
+Name: Lua
+Description: An Extensible Extension Language
+Version: \${R}
+Requires: 
+Libs: -L\${libdir} -llua -lm
+Cflags: -I\${includedir}"
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make INSTALL_TOP="${fakeroot_dir}/usr" TO_LIB="liblua.so liblua.so.5.2 liblua.so.5.2.3" INSTALL_DATA="cp -d" INSTALL_MAN=/usr/share/man/man1 install
+    mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -v doc/*.{html,css,gif,png} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
