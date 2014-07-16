@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=js
+pkgver=17.0.0
+pkgver_postfix=
+
+sources=( "http://ftp.mozilla.org/pub/mozilla.org/${pkgname}/moz${pkgname}${pkgver}.tar.gz" )
+sha1sums=( '7805174898c34e5d3c3b256117af9944ba825c89' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/moz${pkgname}${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/moz${pkgname}${pkgver}"
+
+    cd js/src
+    ./configure --prefix=/usr       \
+                --enable-readline   \
+                --enable-threadsafe \
+                --with-system-ffi   \
+                --with-system-nspr
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    find "${fakeroot_dir}/usr/include/js-17.0/"            \
+         "${fakeroot_dir}/usr/lib/libmozjs-17.0.a"         \
+         "${fakeroot_dir}/usr/lib/pkgconfig/mozjs-17.0.pc" \
+         -type f -exec chmod -v 644 {} \;
+}
