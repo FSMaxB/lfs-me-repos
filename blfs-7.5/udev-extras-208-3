@@ -1,0 +1,32 @@
+#!/bin/bash
+pkgname=udev-extras
+pkgver=208
+pkgver_postfix=3
+
+sources=( "http://www.freedesktop.org/software/systemd/systemd-208.tar.xz"
+          "http://anduin.linuxfromscratch.org/sources/other/udev-lfs-${pkgver}-${pkgver_postfix}.tar.bz2" )
+sha1sums=( 'e1a4e213d5d1e3498bca851347f2f07fdb9b4e1f'
+           '001072d945c3d49e30bfee64568c23c0fe5fb262' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/systemd-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/systemd-${pkgver}"
+    tar -xf "${sources_dir}/udev-lfs-${pkgver}-${pkgver_postfix}.tar.bz2"
+}
+
+lfs_me_build() {
+    make -f "udev-lfs-${pkgver}-${pkgver_postfix}/Makefile.lfs" gudev
+
+    make -f "udev-lfs-${pkgver}-${pkgver_postfix}/Makefile.lfs" gir-data
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" -f "udev-lfs-${pkgver}-${pkgver_postfix}/Makefile.lfs" install-gudev
+
+    make DESTDIR="$fakeroot_dir" -f "udev-lfs-${pkgver}-${pkgver_postfix}/Makefile.lfs" install-gir-data
+}
