@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=ntfs-3g
+pkgver=2013.1.13
+pkgver_postfix=
+
+sources=( "http://tuxera.com/opensource/${pkgname}_ntfsprogs-${pkgver}.tgz" )
+sha1sums=( '8c12b7644d90ae9fb8d0aca0d7ebd5f8fac2c818' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}_ntfsprogs-${pkgver}.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}_ntfsprogs-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/sbin"
+    ln -sv ../bin/ntfs-3g "${fakeroot_dir}/sbin/mount.ntfs"
+    ln -sv "$fakeroot_dir"/usr/share/man/man8/{ntfs-3g,mount.ntfs}.8
+}
