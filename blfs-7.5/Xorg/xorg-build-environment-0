@@ -1,0 +1,63 @@
+#!/bin/bash
+pkgname=xorg-build-environment
+pkgver=0
+pkgver_postfix=
+
+sources=( )
+
+#Package specific variable:
+XORG_PREFIX=/usr/X11
+
+lfs_me_prepare() {
+    cd ${build_dir}
+}
+
+lfs_me_build() {
+    echo \
+"XORG_PREFIX=\"${XORG_PREFIX}\"
+XORG_CONFIG=\"--prefix=\$XORG_PREFIX \\
+             --sysconfdir=/etc \\
+             --localstatedir=/var \\
+             --disable-static\"
+export XORG_PREFIX XORG_CONFIG
+
+
+pathappend \$XORG_PREFIX/bin             PATH
+pathappend \$XORG_PREFIX/lib/pkgconfig   PKG_CONFIG_PATH
+pathappend \$XORG_PREFIX/share/pkgconfig PKG_CONFIG_PATH
+
+pathappend \$XORG_PREFIX/lib             LIBRARY_PATH
+pathappend \$XORG_PREFIX/include         C_INCLUDE_PATH
+pathappend \$XORG_PREFIX/include         CPLUS_INCLUDE_PATH
+
+ACLOCAL='aclocal -I \$XORG_PREFIX/share/aclocal'
+
+export PATH PKG_CONFIG_PATH ACLOCAL LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH" > xorg.sh
+
+    cp /etc/ld.so.conf .
+    echo "${XORG_PREFIX}/lib" >> ld.so.conf
+
+    cp /etc/man_db.conf .
+    sed "s@/usr/X11R6@${XORG_PREFIX}@g" -i man_db.conf
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/etc/profile.d"
+    cp -v xorg.sh "${fakeroot_dir}/etc/profile.d/"
+    chmod 644 "${fakeroot_dir}/etc/profile.d/xorg.sh"
+    cp -v ld.so.conf man_db.conf "${fakeroot_dir}/etc/"
+    mkdir -pv "${fakeroot_dir}/usr/share/"
+    mkdir -pv "${fakeroot_dir}/${XORG_PREFIX}/share/X11"
+    ln -sv "${XORG_PREFIX}/share/X11" "${fakeroot_dir}/usr/share/X11"
+    install -v -m755 -d "${fakeroot_dir}/${XORG_PREFIX}"
+    install -v -m755 -d "${fakeroot_dir}/${XORG_PREFIX}/lib"
+    case $(uname -m) in
+        x86_64)
+            ln -sv lib "${fakeroot_dir}/${XORG_PREFIX}/lib64"
+            ;;
+    esac
+}
