@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=LVM2
+pkgver=2.02.105
+pkgver_postfix=
+
+sources=( "ftp://sources.redhat.com/pub/lvm2/${pkgname}.${pkgver}.tgz" )
+sha1sums=( '796163e766480cdc427cd443dc1336ae8e8e3bd7' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}.${pkgver}.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}.${pkgver}"
+
+    ./configure --prefix=/usr       \
+                --exec-prefix=      \
+                --with-confdir=/etc \
+                --enable-applib     \
+                --enable-cmdlib     \
+                --enable-pkgconfig  \
+                --enable-udev_sync
+}
+
+lfs_me_check() {
+    return
+}
