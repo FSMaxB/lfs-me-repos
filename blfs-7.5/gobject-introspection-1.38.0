@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=gobject-introspection
+pkgver=1.38.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/1.38/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '51f3053f6b806efea41a38ea13d2e6ce494cf7af' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
