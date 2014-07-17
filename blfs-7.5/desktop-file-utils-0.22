@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=desktop-file-utils
+pkgver=0.22
+pkgver_postfix=
+
+sources=( "http://freedesktop.org/software/${pkgname}/releases/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '617f130091dbcc5e739d82ee48e2b3932da5957d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
