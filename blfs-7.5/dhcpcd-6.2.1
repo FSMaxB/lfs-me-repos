@@ -1,0 +1,79 @@
+#!/bin/bash
+pkgname=dhcpcd
+pkgver=6.2.1
+pkgver_postfix=
+
+sources=( "http://roy.marples.name/downloads/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+          "http://www.linuxfromscratch.org/blfs/downloads/7.5/blfs-bootscripts-20140301.tar.bz2")
+sha1sums=( '02319be210f10e73a3add726ae3fd96f69743cff'
+           'be3bd33ee1bbd950b53f1707a409887c2c5d7721' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+    tar -xf "${sources_dir}/blfs-bootscripts-20140301.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/blfs-bootscripts-20140301"
+    mv Makefile.systemd Makefile
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --libexecdir=/lib/dhcpcd \
+                --dbdir=/var/tmp
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"[Unit]
+Description=dhcpcd on all interfaces
+Wants=network.target
+Before=network.target
+
+[Service]
+Type=forking
+PIDFile=/run/dhcpcd.pid
+ExecStart=/sbin/dhcpcd -q -b
+ExecStop=/sbin/dhcpcd -x
+
+[Install]
+WantedBy=multi-user.target" > "${build_dir}/blfs-bootscripts-20140301/dhcpcd.service"
+
+echo \
+"[Unit]
+Description=dhcpcd on %I
+Wants=network.target
+Before=network.target
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+Type=forking
+PIDFile=/run/dhcpcd-%I.pid
+ExecStart=/usr/bin/dhcpcd -q -w %I
+ExecStop=/usr/bin/dhcpcd -x %I
+
+[Install]
+WantedBy=multi-user.target" > "${build_dir}/blfs-bootscripts-20140301/dhcpcd@.service" 
+
+echo \
+"# OpenDNS servers
+nameserver 208.67.222.222
+nameserver 208.67.220.220" > "${build_dir}/resolv.conf.head"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    cd "${build_dir}/blfs-bootscripts-20140301"
+    make DESTDIR="$fakeroot_dir" install-service-dhcpcd
+    mkdir -pv "${fakeroot_dir}/lib/systemd/system"
+    mv -v dhcpcd{,@}.service "${fakeroot_dir}/lib/systemd/system"
+    
+    mkdir -pv "${fakeroot_dir}/etc"
+    cp -v "${build_dir}/resolv.conf.head" "${fakeroot_dir}/etc/"
+}
