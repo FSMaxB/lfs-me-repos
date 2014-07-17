@@ -25,6 +25,7 @@ lfs_me_prepare() {
 lfs_me_install() {
     make DESTDIR="$fakeroot_dir" install
 
+    mkdir -pv "${fakeroot_dir}/lib"
     mv -v "$fakeroot_dir"/usr/lib/libpcre.so.* "${fakeroot_dir}/lib"
     ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libpcre.so") "${fakeroot_dir}/usr/lib/libpcre.so"
 }
