@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=shared-mime-info
+pkgver=1.2
+pkgver_postfix=
+
+sources=( "http://freedesktop.org/~hadess/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '4c1598e30c632f1f9e825d95da7e3a1f47a32948' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
