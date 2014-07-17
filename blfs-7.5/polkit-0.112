@@ -1,0 +1,55 @@
+#!/bin/bash
+pkgname=polkit
+pkgver=0.112
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/${pkgname}/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '374397f1c32fa1290be0fce378fe9bab541ee4bf' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr        \
+                --sysconfdir=/etc    \
+                --localstatedir=/var \
+                --disable-static
+}
+
+lfs_me_build() {
+    make
+
+    echo\
+"# Begin /etc/pam.d/polkit-1
+
+auth     include        system-auth
+account  include        system-account
+password include        system-password
+session  include        system-session
+
+# End /etc/pam.d/polkit-1" > "polkit-1"
+
+    echo -e "${color_bblue}If there are complaints about the system not using systemd, just boot into it and build the package inside the running system.${color_reset}"
+}
+
+lfs_me_check() {
+    make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/etc/pam.d"
+    cp -v "polkit-1" "${fakeroot_dir}/etc/pam.d/"
+}
+
+lfs_me_postinstall() {
+    groupadd -fg 27 polkitd &&
+    useradd -c "PolicyKit Daemon Owner" -d /etc/polkit-1 -u 27 -g polkitd -s /bin/false polkitd
+}
+
+lfs_me_postremove() {
+    groupdel polkitd
+    userdel polkitd
+}
