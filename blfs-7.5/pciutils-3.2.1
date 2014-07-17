@@ -1,0 +1,33 @@
+#!/bin/bash
+pkgname=pciutils
+pkgver=3.2.1
+pkgver_postfix=
+
+sources=( "http://ftp.kernel.org/pub/software/utils/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '2009c441bfb78811c2991bde03b88c043654c195' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    make PREFIX=/usr              \
+         SHAREDIR=/usr/share/misc \
+         SHARED=yes
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir"  \
+         PREFIX=/usr              \
+         SHAREDIR=/usr/share/misc \
+         SHARED=yes               \
+         install install-lib
+
+   chmod -v 755 "${fakeroot_dir}/usr/lib/libpci.so"
+}
