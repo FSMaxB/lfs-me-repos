@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=glib
+pkgver=2.38.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.38/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '685c5a4215b776b83dd5330ab9084c5dcb0a51b8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --with-pcre=system
+}
+
+lfs_me_check() {
+    return
+}
