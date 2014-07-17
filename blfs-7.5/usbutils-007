@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=usbutils
+pkgver=007
+pkgver_postfix=
+
+sources=( "http://ftp.kernel.org/pub/linux/utils/usb/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '2aa78ca39c10bfedda99a8263785a06d00e38f12' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr  \
+                --disable-zlib \
+                --datadir=/usr/share/misc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mv -v "${fakeroot_dir}/usr/sbin/update-usbids.sh" "${fakeroot_dir}/usr/sbin/update-usbids"
+}
