@@ -1,0 +1,71 @@
+#!/bin/bash
+pkgname=ntp
+pkgver=4.2.6p5
+pkgver_postfix=
+
+sources=( "http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/blfs/downloads/7.5/blfs-bootscripts-20140301.tar.bz2" )
+sha1sums=( '4a5353a4791b6f4315a66c28d504ec6c7926b192'
+           'be3bd33ee1bbd950b53f1707a409887c2c5d7721' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+    tar -xf "${sources_dir}/blfs-bootscripts-20140301.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr         \
+                --sysconfdir=/etc     \
+                --enable-linuxcaps    \
+                --with-binsubdir=sbin \
+                --with-lineeditlibs=readline
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+" # Asia
+server 0.asia.pool.ntp.org
+
+# Australia
+server 0.oceania.pool.ntp.org
+
+# Europe
+server 0.europe.pool.ntp.org
+
+# North America
+server 0.north-america.pool.ntp.org
+
+# South America
+server 2.south-america.pool.ntp.org
+
+driftfile /var/lib/ntp/ntp.drift
+pidfile   /var/run/ntpd.pid" > ntp.conf
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -d "${fakeroot_dir}/var/lib/ntp"
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -v -R html/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/"
+
+    mkdir -pv "${fakeroot_dir}/etc"
+    cp -v ntp.conf "${fakeroot_dir}/etc/"
+    
+    cd "${build_dir}/blfs-bootscripts-20140301"
+    echo -e "${color_bblue}The next command will fail!${color_reset}"
+    make DESTDIR="$fakeroot_dir" -f Makefile.systemd install-ntpd
+}
+
+lfs_me_postinstall() {
+    groupadd -g 87 ntp &&
+    useradd -c "Network Time Protocol" -d /var/lib/ntp -u 87 -g ntp -s /bin/false ntp
+    chown ntp:ntp /var/lib/ntp
+}
+
+lfs_me_postremove() {
+    userdel ntp
+    groupdel ntp
+}
