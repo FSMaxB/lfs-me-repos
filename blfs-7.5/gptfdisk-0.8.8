@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=gptfdisk
+pkgver=0.8.8
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/project/${pkgname}/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-convenience-1.patch")
+sha1sums=( '11f66ec2a67920368f7afe0c01a1cb8c3f2c527a'
+           'f6024ca4f1ae49f469dae532826f17319ffb8172' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-convenience-1.patch"
+}
+
+lfs_me_build() {
+    make ICU=1 POPT=1
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" POPT=1 install
+}   
+
+lfs_me_check() {
+    return
+}
