@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=libnl
+pkgver=3.2.24
+pkgver_postfix=
+
+sources=( "http://www.carisma.slowglass.com/~tgr/libnl/files/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '4931cf6e790f51925c7c74602d3ae10499e17a79' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr     \
+                --sysconfdir=/etc \
+                --disable-static
+}
