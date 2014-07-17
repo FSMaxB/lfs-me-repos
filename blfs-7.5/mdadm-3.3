@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=mdadm
+pkgver=3.3
+pkgver_postfix=
+
+sources=( "http://www.kernel.org/pub/linux/utils/raid/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'a2b85093a4f196de5d7a298194443847e903e3ba' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+    return
+}
