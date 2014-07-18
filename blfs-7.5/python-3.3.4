@@ -1,0 +1,33 @@
+#!/bin/bash
+pkgname=python
+pkgver=3.3.4
+pkgver_postfix=
+
+sources=( "http://www.python.org/ftp/python/${pkgver}/Python-${pkgver}.tar.xz"
+          "http://docs.python.org/ftp/python/doc/${pkgver}/${pkgname}-${pkgver}-docs-html.tar.bz2" )
+sha1sums=( '2c9586eeb4b6e45e9ebc28372c0856c709d9a522'
+           '6d54aa11f2aa51339c09358d4a10217ee905dae3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/Python-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/Python-${pkgver}"
+
+    ./configure --prefix=/usr       \
+                --enable-shared     \
+                --with-system-expat \
+                --with-system-ffi
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libpython3.3m.so"
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libpython3.so"
+
+    install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/html"
+    tar --strip-components=1 --no-same-owner --no-same-permissions -C "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/html" -xvf "${sources_dir}/${pkgname}-${pkgver}-docs-html.tar.bz2"
+}
