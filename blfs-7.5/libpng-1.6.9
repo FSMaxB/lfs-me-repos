@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=libpng
+pkgver=1.6.9
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+          "http://downloads.sourceforge.net/${pkgname}-apng/${pkgname}-${pkgver}-apng.patch.gz" )
+sha1sums=( 'fe5b37a01a2a056a26f1a6661dc45e026ad86c88'
+           'c46998a66716f8184dae7e17fc9e91315a3efaad' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    gzip -cd "${sources_dir}/${pkgname}-${pkgver}-apng.patch.gz" | patch -p1
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -v README libpng-manual.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
