@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=kbproto
+pkgver=1.0.6
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'a2cc82357c22a1f4d6243017982c32703c95575c' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}

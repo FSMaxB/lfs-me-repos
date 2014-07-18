@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=xf86driproto
+pkgver=2.1.1
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '23e861f40ba0f0cbbfd7db7ba2ef623762ffca17' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}

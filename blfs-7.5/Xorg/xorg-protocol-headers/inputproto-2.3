@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=inputproto
+pkgver=2.3
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '4eacc1883593d3f0040e410be3afc8483c7d2409' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}
