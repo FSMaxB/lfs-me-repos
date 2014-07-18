@@ -34,8 +34,7 @@ ACLOCAL='aclocal -I \$XORG_PREFIX/share/aclocal'
 
 export PATH PKG_CONFIG_PATH ACLOCAL LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH" > xorg.sh
 
-    cp /etc/ld.so.conf .
-    echo "${XORG_PREFIX}/lib" >> ld.so.conf
+    echo "${XORG_PREFIX}/lib" >> xorg.conf
 
     cp /etc/man_db.conf .
     sed "s@/usr/X11R6@${XORG_PREFIX}@g" -i man_db.conf
@@ -49,7 +48,9 @@ lfs_me_install() {
     mkdir -pv "${fakeroot_dir}/etc/profile.d"
     cp -v xorg.sh "${fakeroot_dir}/etc/profile.d/"
     chmod 644 "${fakeroot_dir}/etc/profile.d/xorg.sh"
-    cp -v ld.so.conf man_db.conf "${fakeroot_dir}/etc/"
+    cp -v man_db.conf "${fakeroot_dir}/etc/"
+    mkdir -pv "${fakeroot_dir}/etc/ld.so.conf.d/"
+    cp -v xorg.conf "${fakeroot_dir}/etc/ld.so.conf.d/"
     mkdir -pv "${fakeroot_dir}/usr/share/"
     mkdir -pv "${fakeroot_dir}/${XORG_PREFIX}/share/X11"
     ln -sv "${XORG_PREFIX}/share/X11" "${fakeroot_dir}/usr/share/X11"
