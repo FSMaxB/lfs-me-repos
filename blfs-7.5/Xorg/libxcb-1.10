@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=libxcb
+pkgver=1.10
+pkgver_postfix=
+
+sources=( "http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'bb1a3113eca5146e2a1cf6379c2e52c212a757e0' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -e "s/pthread-stubs//" -i configure.ac
+    autoreconf -fiv
+    ./configure $XORG_CONFIG --docdir='${datadir}'/doc/"${pkgname}-${pkgver}" --enable-xinput --enable-xkb
+}
