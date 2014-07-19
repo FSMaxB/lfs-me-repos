@@ -1,0 +1,41 @@
+#!/bin/bash
+pkgname=xterm
+pkgver=301
+pkgver_postfix=
+
+sources=( "ftp://invisible-island.net/${pkgname}/${pkgname}-${pkgver}.tgz" )
+sha1sums=( 'bba521c397741d2fef56f89acb4881ab452aad91' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i '/v0/,+1s/new:/new:kb=^?:/' termcap
+    echo -e '\tkbs=\\177,' >> terminfo
+
+    TERMINFO=/usr/share/terminfo \
+    ./configure $XORG_CONFIG     \
+        --with-app-defaults=/etc/X11/app-defaults
+}
+
+lfs_me_build() {
+    echo \
+"*VT100*locale: true
+*VT100*faceName: Monospace
+*VT100*faceSize: 10
+*backarrowKeyIsErase: true
+*ptyInitialErase: true" > XTerm
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    make DESTDIR="$fakeroot_dir" install-ti
+
+    mkdir -pv "${fakeroot_dir}/etc/X11/app-defaults/"
+    mv -v XTerm "${fakeroot_dir}/etc/X11/app-defaults/"
+}
