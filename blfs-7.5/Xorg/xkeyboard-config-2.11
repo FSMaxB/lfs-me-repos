@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=xkeyboard-config
+pkgver=2.11
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/archive/individual/data/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '9380279d8164ee14a89ea12bea62ab54d7803c0a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG --with-xkb-rules-symlink=xorg
+}
+
+lfs_me_check() {
+    return
+}
