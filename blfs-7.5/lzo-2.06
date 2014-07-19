@@ -1,0 +1,18 @@
+#!/bin/bash
+pkgname=lzo
+pkgver=2.06
+pkgver_postfix=
+
+sources=( "http://www.oberhumer.com/opensource/${pkgname}/download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'a11768b8a168ec607750842bbef406f11547b904' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                    \
+                --enable-shared                  \
+                --disable-static                 \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
