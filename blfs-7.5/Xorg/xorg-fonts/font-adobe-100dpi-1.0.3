@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=font-adobe-100dpi
+pkgver=1.0.3
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/font/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '53311cbd604f18bd9570727105a4222473d363e3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -d -m755 "${fakeroot_dir}/usr/share/fonts"
+    ln -svfn $XORG_PREFIX/share/fonts/X11/OTF "${fakeroot_dir}/usr/share/fonts/X11-OTF"
+    ln -svfn $XORG_PREFIX/share/fonts/X11/TTF "${fakeroot_dir}/usr/share/fonts/X11-TTF"
+}

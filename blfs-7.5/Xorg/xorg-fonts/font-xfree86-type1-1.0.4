@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=font-xfree86-type1
+pkgver=1.0.4
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/font/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '1381f274a178cbd08627560e17a4a8f6653be3f7' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -d -m755 "${fakeroot_dir}/usr/share/fonts"
+    ln -svfn $XORG_PREFIX/share/fonts/X11/OTF "${fakeroot_dir}/usr/share/fonts/X11-OTF"
+    ln -svfn $XORG_PREFIX/share/fonts/X11/TTF "${fakeroot_dir}/usr/share/fonts/X11-TTF"
+}
