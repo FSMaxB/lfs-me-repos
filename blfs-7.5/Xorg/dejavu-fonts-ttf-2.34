@@ -1,0 +1,30 @@
+#!/bin/bash
+pkgname=dejavu-fonts-ttf
+pkgver=2.34
+pkgver_postfix=
+
+sources=( "http://sourceforge.net/projects/dejavu/files/dejavu/${pkgver}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '33fa825aa1dd44ce23a11af92b3078e978ff513d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    install -v -d -m755 "${fakeroot_dir}/usr/share/fonts/dejavu"
+    install -v -m644 ttf/*.ttf "${fakeroot_dir}/usr/share/fonts/dejavu"
+}
+
+lfs_me_postinstall() {
+    fc-cache -v /usr/share/fonts/dejavu
+}
