@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=glamor-egl
+pkgver=0.6.0
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '59c7518a49c9bde0c982705655514bbeab482ead' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG --enable-glx-tls
+}
+
+lfs_me_check() {
+    return
+}
