@@ -1,0 +1,16 @@
+#!/bin/bash
+pkgname=yasm
+pkgver=1.2.0
+pkgver_postfix=
+
+sources=( "http://www.tortall.net/projects/${pkgname}/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '773d28f27f83c44ac35079add0d3167ca6c1def8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's#) ytasm.*#)#' Makefile.in
+    ./configure --prefix=/usr
+}
