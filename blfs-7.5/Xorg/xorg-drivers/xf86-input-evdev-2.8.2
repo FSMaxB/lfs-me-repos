@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=xf86-input-evdev
+pkgver=2.8.2
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '51888302fac547b1bc81996d36e2def1beb944c5' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    return
+}
