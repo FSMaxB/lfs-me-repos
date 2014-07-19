@@ -17,7 +17,7 @@ lfs_me_prepare() {
                 --with-timedir="/var/lib/${pkgname}"           \
                 --with-all-insults                             \
                 --with-env-editor                              \
-                --with-passprompt="[sudo] password for %p"
+                --with-passprompt="[sudo] password for %p: "
 }
 
 lfs_me_build() {
