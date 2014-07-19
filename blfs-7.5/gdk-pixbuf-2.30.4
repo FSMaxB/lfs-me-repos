@@ -1,0 +1,18 @@
+#!/bin/bash
+pkgname=gdk-pixbuf
+pkgver=2.30.4
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.30/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '1f92ef9246ed70003cbb104128c0d24720830d53' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --with-x11
+}
+lfs_me_postinstall() {
+    gdk-pixbuf-query-loaders --update-cache
+}
