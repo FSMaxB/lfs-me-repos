@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=atk
+pkgver=2.10.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '9b7f09a31f3781d5af4eb02ec0e2b289cf077a49' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
