@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=mtdev
+pkgver=1.1.4
+pkgver_postfix=
+
+sources=( "http://bitmath.org/code/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '846f233635d677b73affbef68fd64daf92af0ef1' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
