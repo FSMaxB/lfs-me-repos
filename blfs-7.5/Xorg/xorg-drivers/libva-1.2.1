@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libva
+pkgver=1.2.1
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/vaapi/releases/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'f716a4cadd670b14f44a2e833f96a2c509956339' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    return
+}
