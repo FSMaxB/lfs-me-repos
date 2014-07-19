@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=xinput
+pkgver=1.6.1
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/app/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '859d98b428c4b343f40fd93dd6c63bec1f546ae4' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}

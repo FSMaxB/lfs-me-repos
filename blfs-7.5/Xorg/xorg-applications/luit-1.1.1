@@ -1,0 +1,33 @@
+#!/bin/bash
+pkgname=luit
+pkgver=1.1.1
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/app/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '3130c14d7267cecce0ba2280643844b48cca49b0' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    line1="#ifdef _XOPEN_SOURCE"
+line2="#  undef _XOPEN_SOURCE"
+line3="#  define _XOPEN_SOURCE 600"
+line4="#endif"
+sed -i -e "s@#ifdef HAVE_CONFIG_H@$line1\n$line2\n$line3\n$line4\n\n&@" sys.c
+ unset line1 line2 line3 line4
+./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}
