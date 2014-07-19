@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=xcb-util-renderutil
+pkgver=0.3.8
+pkgver_postfix=
+
+sources=( "http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'ce6b6acb015fa47c716adfd83b2f36c874401277' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    return
+}
