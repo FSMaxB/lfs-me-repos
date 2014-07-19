@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=libdrm
+pkgver=2.4.52
+pkgver_postfix=
+
+sources=( "http://dri.freedesktop.org/libdrm/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '7be6767efd0988c76c984fcdd1c8b712bcb9aea5' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -e "/pthread-stubs/d" -i configure.ac
+    autoreconf -fiv
+    ./configure --prefix=/usr --enable-udev
+}
