@@ -1,0 +1,51 @@
+#!/bin/bash
+pkgname=MesaLib
+pkgver=10.0.3
+pkgver_postfix=
+
+sources=( "ftp://ftp.freedesktop.org/pub/mesa/older-versions/10.x/${pkgver}/${pkgname}-${pkgver}.tar.bz2"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-add_xdemos-1.patch" )
+sha1sums=( '33f93bfb8fcf9e24b8ca1fe412f7eebf572b53da'
+           'f8b939c8bb25ec01cee0e05a6d334ee5058275dd' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/Mesa-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-add_xdemos-1.patch"
+
+    ./autogen.sh CFLAGS="-O2" CXXFLAGS="-O2"   \
+                --prefix=$XORG_PREFIX          \
+                --sysconfdir=/etc              \
+                --enable-texture-float         \
+                --enable-gles1                 \
+                --enable-gles2                 \
+                --enable-openvg                \
+                --enable-osmesa                \
+                --enable-xa                    \
+                --enable-gbm                   \
+                --enable-gallium-egl           \
+                --enable-gallium-gbm           \
+                --enable-glx-tls               \
+                --with-llvm-shared-libs        \
+                --with-egl-platforms="drm,x11" \
+                --with-gallium-drivers="nouveau,r300,r600,radeonsi,svga,swrast,i915,ilo"
+}
+
+lfs_me_build() {
+    make
+    make -C xdemos DEMOS_PREFIX="$XORG_PREFIX"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    make DESTDIR="$fakeroot_dir" -C xdemos DEMOS_PREFIX=$XORG_PREFIX install
+
+    install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -rfv docs/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
