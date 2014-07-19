@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=libFS
+pkgver=1.0.5
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '3a94bc42775f4aa2eac14a51e0043299d7cd31b6' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -e '/#include <X11/ i\#include <X11\/Xtrans\/Xtransint.h>' -e 's/_FSTransReadv(svr->trans_conn/readv(svr->trans_conn->fd/' -i src/FSlibInt.c; ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}

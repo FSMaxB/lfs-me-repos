@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=libpciaccess
+pkgver=0.13.2
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '63df515a4c5d5a339a7c1f9e4baa6543efa3c7da' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}
