@@ -11,7 +11,7 @@ lfs_me_prepare() {
 
     cd "${build_dir}/${pkgname}-${pkgver}"
 
-    ./configure --prefix=/usr --with-x11
+    ./configure --prefix=/usr --with-x11 --enable-gtk-doc
 }
 lfs_me_postinstall() {
     gdk-pixbuf-query-loaders --update-cache
