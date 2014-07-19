@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libva-intel-driver
+pkgver=1.2.2
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/vaapi/releases/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'ece479b51926764edd2be6599f9c067cae2a3942' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    return
+}
