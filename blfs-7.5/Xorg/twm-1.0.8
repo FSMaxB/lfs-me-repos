@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=twm
+pkgver=1.0.8
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/releases/individual/app/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'b568e6242c5a2b9a05d0a198b96f3d43cf792931' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e '/^rcdir =/s,^\(rcdir = \).*,\1/etc/X11/app-defaults,' src/Makefile.in
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    return
+}
