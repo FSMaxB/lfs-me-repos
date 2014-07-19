@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=elfutils
+pkgver=0.158
+pkgver_postfix=
+
+sources=( "https://fedorahosted.org/releases/e/l/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '09adbbf0f3a35bb1bcb77c2eaa40de8d3443af4d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --program-prefix="eu-"
+}
