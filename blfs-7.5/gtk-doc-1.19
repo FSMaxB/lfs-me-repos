@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=gtk-doc
+pkgver=1.19
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'bffec0e53e52b4a5e29ec45f413275fc6fb85054' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
