@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=xcb-util
+pkgver=0.3.9
+pkgver_postfix=
+
+sources=( "http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '02060d8e2e70838fc41cd3a27c7f2909090d8c20' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    return
+}
