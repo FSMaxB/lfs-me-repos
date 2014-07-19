@@ -1,0 +1,37 @@
+#!/bin/bash
+pkgname=nasm
+pkgver=2.11
+pkgver_postfix=
+
+sources=( "http://www.nasm.us/pub/${pkgname}/releasebuilds/${pkgver}/${pkgname}-${pkgver}.tar.xz"
+          "http://www.nasm.us/pub/${pkgname}/releasebuilds/${pkgver}/${pkgname}-${pkgver}-xdoc.tar.xz" )
+sha1sums=( '7cc2568ce804fa17d972d159f161adc3f6d25750'
+           '0d1a8c9022436a6c39c7b33d4ef5669cec3e5e78' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}-xdoc.tar.xz" --strip-components=1
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make prefix="$fakeroot_dir" install
+
+    install -m755 -d         "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/html"
+    cp -v doc/html/*.html    "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/html"
+    cp -v doc/*.{txt,ps,pdf} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    mkdir -pv "${fakeroot_dir}/usr/share/info"
+    cp -v doc/info/*         "${fakeroot_dir}/usr/share/info"
+}
+
+lfs_me_postinstall() {
+    install-info /usr/share/info/nasm.info /usr/share/info/dir
+}
