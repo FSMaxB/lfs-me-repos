@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=xf86-video-intel
+pkgver=2.21.15
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-api_change-1.patch" )
+sha1sums=( '6952e6e1deff1c4580ddee472dbc2223c3248d0f'
+           '2b187eb070ddaf30ba0c879ad81ca74801971694' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-api_change-1.patch"
+    ./configure $XORG_CONFIG      \
+                --enable-kms-only \
+                --with-default-accel=sna
+}
+
+lfs_me_build() {
+    echo \
+"Section \"Module\"
+Load \"dri2\"
+Load \"glamoregl\"
+EndSection
+
+Section \"Device\"
+Identifier \"intel\"
+Driver \"intel\"
+Option \"AccelMethod\" \"glamor\"
+EndSection" > xorg.conf
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/etc/X11/"
+    cp -v xorg.conf "${fakeroot_dir}/etc/X11/"
+}
