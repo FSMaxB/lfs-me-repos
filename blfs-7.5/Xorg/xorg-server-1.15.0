@@ -1,0 +1,37 @@
+#!/bin/bash
+pkgname=xorg-server
+pkgver=1.15.0
+pkgver_postfix=
+
+sources=( "http://xorg.freedesktop.org/archive/individual/xserver/${pkgname}-${pkgver}.tar.bz2"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-add_prime_support-1.patch" )
+sha1sums=( 'a0f347a9002770925fe95d4b9275068b44b4a4b0'
+           'c60264dcf92639944f06e7b17f62f69ef63dbc80' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-add_prime_support-1.patch"
+
+    ./configure $XORG_CONFIG                   \
+                --with-xkb-output=/var/lib/xkb \
+                --enable-install-setuid
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"/tmp/.ICE-unix dir 1777 root root
+/tmp/.X11-unix dir 1777 root root" > createfiles
+}
+
+lfs_me_install() {
+    fakeroot make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/etc/X11/xorg.conf.d"
+    mkdir -pv "${fakeroot_dir}/etc/sysconfig"
+    mv -v createfiles "${fakeroot_dir}/etc/sysconfig/"
+}
