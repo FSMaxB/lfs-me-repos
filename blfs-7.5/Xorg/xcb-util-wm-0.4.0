@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=xcb-util-wm
+pkgver=0.4.0
+pkgver_postfix=
+
+sources=( "http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'a79d7c3e564258661227cf959751a0031db1e7f4' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    LD_LIBRARY_PATH=$XORG_PREFIX/lib make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
