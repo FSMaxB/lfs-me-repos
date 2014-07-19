@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libvdpau
+pkgver=0.7
+pkgver_postfix=
+
+sources=( "http://people.freedesktop.org/~aplattner/vdpau/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'd9686b095e6b34231c37b54c895f610a9ac3d5b8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
