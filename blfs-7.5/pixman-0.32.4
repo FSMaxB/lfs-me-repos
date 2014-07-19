@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=pixman
+pkgver=0.32.4
+pkgver_postfix=
+
+sources=( "http://cairographics.org/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '54be89b3453109be0930400e5b13c35c9e9d5e3a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
