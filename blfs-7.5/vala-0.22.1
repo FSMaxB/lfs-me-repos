@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=vala
+pkgver=0.22.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.22/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '440b63356a94565a3f58b9e2218e3bb31f02879b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
