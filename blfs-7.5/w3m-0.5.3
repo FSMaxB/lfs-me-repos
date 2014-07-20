@@ -1,0 +1,34 @@
+#!/bin/bash
+pkgname=w3m
+pkgver=0.5.3
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-bdwgc72-1.patch" )
+sha1sums=( '444b6c8cf7094ee95f8e9de96b37f814b9d83237'
+           '687273293effd0cba17284d05f02691c04d75ca0' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-bdwgc72-1.patch"
+    sed -i 's/file_handle/file_foo/' istream.{c,h}
+    sed -i 's#gdk-pixbuf-xlib-2.0#& x11#' configure
+
+    ./configure --prefix=/usr --sysconfdir=/etc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m644 -D doc/keymap.default "${fakeroot_dir}/etc/w3m/keymap"
+    install -v -m644    doc/menu.default "${fakeroot_dir}/etc/w3m/menu"
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644    doc/{HISTORY,READ*,keymap.*,menu.*,*.html} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
