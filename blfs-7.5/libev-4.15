@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=libev
+pkgver=4.15
+pkgver_postfix=
+
+sources=( "http://dist.schmorp.de/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '88655b1e2c0b328c9f90a6df7e72361a97fa8dc3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    rm "${fakeroot_dir}/usr/include/event.h"
+}
