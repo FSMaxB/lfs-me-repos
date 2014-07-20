@@ -1,0 +1,47 @@
+#!/bin/bash
+pkgname=cvs
+pkgver=1.11.23
+pkgver_postfix=
+
+sources=( "http://ftp.gnu.org/non-gnu/${pkgname}/source/stable/${pkgver}/${pkgname}-${pkgver}.tar.bz2"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-zlib-1.patch" )
+sha1sums=( 'a51c531eebaff2dfdcc0fb6d94c8c6e509e06d7d'
+           '0d20bab8a6b6e419a8c900d082b487ad6a3aec38' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-zlib-1.patch"
+
+    sed -i -e 's/getline /get_line /' lib/getline.{c,h}
+    sed -i -e 's/^@sp$/& 1/'          doc/cvs.texinfo
+    touch doc/*.pdf
+
+    ./configure --prefix=/usr --docdir="/usr/share/doc/${pkgname}-${pkgver}" --with-rsh=ssh
+}
+
+lfs_me_build() {
+    make
+    make -C doc html txt
+}
+
+lfs_me_check() {
+    sed -e 's/rsh};/ssh};/' \
+        -e 's/g=rw,o=r$/g=r,o=r/' \
+        -i src/sanity.sh
+    make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    make DESTDIR="$fakeroot_dir" -C doc install-pdf
+    install -v -m644 FAQ README "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    install -v -m644 doc/*.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m755 -d        "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"/html/cvs{,client}
+    install -v -m644 doc/cvs.html/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/html/cvs"
+    install -v -m644 doc/cvsclient.html/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/html/cvsclient"
+}
