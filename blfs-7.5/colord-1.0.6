@@ -16,9 +16,11 @@ lfs_me_prepare() {
                 --localstatedir=/var         \
                 --with-daemon-user=colord    \
                 --enable-vala                \
+                --enable-systemd-login       \
+                --enable-polkit              \
                 --disable-bash-completion    \
-                --disable-systemd-login      \
-                --disable-static
+                --disable-static             \
+                --enable-gtk-doc
 }
 
 lfs_me_postinstall() {
