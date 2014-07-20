@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=zip
+pkgver=3.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/infozip/${pkgname}30.tar.gz" )
+sha1sums=( 'c9f4099ecf2772b53c2dd4a8e508064ce015d182' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}30.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}30"
+}
+
+lfs_me_build() {
+    make -f unix/Makefile generic_gcc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make prefix="${fakeroot_dir}/usr" MANDIR="${fakeroot_dir}/usr/share/man/man1" -f unix/Makefile install
+}
