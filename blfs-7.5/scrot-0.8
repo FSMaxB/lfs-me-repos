@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=scrot
+pkgver=0.8
+pkgver_postfix=
+
+sources=( "http://linuxbrit.co.uk/downloads/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '674fcb4860f1dcfa02cde7d82414e1e1c731aa75' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --mandir=/usr/share/man
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" docsdir="/usr/share/doc/${pkgname}-${pkgver}" install
+}
