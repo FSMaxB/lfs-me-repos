@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=bazaar
+pkgver=2.5.1
+pkgver_postfix=
+
+sources=( "https://launchpad.net/bzr/2.5/${pkgver}/+download/bzr-${pkgver}.tar.gz" )
+sha1sums=( '7e2776e3aaf8fb48828026d3fc2a3047465eea5e' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/bzr-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/bzr-${pkgver}"
+
+    sed -i -e 's|man/man1|share/&|' setup.py
+}
+
+lfs_me_build() {
+    python setup.py build
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    python setup.py install --prefix=/usr --root="$fakeroot_dir"
+}
