@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=i3
+pkgver=4.8
+pkgver_postfix=
+
+sources=( "http://i3wm.org/downloads/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '857d8d0014b873de406e2041dea94d81cc515b74' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    MAKEFLAGS=-j1 make
+}
+
+lfs_me_check() {
+    return
+}
