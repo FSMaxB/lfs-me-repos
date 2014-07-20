@@ -40,7 +40,7 @@ Description: An Extensible Extension Language
 Version: \${R}
 Requires: 
 Libs: -L\${libdir} -llua -lm
-Cflags: -I\${includedir}"
+Cflags: -I\${includedir}" > lua.pc
 }
 
 lfs_me_check() {
@@ -51,4 +51,7 @@ lfs_me_install() {
     make INSTALL_TOP="${fakeroot_dir}/usr" TO_LIB="liblua.so liblua.so.5.2 liblua.so.5.2.3" INSTALL_DATA="cp -d" INSTALL_MAN=/usr/share/man/man1 install
     mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
     cp -v doc/*.{html,css,gif,png} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    mkdir -pv "${fakeroot_dir}/usr/lib/pkgconfig/"
+    cp -v lua.pc "${fakeroot_dir}/usr/lib/pkgconfig/"
 }
