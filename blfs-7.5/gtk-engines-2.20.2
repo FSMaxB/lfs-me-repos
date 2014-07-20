@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=gtk-engines
+pkgver=2.20.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.20/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '574c7577d70eaacecd2ffa14e288ef88fdcb6c2a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-lua --with-system-lua
+}
