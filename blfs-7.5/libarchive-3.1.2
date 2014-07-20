@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=libarchive
+pkgver=3.1.2
+pkgver_postfix=
+
+sources=( "http://www.libarchive.org/downloads/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '6a991777ecb0f890be931cec4aec856d1a195489' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
