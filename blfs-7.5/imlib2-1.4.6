@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=imlib2
+pkgver=1.4.6
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/enlightenment/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '20e111d822074593e8d657ecf8aafe504e9e2967' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i '/DGifOpen/s:fd:&, NULL:' src/modules/loaders/loader_gif.c
+    sed -i 's/@my_libs@//' imlib2-config.in
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644    doc/{*.gif,index.html} "${fakeroot_dir}/usr/share/doc/${pkname}-${pkgver}"
+
+}
