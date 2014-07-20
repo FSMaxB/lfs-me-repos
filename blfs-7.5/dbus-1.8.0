@@ -1,0 +1,44 @@
+#!/bin/bash
+pkgname=dbus
+pkgver=1.8.0
+pkgver_postfix=
+
+sources=( "http://dbus.freedesktop.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'd14ab33e92e29fa732cdff69214913832181e737' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                  \
+                --sysconfdir=/etc              \
+                --localstatedir=/var           \
+                --with-console-auth-dir=/run/console/ \
+                --enable-inotify               \
+                --enable-systemd               \
+                --with-x                       \
+                --disable-static 
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mv -v "${fakeroot_dir}/usr/share/doc/dbus" "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_postinstall() {
+    groupadd -g 18 messagebus &&
+    useradd -c "D-Bus Message Daemon User" -d /var/run/dbus \
+            -u 18 -g messagebus -s /bin/false messagebus
+
+}
+
+lfs_me_postremove() {
+    userdel messagebus
+    groupdel messagebus
+}
