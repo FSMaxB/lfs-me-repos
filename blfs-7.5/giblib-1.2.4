@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=giblib
+pkgver=1.2.4
+pkgver_postfix=
+
+sources=( "http://linuxbrit.co.uk/downloads/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '342e6f7882c67d2277e1765299e1be5078329ab0' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
