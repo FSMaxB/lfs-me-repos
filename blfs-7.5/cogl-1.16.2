@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=cogl
+pkgver=1.16.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/1.16/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'a97b917ae6033aba7b132c0095e24bd8bfb62aee' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-gles1 --enable-gles2 --enable-gtk-doc
+}
