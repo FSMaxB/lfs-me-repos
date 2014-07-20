@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=cmake
+pkgver=2.8.12.2
+pkgver_postfix=
+
+sources=( "http://www.cmake.org/files/v2.8/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-freetype-1.patch" )         
+sha1sums=( 'cca70b307aa32a6a32c72e01fdfcecc84c1c2690'
+           '47eda254e513f9df7838d956f2107fc4145e07cf' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-freetype-1.patch"
+    ./bootstrap --prefix=/usr       \
+                --system-libs       \
+                --mandir=/share/man \
+                --docdir="/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+    make -k test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
