@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=xfconf
+pkgver=4.10.0
+pkgver_postfix=
+
+sources=( "http://archive.xfce.org/src/xfce/${pkgname}/4.10/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'c1ee751ea1139f5b656476b0ef2d46d52630aa47' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
