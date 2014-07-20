@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libxkbcommon
+pkgver=0.4.2
+pkgver_postfix=
+
+sources=( "http://xkbcommon.org/download/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '63eaa8624ec9bcc209e281193fb2db35a28b0246' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
