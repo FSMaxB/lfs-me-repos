@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=pygtk
+pkgver=2.24.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.24/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '344e6a32a5e8c7e0aaeb807e0636a163095231c2' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-docs
+}
