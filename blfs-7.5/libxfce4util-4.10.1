@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libxfce4util
+pkgver=4.10.1
+pkgver_postfix=
+
+sources=( "http://archive.xfce.org/src/xfce/${pkgname}/4.10/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '8857c89262dea7b4c49626a1cef1abb7101821fb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
