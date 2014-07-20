@@ -1,0 +1,16 @@
+#!/bin/bash
+pkgname=libglade
+pkgver=2.6.4
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.6/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '8465851733b8a0efbe57c43efc0f140d8e2d2edb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i '/DG_DISABLE_DEPRECATED/d' glade/Makefile.in
+    ./configure --prefix=/usr --disable-static --enable-gtk-doc
+}
