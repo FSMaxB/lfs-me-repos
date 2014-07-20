@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=gtk+
+pkgver=3.10.7
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'cf30e2e0c4cab9d5dfc0b4325a3139ed01387d01' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr             \
+                --sysconfdir=/etc         \
+                --enable-broadway-backend \
+                --enable-x11-backend      \
+                --disable-wayland-backend \
+                --enable-gtk-doc
+}
+
+lfs_me_postinstall() {
+    gtk-query-immodules-3.0 --update-cache
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
