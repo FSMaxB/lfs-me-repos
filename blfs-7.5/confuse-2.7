@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=confuse
+pkgver=2.7
+pkgver_postfix=
+
+sources=( "http://savannah.nongnu.org/download/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'b3f74f9763e6c9012476dbd323d083af4be34cad' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-shared
+}
+
+lfs_me_check() {
+    return
+}
