@@ -1,0 +1,22 @@
+#!/bin/bash
+pkgname=pygobject
+pkgver=2.28.6
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.28/${pkgname}-${pkgver}.tar.xz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-fixes-1.patch" )
+sha1sums=( 'b1749ba806499f4c2780dbd1cbb363aaf1f41e78'
+           '83de893b77c6b1d32dbfbe7bb39d93aaa59aa67b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-1.patch"
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
