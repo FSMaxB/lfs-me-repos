@@ -1,0 +1,47 @@
+#!/bin/bash
+pkgname=ghostscript
+pkgver=9.10
+pkgver_postfix=
+
+sources=( "http://downloads.ghostscript.com/public/${pkgname}-${pkgver}.tar.bz2"
+          "http://downloads.sourceforge.net/gs-fonts/${pkgname}-fonts-std-8.11.tar.gz"
+          "http://downloads.sourceforge.net/gs-fonts/gnu-gs-fonts-other-6.0.tar.gz" )
+sha1sums=( '89527d45f97b6cf028ad8ca4bfa07c64462390e8'
+           '2a7198e8178b2e7dba87cb5794da515200b568f5'
+           '7263e2bf12202b39517db600819956a832e42a75' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    rm -rf expat freetype lcms2 jpeg libpng
+    rm -rf zlib
+    ./configure --prefix=/usr --disable-compile-inits \
+                --enable-dynamic --with-system-libtiff
+}
+
+lfs_me_build() {
+    make -j1
+    make -j1 so
+}
+
+lfs_me_check() {
+    bin/gs -Ilib -IResource/Init -dBATCH examples/tiger.epsk 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    make DESTDIR="$fakeroot_dir" soinstall
+    
+    mkdir -pv "${fakeroot_dir}/usr/include/ghostscript"
+    install -v -m644 base/*.h "${fakeroot_dir}/usr/include/ghostscript/"
+    ln -v -s ghostscript "${fakeroot_dir}/usr/include/ps"
+
+    ln -sfv "../${pkgname}/${pkgver}/doc" "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    #install fonts
+    mkdir -pv "${fakeroot_dir}/usr/share/ghostscript"
+    tar -xvf "${sources_dir}/${pkgname}-fonts-std-8.11.tar.gz" -C "${fakeroot_dir}/usr/share/ghostscript" --no-same-owner
+    tar -xvf "${sources_dir}/gnu-gs-fonts-other-6.0.tar.gz" -C "${fakeroot_dir}/usr/share/ghostscript" --no-same-owner
+}
