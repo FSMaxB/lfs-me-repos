@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=startup-notification
+pkgver=0.12
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/startup-notification/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '4198bce2808d03160454a2940d989f3a5dc96dbb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m644 -D doc/startup-notification.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/startup-notification.txt"
+}
