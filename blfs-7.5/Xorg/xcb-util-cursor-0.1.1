@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=xcb-util-cursor
+pkgver=0.1.1
+pkgver_postfix=
+
+sources=( "http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '75ea5d4dc5f185151f171e525023cb76f3b72128' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
