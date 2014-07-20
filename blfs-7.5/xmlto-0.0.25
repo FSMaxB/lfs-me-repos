@@ -1,0 +1,7 @@
+#!/bin/bash
+pkgname=xmlto
+pkgver=0.0.25
+pkgver_postfix=
+
+sources=( "https://fedorahosted.org/releases/x/m/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '5d1aecd59d519066f94b4591722767c4e41bdc0f' )
