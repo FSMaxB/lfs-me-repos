@@ -1,0 +1,107 @@
+#!/bin/bash
+pkgname=seamonkey
+pkgver=2.24
+pkgver_postfix=
+
+sources=( "http://ftp.mozilla.org/pub/mozilla.org/${pkgname}/releases/${pkgver}/source/${pkgname}-${pkgver}.source.tar.bz2" )
+sha1sums=( '1939080a37c6fef63e9cb740de778a3321227aad' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.source.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/comm-release"
+
+    echo \
+"# If you have a multicore machine you can speed up the build by running
+# several jobs at once, but if you have a single core, delete this line:
+mk_add_options MOZ_MAKE_FLAGS=\"-j$(getconf _NPROCESSORS_ONLN)\"
+
+# If you have installed Yasm delete this option:
+# ac_add_options --disable-webm
+
+# If you have installed DBus-Glib delete this option:
+# ac_add_options --disable-dbus
+
+# If you have installed wireless-tools delete this option:
+# ac_add_options --disable-necko-wifi
+
+# If you have installed libnotify delete this option:
+# ac_add_options --disable-libnotify
+
+# GStreamer is necessary for H.264 video playback in HTML5 Video Player;
+# to be enabled, also remember to set "media.gstreamer.enabled" to "true"
+# in about:config. If you have installed GStreamer comment out this line:
+ac_add_options --disable-gstreamer
+
+# Uncomment this line if you compiled Cairo with --enable-tee switch and want
+# to use it instead of the bundled one:
+ac_add_options --enable-system-cairo
+
+# Uncomment these if you have installed them:
+ac_add_options --enable-startup-notification
+# ac_add_options --enable-system-hunspell
+ac_add_options --enable-system-sqlite
+ac_add_options --with-system-libevent
+ac_add_options --with-system-libvpx
+ac_add_options --with-system-nspr
+ac_add_options --with-system-nss
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/moz-build-dir
+ac_add_options --disable-crashreporter
+ac_add_options --disable-debug
+ac_add_options --disable-debug-symbols
+ac_add_options --disable-installer
+ac_add_options --disable-static
+ac_add_options --disable-tests
+ac_add_options --disable-updater
+ac_add_options --enable-application=suite
+ac_add_options --enable-shared
+ac_add_options --enable-system-ffi
+ac_add_options --prefix=/usr
+ac_add_options --with-pthreads
+ac_add_options --with-system-jpeg
+ac_add_options --with-system-png
+ac_add_options --with-system-zlib" > mozconfig
+}
+
+lfs_me_build() {
+    export CPLUS_INCLUDE_PATH=$XORG_PREFIX/include
+    export C_INCLUDE_PATH=$XORG_PREFIX/include
+
+    make -f client.mk
+    make -C moz-build-dir/suite/installer
+
+    echo \
+"[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=SeaMonkey
+Comment=The Mozilla Suite
+Icon=seamonkey
+Exec=seamonkey
+Categories=Network;GTK;Application;Email;Browser;WebBrowser;News;
+StartupNotify=true
+Terminal=false" > seamonkey.desktop
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}"
+
+    tar -xf "moz-build-dir/mozilla/dist/${pkgname}-${pkgver}.en-US.linux-$(uname -m).tar.bz2" -C "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}" --strip-components=1
+
+    mkdir -pv "${fakeroot_dir}/usr/bin"
+    ln -sfv "../lib/${pkgname}-${pkgver}/seamonkey" "${fakeroot_dir}/usr/bin/"
+
+    mkdir -pv "${fakeroot_dir}/usr/lib/mozilla/plugins"
+    ln -sfv ../mozilla/plugins "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}/"
+
+    mkdir -pv "${fakeroot_dir}/usr/share/man/man1"
+    cp -v moz-build-dir/mozilla/dist/man/man1/seamonkey.1 "${fakeroot_dir}/usr/share/man/man1"
+
+    mkdir -pv "$fakeroot_dir"/usr/share/{applications,pixmaps}
+    ln -sfv "/usr/lib/${pkgname}-${pkgver}/chrome/icons/default/seamonkey.png" "${fakeroot_dir}/usr/share/pixmaps/"
+}
