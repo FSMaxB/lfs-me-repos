@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=libvpx
+pkgver=v1.3.0
+pkgver_postfix=
+
+sources=( "http://anduin.linuxfromscratch.org/sources/other/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '3479ffd4e8048b28c415529152fe71d81facd3a7' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's/cp -p/cp/' build/make/Makefile
+    chmod -v 644 vpx/*.h
+    mkdir "${build_dir}/${pkgname}-build"
+    cd "${build_dir}/${pkgname}-build"
+    "${build_dir}/${pkgname}-${pkgver}/configure" --prefix=/usr \
+                                                  --enable-shared \
+                                                  --disable-static
+}
+
+lfs_me_check() {
+    return
+}
