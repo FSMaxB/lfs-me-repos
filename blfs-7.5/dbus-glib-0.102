@@ -1,0 +1,18 @@
+#!/bin/bash
+pkgname=dbus-glib
+pkgver=0.102
+pkgver_postfix=
+
+sources=( "http://dbus.freedesktop.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '58a8955972f6c221461a49f9c541c22e838a5776' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr     \
+                --sysconfdir=/etc \
+                --disable-static  \
+                --enable-gtk-doc
+}
