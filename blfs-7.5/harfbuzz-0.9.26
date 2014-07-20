@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=harfbuzz
+pkgver=0.9.26
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/${pkgname}/release/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '0963768b8ee1f575c5a20828eefb101be6eaae6f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --with-gobject --with-graphite2 --enable-gtk-doc
+}
