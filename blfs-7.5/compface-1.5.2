@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=compface
+pkgver=1.5.2
+pkgver_postfix=
+
+sources=( "http://ftp.xemacs.org/pub/xemacs/aux/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '72dad8774b3301a1562bdbd5b3c5536ebf86a03d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --mandir=/usr/share/man
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make MANDIR="${fakeroot_dir}/usr/share/man" prefix="${fakeroot_dir}/usr" install
+
+    mkdir -pv "${fakeroot_dir}/usr/bin"
+    install -m755 -v xbm2xface.pl "${fakeroot_dir}/usr/bin"
+}
