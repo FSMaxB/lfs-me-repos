@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=dbus-python
+pkgver=1.2.0
+pkgver_postfix=
+
+sources=( "http://dbus.freedesktop.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '7a00f7861d26683ab7e3f4418860bd426deed9b5' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    mkdir python2
+    pushd python2
+    PYTHON=/usr/bin/python     \
+    ../configure --prefix=/usr --docdir=/usr/share/doc/dbus-python-1.2.0
+    popd
+
+    mkdir python3
+    pushd python3
+    PYTHON=/usr/bin/python3    \
+    ../configure --prefix=/usr --docdir=/usr/share/doc/dbus-python-1.2.0
+    popd
+}
+
+lfs_me_build() {
+    pushd python2
+    make
+    popd
+    
+    pushd python3
+    make
+    popd
+}
+
+lfs_me_check() {
+    make -C python2 check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+    make -C python3 check 2>&1 | tee -a "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" -C python2 install
+    make DESTDIR="$fakeroot_dir" -C python3 install
+}
