@@ -1,0 +1,33 @@
+#!/bin/bash
+pkgname=colord
+pkgver=1.0.6
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/${pkgname}/releases/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'b3ad9d1cd90ff0ea4d955b253dc0491d851c2778' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                \
+                --sysconfdir=/etc            \
+                --localstatedir=/var         \
+                --with-daemon-user=colord    \
+                --enable-vala                \
+                --disable-bash-completion    \
+                --disable-systemd-login      \
+                --disable-static
+}
+
+lfs_me_postinstall() {
+    groupadd -g 71 colord
+    useradd -c "Color Daemon Owner" -d /var/lib/colord -u 71 \
+            -g colord -s /bin/false colord
+}
+
+lfs_me_postremove() {
+    userdel colord
+    groupdel colord
+}
