@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=avahi
+pkgver=0.6.31
+pkgver_postfix=
+
+sources=( "http://avahi.org/download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '7e05bd78572c9088b03b1207a0ad5aba38490684' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's/\(CFLAGS=.*\)-Werror \(.*\)/\1\2/' configure
+    sed -i -e 's/-DG_DISABLE_DEPRECATED=1//' \
+        -e '/-DGDK_DISABLE_DEPRECATED/d' avahi-ui/Makefile.in
+    ./configure --prefix=/usr        \
+                --sysconfdir=/etc    \
+                --localstatedir=/var \
+                --disable-static     \
+                --disable-mono       \
+                --disable-monodoc    \
+                --disable-python     \
+                --disable-qt3        \
+                --disable-qt4        \
+                --enable-core-docs   \
+                --with-distro=none
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    groupadd -fg 84 avahi
+    useradd -c "Avahi Daemon Owner" -d /var/run/avahi-daemon -u 84 \
+            -g avahi -s /bin/false avahi
+    groupadd -fg 86 netdev
+}
+
+lfs_me_postremove() {
+    userdel avahi
+    groupdel avahi
+    groupdel netdev
+}
