@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=libtheora
+pkgver=1.1.1
+pkgver_postfix=
+
+sources=( "http://downloads.xiph.org/releases/theora/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '800aa48cf9e59d546c18ecdac1d06d7643cbb2d3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's/png_\(sizeof\)/\1/g' examples/png2theora.c
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/bin"
+    cd examples/.libs
+    for E in *; do
+        install -v -m755 $E "${fakeroot_dir}/usr/bin/theora_${E}"
+    done
+}
