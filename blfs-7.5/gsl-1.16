@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=gsl
+pkgver=1.16
+pkgver_postfix=
+
+sources=( "http://ftp.gnu.org/pub/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '210af9366485f149140973700d90dc93a4b6213e' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_build() {
+    make
+    make html
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp doc/gsl-ref.html/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
