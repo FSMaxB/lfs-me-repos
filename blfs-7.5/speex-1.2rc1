@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=speex
+pkgver=1.2rc1
+pkgver_postfix=
+
+sources=( "http://downloads.us.xiph.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '52daa72572e844e5165315e208da539b2a55c5eb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr    \
+                --disable-static \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+    return
+}
