@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=cdparanoia-III
+pkgver=10.2
+pkgver_postfix=
+
+sources=( "http://downloads.xiph.org/releases/cdparanoia/${pkgname}-${pkgver}.src.tgz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-gcc_fixes-1.patch" )
+sha1sums=( '1901e20d3a370ca6afa4c76a9ef30d3f03044320'
+           '61e3296f8e6d3ce72c2a87259a5c03c703f2dd75' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.src.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-gcc_fixes-1.patch"
+    ./configure --prefix=/usr --mandir=/usr/share/man
+}
+
+lfs_me_build() {
+    make -j1
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make prefix="${fakeroot_dir}/usr" MANDIR="${fakeroot_dir}/usr/share/man" install
+    chmod -v 755 "$fakeroot_dir"/usr/lib/libcdda_*.so.0.10.2
+}
