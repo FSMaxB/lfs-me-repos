@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=gstreamer
+pkgver=0.10.36
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '27931b00eb5d50bc477e32e2dda7440f4179e7ac' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i  -e '/YYLEX_PARAM/d'                                       \
+            -e '/parse-param.*scanner/i %lex-param { void *scanner }' \
+                gst/parse/grammar.y
+
+    ./configure --prefix=/usr \
+                --disable-static
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/gstreamer-0.10/design"
+    install -v -m644 docs/design/*.txt "${fakeroot_dir}/usr/share/doc/gstreamer-0.10/design"
+}
