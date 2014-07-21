@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=sbc
+pkgver=1.2
+pkgver_postfix=
+
+sources=( "http://www.kernel.org/pub/linux/bluetooth/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '83ae4a748383696cb7a555c86c7fb465812e8801' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
