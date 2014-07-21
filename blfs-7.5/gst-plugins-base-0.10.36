@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=gst-plugins-base
+pkgver=0.10.36
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '2c4b34245107395bc9103649bb2af1c1088a3f7c' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static --enable-gtk-doc
+}
