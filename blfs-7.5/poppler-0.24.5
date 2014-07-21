@@ -1,0 +1,36 @@
+#!/bin/bash
+pkgname=poppler
+pkgver=0.24.5
+pkgver_postfix=
+
+sources=( "http://poppler.freedesktop.org/${pkgname}-${pkgver}.tar.xz"
+          "http://poppler.freedesktop.org/${pkgname}-data-0.4.6.tar.gz")
+sha1sums=( '7b7cabee85bd81a7e55c939740d5d7ccd7c0dda5'
+           'f030563eed9f93912b1a546e6d87936d07d7f27d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+    tar -xf "${sources_dir}/${pkgname}-data-0.4.6.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr     \
+                --sysconfdir=/etc \
+                --disable-static  \
+                --enable-xpdf-headers \
+                --enable-libcurl
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m755 -d      "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 README* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    cd "${pkgname}-data-0.4.6"
+    make DESTDIR="$fakeroot_dir" prefix=/usr install
+}
