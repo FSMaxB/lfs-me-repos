@@ -1,0 +1,28 @@
+#!/bin/bash
+pkgname=mercurial
+pkgver=2.9
+pkgver_postfix=
+
+sources=( "http://mercurial.selenic.com/release/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '9b7d8259434f6aae29f6eee3dd5665b516857cf3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    make build
+
+    echo \
+"[web]
+cacerts = /etc/ssl/ca-bundle.crt" > etc.mercurial
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" PREFIX="/usr" install-bin
+
+    install -v -d -m755 "${fakeroot_dir}/etc/mercurial"
+    cp -v etc.mercurial "${fakeroot_dir}/etc/mercurial/hgrc"
+}
