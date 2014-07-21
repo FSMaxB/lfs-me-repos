@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libsamplerate
+pkgver=0.1.8
+pkgver_postfix=
+
+sources=( "http://www.mega-nerd.com/SRC/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'e5fe82c4786be2fa33ca6bd4897db4868347fe70' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" htmldocdir="/usr/share/doc/${pkgname}-${pkgver}" install
+}
