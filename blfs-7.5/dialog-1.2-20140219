@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=dialog
+pkgver=1.2-20140219
+pkgver_postfix=
+
+sources=( "ftp://invisible-island.net/${pkgname}/${pkgname}-${pkgver}.tgz" )
+sha1sums=( '50b70508254afe678265eed28654e629853649b1' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure \
+            --prefix=/usr \
+            --mandir=/usr/share/man \
+            --with-ncursesw \
+            --enable-nls
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install-full
+}
