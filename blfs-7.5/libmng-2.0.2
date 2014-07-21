@@ -1,0 +1,28 @@
+#!/bin/bash
+pkgname=libmng
+pkgver=2.0.2
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '7dd35369ff5916e1823cbacef984ab1b87714b69' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i "s:#include <jpeg:#include <stdio.h>\n&:" libmng_types.h
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m755 -d        "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 doc/*.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
