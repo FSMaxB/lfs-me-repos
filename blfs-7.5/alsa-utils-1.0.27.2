@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=alsa-utils
+pkgver=1.0.27.2
+pkgver_postfix=
+
+sources=( "http://alsa.cybermirror.org/utils/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'dfec4691dde6b2cee292bbd10f0f368158713e8f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --disable-alsaconf
+}
