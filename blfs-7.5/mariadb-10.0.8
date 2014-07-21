@@ -1,0 +1,137 @@
+#!/bin/bash
+pkgname=mariadb
+pkgver=10.0.8
+pkgver_postfix=
+
+sources=( "http://tweedo.com/mirror/${pkgname}/${pkgname}-${pkgver}/kvm-tarbake-jaunty-x86/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/blfs/downloads/7.5/blfs-bootscripts-20140301.tar.bz2" )
+sha1sums=( '2b56a7d78b5cf063374f8d6cf03986020b0290c1'
+           'be3bd33ee1bbd950b53f1707a409887c2c5d7721' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+    tar -xf "${sources_dir}/blfs-bootscripts-20140301.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i "s@data/test@\${INSTALL_MYSQLTESTDIR}@g" sql/CMakeLists.txt &&
+    sed -i "s/srv_buf_size/srv_sort_buf_size/" storage/innobase/row/row0log.cc &&
+    mkdir build &&
+    cd build &&
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr \
+          -DINSTALL_DOCDIR=share/doc/mysql \
+          -DINSTALL_DOCREADMEDIR=share/doc/mysql \
+          -DINSTALL_MANDIR=share/man \
+          -DINSTALL_MYSQLSHAREDIR=share/mysql \
+          -DINSTALL_MYSQLTESTDIR=share/mysql/test \
+          -DINSTALL_PLUGINDIR=lib/mysql/plugin \
+          -DINSTALL_SBINDIR=sbin \
+          -DINSTALL_SCRIPTDIR=bin \
+          -DINSTALL_SQLBENCHDIR=share/mysql/bench \
+          -DINSTALL_SUPPORTFILESDIR=share/mysql \
+          -DMYSQL_DATADIR=/srv/mysql \
+          -DMYSQL_UNIX_ADDR=/run/mysqld/mysqld.sock \
+          -DWITH_EXTRA_CHARSETS=complex \
+          -DTOKUDB_OK=0 \
+          ..
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"# Begin /etc/mysql/my.cnf
+
+# The following options will be passed to all MySQL clients
+[client]
+#password       = your_password
+port            = 3306
+socket          = /run/mysqld/mysqld.sock
+
+# The MySQL server
+[mysqld]
+port            = 3306
+socket          = /run/mysqld/mysqld.sock
+datadir         = /srv/mysql
+skip-external-locking
+key_buffer_size = 16M
+max_allowed_packet = 1M
+sort_buffer_size = 512K
+net_buffer_length = 16K
+myisam_sort_buffer_size = 8M
+
+# Don't listen on a TCP/IP port at all.
+skip-networking
+
+# required unique id between 1 and 2^32 - 1
+server-id       = 1
+
+# Uncomment the following if you are using BDB tables
+#bdb_cache_size = 4M
+#bdb_max_lock = 10000
+
+# Uncomment the following if you are using InnoDB tables
+#innodb_data_home_dir = /srv/mysql
+#innodb_data_file_path = ibdata1:10M:autoextend
+#innodb_log_group_home_dir = /srv/mysql
+# You can set .._buffer_pool_size up to 50 - 80 %
+# of RAM but beware of setting memory usage too high
+#innodb_buffer_pool_size = 16M
+#innodb_additional_mem_pool_size = 2M
+# Set .._log_file_size to 25 % of buffer pool size
+#innodb_log_file_size = 5M
+#innodb_log_buffer_size = 8M
+#innodb_flush_log_at_trx_commit = 1
+#innodb_lock_wait_timeout = 50
+
+[mysqldump]
+quick
+max_allowed_packet = 16M
+
+[mysql]
+no-auto-rehash
+# Remove the next comment character if you are not familiar with SQL
+#safe-updates
+
+[isamchk]
+key_buffer = 20M
+sort_buffer_size = 20M
+read_buffer = 2M
+write_buffer = 2M
+
+[myisamchk]
+key_buffer_size = 20M
+sort_buffer_size = 20M
+read_buffer = 2M
+write_buffer = 2M
+
+[mysqlhotcopy]
+interactive-timeout
+
+# End /etc/mysql/my.cnf" > my.cnf
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -dm 755 "${fakeroot_dir}/etc/mysql"
+    cp -v my.cnf "${fakeroot_dir}/etc/mysql"
+
+    cd "${build_dir}/blfs-bootscripts-20140301"
+    make -f Makefile.systemd DESTDIR="$fakeroot_dir" install-mysqld
+}
+
+lfs_me_postinstall() {
+    groupadd -g 40 mysql &&
+    useradd -c "MySQL Server" -d /srv/mysql -g mysql -s /bin/false -u 40 mysql
+}
+
+lfs_me_postremove() {
+    userdel mysql
+    groupdel mysql
+}
