@@ -1,0 +1,30 @@
+#!/bin/bash
+pkgname=GConf
+pkgver=3.2.6
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.2/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'a90d3ac08dc454f927c8d3024f52d4d57e3ff613' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --disable-orbit \
+                --disable-static \
+                --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/etc/gconf/"
+    ln -s gconf.xml.defaults "${fakeroot_dir}/etc/gconf/gconf.xml.system"
+}
