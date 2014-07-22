@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=graphviz
+pkgver=2.36.0
+pkgver_postfix=
+
+sources=( "http://graphviz.org/pub/${pkgname}/stable/SOURCES/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'a41e9f1cbcc9a24651e14dd15a4cda3d912d7d19' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/share/doc"
+    ln -v -s "${fakeroot_dir}/usr/share/graphviz/doc" "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
