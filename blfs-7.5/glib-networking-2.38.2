@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=glib-networking
+pkgver=2.38.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.38/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '02e4eb212dd5a322ca726802c714dd4e5a143a74' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                                 \
+                --with-ca-certificates=/etc/ssl/ca-bundle.crt \
+                --disable-static
+}
+
+lfs_me_check() {
+    make -k check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
