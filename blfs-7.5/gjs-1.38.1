@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=gjs
+pkgver=1.38.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/1.38/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'c5530fbe6dde7d02e1f461829385075c5487e2bb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
