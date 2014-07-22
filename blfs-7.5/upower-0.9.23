@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=upower
+pkgver=0.9.23
+pkgver_postfix=
+
+sources=( "http://upower.freedesktop.org/releases/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '8fc30c2d53b15c0a4e7c1bc077a912bc1aeb6138' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr        \
+                --sysconfdir=/etc    \
+                --localstatedir=/var \
+                --enable-deprecated  \
+                --disable-static     \
+                --enable-gtk-doc
+}
