@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=iso-codes
+pkgver=3.51
+pkgver_postfix=
+
+sources=( "http://pkg-isocodes.alioth.debian.org/downloads/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '2616a3f3420fab69b800675df7456175f87e0cdf' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
