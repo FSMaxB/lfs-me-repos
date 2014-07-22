@@ -1,0 +1,39 @@
+#!/bin/bash
+pkgname=NetworkManager
+pkgver=0.9.8.8
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.9/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'c134f5fa9fa1736d0af636430bc0c16cc3ab0dd1' )
+
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    
+    ./configure --prefix=/usr        \
+                --sysconfdir=/etc    \
+                --localstatedir=/var \
+                --disable-ppp        \
+                --enable-doc         \
+                --without-iptables
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"[main]
+plugins=keyfile" > NetworkManager.conf
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    cp -v NetworkManager.conf "${fakeroot_dir}/etc/NetworkManager/"
+}
