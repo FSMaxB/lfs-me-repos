@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=libsoup
+pkgver=2.44.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.44/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'd469abbeaffca9b157f50ce079662078e239d962' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static --enable-gtk-doc
+}
