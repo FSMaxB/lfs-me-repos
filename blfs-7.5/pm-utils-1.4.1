@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=pm-utils
+pkgver=1.4.1
+pkgver_postfix=
+
+sources=( "http://pm-utils.freedesktop.org/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '9aacb9b4a5f11f751d94f5257c6c54460f106197' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc \
+                --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+    return
+}
