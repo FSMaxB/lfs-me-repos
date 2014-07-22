@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=gnome-keyring
+pkgver=3.10.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '74100cf499ed23d66340b9f4061a6861e88d7ead' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr     \
+                --sysconfdir=/etc \
+                --with-pam-dir=/lib/security
+}
