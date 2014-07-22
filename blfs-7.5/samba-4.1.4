@@ -1,0 +1,67 @@
+#!/bin/bash
+pkgname=samba
+pkgver=4.1.4
+pkgver_postfix=
+
+sources=( "http://ftp.samba.org/pub/${pkgname}/stable/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/blfs/downloads/7.5/blfs-bootscripts-20140301.tar.bz2" )
+sha1sums=( 'dff22226d59b5fbf294cb169832a99b98ca8b861'
+           'be3bd33ee1bbd950b53f1707a409887c2c5d7721' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+    tar -xf "${sources_dir}/blfs-bootscripts-20140301.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure                            \
+        --prefix=/usr                      \
+        --sysconfdir=/etc                  \
+        --localstatedir=/var               \
+        --with-piddir=/run/samba           \
+        --with-pammodulesdir=/lib/security \
+        --enable-fhs                       \
+        --enable-nss-wrapper               \
+        --enable-socket-wrapper            \
+        --enable-selftest
+}
+
+lfs_me_check() {
+    make quicktest 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libnss_win{s,bind}.so*   "${fakeroot_dir}/lib"
+    ln -v -sf ../../lib/libnss_winbind.so.2 "${fakeroot_dir}/usr/lib/libnss_winbind.so"
+    ln -v -sf ../../lib/libnss_wins.so.2    "${fakeroot_dir}/usr/lib/libnss_wins.so"
+
+    install -v -m644    examples/smb.conf.default "${fakeroot_dir}/etc/samba"
+
+    mkdir -pv "${fakeroot_dir}/etc/openldap/schema"
+
+    install -v -m644    examples/LDAP/README "${fakeroot_dir}/etc/openldap/schema/README.LDAP"
+
+    install -v -m644    examples/LDAP/samba* "${fakeroot_dir}/etc/openldap/schema"
+
+    install -v -m755    examples/LDAP/{get*,ol*} "${fakeroot_dir}/etc/openldap/schema"
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    install -v -m644    lib/ntdb/doc/design.pdf "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    cd "${build_dir}/blfs-bootscripts-20140301"
+    make -f Makefile.systemd DESTDIR="$fakeroot_dir" install-samba
+    make -f Makefile.systemd DESTDIR="$fakeroot_dir" install-winbindd
+}
+
+lfs_me_postinstall() {
+    groupadd -g 99 nogroup
+    useradd -c "Unprivileged Nobody" -d /dev/null -g nogroup -s /bin/false -u 99 nobody
+}
+
+lfs_me_postremove() {
+    return
+}
