@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libass
+pkgver=0.10.2
+pkgver_postfix=
+
+sources=( "http://libass.googlecode.com/files/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '72a153364e838d3b561bae3653f1515169d479c4' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
