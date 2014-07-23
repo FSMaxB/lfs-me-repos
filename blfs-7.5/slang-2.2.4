@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=slang
+pkgver=2.2.4
+pkgver_postfix=
+
+sources=( "ftp://space.mit.edu/pub/davis/${pkgname}/v2.2/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '34e68a993888d0ae2ebc7bc31b40bc894813a7e2' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --with-readline=gnu
+}
+
+lfs_me_build() {
+    make -j1
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install_doc_dir="/usr/share/doc/${pkgname}-${pkgver}"   \
+         SLSH_DOC_DIR="/usr/share/doc/${pkgname}-${pkgver}/slsh" \
+         install-all
+
+   chmod -v 755 "${fakeroot_dir}/usr/lib/libslang.so.2.2.4" "$fakeroot_dir"/usr/lib/slang/v2/modules/*.so
+}
