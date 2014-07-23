@@ -1,0 +1,17 @@
+#!/bin/bash
+pkgname=fribidi
+pkgver=0.19.6
+pkgver_postfix=
+
+sources=( "http://fribidi.org/download/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '5a6ff82fdee31d27053c39e03223666ac1cb7a6a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i "s|glib/gstrfuncs\.h|glib.h|" charset/fribidi-char-sets.c
+    sed -i "s|glib/gmem\.h|glib.h|"      lib/mem.h
+    ./configure --prefix=/usr 
+}
