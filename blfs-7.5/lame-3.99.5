@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=lame
+pkgver=3.99.5
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '03a0bfa85713adcc6b3383c12e2cc68a9cfbf4c4' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-mp3rtp --enable-nasm --disable-static
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" pkghtmldir="/usr/share/doc/${pkgname}-${pkgver}" install
+}
