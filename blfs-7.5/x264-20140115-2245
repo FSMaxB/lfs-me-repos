@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=x264
+pkgver=20140115-2245
+pkgver_postfix=
+
+sources=( "ftp://ftp.videolan.org/pub/videolan/${pkgname}/snapshots/${pkgname}-snapshot-${pkgver}-stable.tar.bz2" )
+sha1sums=( 'f68ae986c032f53fddd65241b575c1badcd6118e' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-snapshot-${pkgver}-stable.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-snapshot-${pkgver}-stable"
+
+    ./configure --prefix=/usr \
+                --enable-shared \
+                --disable-cli
+}
+
+lfs_me_check() {
+    return
+}
