@@ -1,0 +1,33 @@
+#!/bin/bash
+pkgname=xvidcore
+pkgver=1.3.2
+pkgver_postfix=
+
+sources=( "http://downloads.xvid.org/downloads/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '56e065d331545ade04c63c91153b9624b51d6e1b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}"
+
+    cd build/generic
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    sed -i '/libdir.*STATIC_LIB/ s/^/#/' Makefile
+    make DESTDIR="$fakeroot_dir" install
+
+    chmod -v 755 /usr/lib/libxvidcore.so.4.3
+    ln -v -sf libxvidcore.so.4.3 /usr/lib/libxvidcore.so.4
+    ln -v -sf libxvidcore.so.4   /usr/lib/libxvidcore.so
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/examples"
+    install -v -m644 ../../doc/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 ../../examples/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/examples"
+}
