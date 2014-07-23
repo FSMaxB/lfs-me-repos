@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=aalib
+pkgver=1.4rc5
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/aa-project/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'a23269e950a249d2ef93625837cace45ddbce03b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-1.4.0"
+
+    sed -i -e '/AM_PATH_AALIB,/s/AM_PATH_AALIB/[&]/' aalib.m4
+
+    ./configure --prefix=/usr             \
+                --infodir=/usr/share/info \
+                --mandir=/usr/share/man   \
+                --disable-static 
+}
+
+lfs_me_check() {
+    return
+}
