@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=faac
+pkgver=1.28
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-glibc_fixes-1.patch" )
+sha1sums=( '01d6239eae86f0de0895d9b25af12fecda934bab'
+           '49cb70b51082b1209e414b0fd16b07f48e4b407a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-glibc_fixes-1.patch"
+    sed -i -e '/obj-type/d' -e '/Long Term/d' frontend/main.c
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
