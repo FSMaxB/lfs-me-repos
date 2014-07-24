@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libdvdnav
+pkgver=4.2.1
+pkgver_postfix=
+
+sources=( "http://dvdnav.mplayerhq.hu/releases/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'c9278f571374b232d92d96c6dbc618ae5f95b318' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./autogen.sh --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
