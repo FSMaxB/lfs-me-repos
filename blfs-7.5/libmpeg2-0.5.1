@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=libmpeg2
+pkgver=0.5.1
+pkgver_postfix=
+
+sources=( "http://libmpeg2.sourceforge.net/files/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '0f9163d8fd52db5f577ebe45636f674252641fd7' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's/static const/static/' libmpeg2/idct_mmx.c
+    ./configure --prefix=/usr
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/mpeg2dec-${pkgver}"
+    install -v -m644 README doc/libmpeg2.txt "${fakeroot_dir}/usr/share/doc/mpeg2dec-${pkgver}"
+}
