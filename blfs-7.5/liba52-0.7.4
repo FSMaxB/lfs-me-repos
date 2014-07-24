@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=liba52
+pkgver=0.7.4
+pkgver_postfix=
+
+sources=( "http://liba52.sourceforge.net/files/a52dec-${pkgver}.tar.gz" )
+sha1sums=( '79b33bd8d89dad7436f85b9154ad35667aa37321' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/a52dec-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/a52dec-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --mandir=/usr/share/man \
+                --enable-shared \
+                --disable-static \
+                CFLAGS="-g -O2 $([ $(uname -m) = x86_64 ] && echo -fPIC)" 
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    cp liba52/a52_internal.h "${fakeroot_dir}/usr/include/a52dec"
+    install -v -m644 -D doc/liba52.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/${pkgname}.txt"
+
+}
