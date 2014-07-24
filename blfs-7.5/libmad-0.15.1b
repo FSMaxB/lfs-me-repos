@@ -1,0 +1,50 @@
+#!/bin/bash
+pkgname=libmad
+pkgver=0.15.1b
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/mad/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-fixes-1.patch" )
+sha1sums=( 'cac19cd00e1a907f3150cc040ccc077783496d76'
+           '21f745109ceda8a97e4c06910f80ae9d4e553020' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-1.patch"
+    sed "s@AM_CONFIG_HEADER@AC_CONFIG_HEADERS@g" -i configure.ac
+    touch NEWS AUTHORS ChangeLog
+    autoreconf -fi
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"prefix=/usr
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
+includedir=\${prefix}/include
+
+Name: mad
+Description: MPEG audio decoder
+Requires:
+Version: 0.15.1b
+Libs: -L\${libdir} -lmad
+Cflags: -I\${includedir}" > mad.pc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/lib/pkgconfig/"
+    cp -v mad.pc "${fakeroot_dir}/usr/lib/pkgconfig/"
+}
