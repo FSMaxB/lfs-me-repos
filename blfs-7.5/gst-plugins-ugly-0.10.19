@@ -1,0 +1,18 @@
+#!/bin/bash
+pkgname=gst-plugins-ugly
+pkgver=0.10.19
+pkgver_postfix=
+
+sources=( "http://gstreamer.freedesktop.org/src/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-libcdio_fixes-1.patch" )
+sha1sums=( 'a370f38a0a98aa01eaed31a21fd0da5ff6face0c'
+           '852bdabca8c05e5c840c1bae609f0911228fb846' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-libcdio_fixes-1.patch"
+    ./configure --prefix=/usr --enable-gtk-doc
+}
