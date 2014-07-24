@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libdvdread
+pkgver=4.2.1
+pkgver_postfix=
+
+sources=( "http://dvdnav.mplayerhq.hu/releases/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '91ae4613110ef24eda4f188b10dad4474017a153' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./autogen.sh --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
