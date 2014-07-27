@@ -1,0 +1,32 @@
+#!/bin/bash
+pkgname=jasper
+pkgver=1.900.1
+pkgver_postfix=
+
+sources=( "http://www.ece.uvic.ca/~mdadams/jasper/software/${pkgname}-${pkgver}.zip"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-security_fixes-1.patch" )
+sha1sums=( '9c5735f773922e580bf98c7c7dfda9bbed4c5191'
+           '025551612fb08b0694f71784d397eed3d1452ef6' )
+
+lfs_me_prepare() {
+    unzip "${sources_dir}/${pkgname}-${pkgver}.zip" -d "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-security_fixes-1.patch"
+    ./configure --prefix=/usr    \
+                --enable-shared  \
+                --disable-static \
+                --mandir=/usr/share/man
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 doc/*.pdf "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
