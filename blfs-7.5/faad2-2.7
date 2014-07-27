@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=faad2
+pkgver=2.7
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/faac/${pkgname}-${pkgver}.tar.bz2"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-mp4ff-1.patch" )
+sha1sums=( 'b0e80481d27ae9faf9e46c8c8dfb617a0adb91b5'
+           '03ea61caf1593715686d7e4fd305f985fa3f0983' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-mp4ff-1.patch"
+    sed -i "s:AM_CONFIG_HEADER:AC_CONFIG_HEADERS:g" configure.in
+    sed -i "s:man_MANS:man1_MANS:g" frontend/Makefile.am
+    autoreconf -fi
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
