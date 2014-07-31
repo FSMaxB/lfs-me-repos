@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=json-glib
+pkgver=0.16.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.16/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'a67e1f0d5a3cc5c96e999ddb24c75c6ca21d8252' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-gtk-doc
+}
