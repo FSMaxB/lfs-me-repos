@@ -17,3 +17,11 @@ lfs_me_prepare() {
 lfs_me_check() {
     return
 }
+
+lfs_me_postinstall() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/gnome
+}
+
+lfs_me_postremove() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/gnome
+}
