@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libbluray
+pkgver=0.5.0
+pkgver_postfix=
+
+sources=( "ftp://ftp.videolan.org/pub/videolan/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '1a9c61daefc31438f9165e7681c563d0524b2d3e' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
