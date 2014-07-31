@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=gst-plugins-bad
+pkgver=0.10.23
+pkgver_postfix=
+
+sources=( "http://gstreamer.freedesktop.org/src/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'dbdf3817513ae5432080feadf9a1f48b06824970' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --with-gtk=3.0 --disable-examples
+}
