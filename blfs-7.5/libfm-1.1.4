@@ -16,3 +16,20 @@ lfs_me_prepare() {
                 --disable-static  \
                 --enable-gtk-doc
 }
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    rm -rf "${fakeroot_dir}/usr/include/libfm"
+    ln -sv libfm-1.0 "${fakeroot_dir}/usr/include/libfm"
+}
+
+lfs_me_postinstall() {
+    update-mime-database /usr/share/mime
+    update-desktop-database
+}
+
+lfs_me_postremove() {
+    update-mime-database /usr/share/mime
+    update-desktop-database
+}
