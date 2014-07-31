@@ -1,0 +1,42 @@
+#!/bin/bash
+pkgname=pyatspi
+pkgver=2.10.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '9599565631c782d18c2476ab95497ae52744ec3d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    mkdir python2
+    pushd python2
+    ../configure --prefix=/usr --with-python=/usr/bin/python
+    popd
+    
+    mkdir python3
+    pushd python3
+    ../configure --prefix=/usr --with-python=/usr/bin/python3
+    popd
+}
+
+lfs_me_build() {
+    pushd python2
+    make
+    popd
+
+    pushd python3
+    make
+    popd
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" -C python2 install
+    make DESTDIR="$fakeroot_dir" -C python3 install
+}
