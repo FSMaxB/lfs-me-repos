@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=gnome-icon-theme-symbolic
+pkgver=3.10.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '5b61ee13f0a93615a7aba525438b1b6d452ba94b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/gnome
+}
+
+lfs_me_postremove() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/gnome
+}
