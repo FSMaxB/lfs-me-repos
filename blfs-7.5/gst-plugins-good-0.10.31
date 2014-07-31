@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=gst-plugins-good
+pkgver=0.10.31
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '15addda7c6322a42c904aaf1c1d0b5d5a63f908b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e "/input:/d" sys/v4l2/gstv4l2bufferpool.c
+    sed -i -e "/case V4L2_CID_HCENTER/d" -e "/case V4L2_CID_VCENTER/d" sys/v4l2/v4l2_calls.c
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --with-gtk=3.0  \
+                --enable-gtk-doc
+}
