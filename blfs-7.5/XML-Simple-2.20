@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=XML-Simple
+pkgver=2.20
+pkgver_postfix=
+
+sources=( "http://cpan.org/authors/id/G/GR/GRANTM/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '2ececb0960deb51296916186000c63d55cc53092' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    perl Makefile.PL
+}
+
+lfs_me_build() {
+    make
+}
+
+lfs_me_check() {
+    make test 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}
