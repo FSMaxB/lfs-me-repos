@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=lxde-icon-theme
+pkgver=0.5.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/lxde/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '33f00dba05a151a57cb82ea57990d81ce5061985' )
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    gtk-update-icon-cache -qf /usr/share/icons/nuoveXT2
+}
+
+lfs_me_postremove() {
+    gtk-update-icon-cache -qf /usr/share/icons/nuoveXT2
+}
