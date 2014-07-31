@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=pcmanfm
+pkgver=1.1.2
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'd6f42f0957abe25bb79b24b57bf1026eabe3d820' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc
+}
+
+lfs_me_check() {
+    return
+}
