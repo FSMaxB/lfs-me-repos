@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=pycairo
+pkgver=1.10.0
+pkgver_postfix=
+
+sources=( "http://cairographics.org/releases/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'b4283aa1cc9aafd12fd72ad371303a486da1d014' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    PYTHON=/usr/bin/python3 ./waf configure --prefix=/usr
+}
+
+lfs_me_build() {
+    ./waf build
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    ./waf --destdir="$fakeroot_dir" install
+}
