@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=gpicview
+pkgver=0.2.4
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/lxde/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '423143c850390db9784ad9812b9f929c18dd51ea' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    xdg-icon-resource forceupdate --theme hicolor
+}
+
+lfs_me_postremove() {
+    xdg-icon-resource forceupdate --theme hicolor
+}
