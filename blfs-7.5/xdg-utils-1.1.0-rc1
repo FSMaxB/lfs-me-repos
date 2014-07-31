@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=xdg-utils
+pkgver=1.1.0-rc1
+pkgver_postfix=
+
+sources=( "http://portland.freedesktop.org/download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '5bd5e2fe10e3055ccec347e8608476fab2d3eaca' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --mandir=/usr/share/man
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
