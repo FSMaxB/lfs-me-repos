@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=libatasmart
+pkgver=0.19
+pkgver_postfix=
+
+sources=( "http://0pointer.de/public/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '0d0745b6bd2e5b9461d15966b5daac6c98302de8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" docdir="/usr/share/doc/${pkgname}-${pkgver}" install
+}
