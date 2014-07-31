@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=gnome-desktop
+pkgver=3.10.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'fd13640ad7f096f29267366bcdf4cf8dc95af07a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --with-gnome-distributor="FSMaxB" --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
