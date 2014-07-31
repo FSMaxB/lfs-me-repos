@@ -1,0 +1,52 @@
+#!/bin/bash
+pkgname=pygobject
+pkgver=3.10.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '693cc1cb692a8f21ff27d28eaa780f5e67cafb1a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    mkdir python2
+    pushd python2
+    ../configure --prefix=/usr --with-python=/usr/bin/python
+    popd
+
+    mkdir python3
+    pushd python3
+    ../configure --prefix=/usr --with-python=/usr/bin/python3
+    popd
+
+}
+
+lfs_me_build() {
+    pushd python2
+    make
+    popd
+
+    pushd python3
+    make
+    popd
+}
+
+lfs_me_check() {
+    make -C python2 -k check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+    make -C python3 -k check 2>&1 | tee -a "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make -C python2 DESTDIR="$fakeroot_dir" install
+    make -C python3 DESTDIR="$fakeroot_dir" install
+}
+
+lfs_me_postinstall() {
+    return
+}
+
+lfs_me_postremove() {
+    return
+}
