@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=nautilus
+pkgver=3.10.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/nautilus/3.10/nautilus-3.10.1.tar.xz" )
+sha1sums=( '56ce27894502884811da7f7a1db953d95dd82e6d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr        \
+                --sysconfdir=/etc    \
+                --disable-tracker    \
+                --disable-packagekit \
+                --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
+
+lfs_me_postremove() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
