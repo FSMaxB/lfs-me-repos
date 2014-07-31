@@ -1,0 +1,28 @@
+#!/bin/bash
+pkgname=libdv
+pkgver=1.0.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '2e5ba0e95f665d60e72cbebcf1c4989e0d6c92c8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --disable-xv \
+                --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+        
+    install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    install -v -m644 README* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
