@@ -1,0 +1,11 @@
+#!/bin/bash
+pkgname=icon-naming-utils
+pkgver=0.8.90
+pkgver_postfix=
+
+sources=( "http://tango.freedesktop.org/releases/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '4e8025f129f9e536eafff847f65e44ede3e5e7ef' )
+
+lfs_me_check() {
+    return
+}
