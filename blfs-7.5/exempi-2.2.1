@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=exempi
+pkgver=2.2.1
+pkgver_postfix=
+
+sources=( "http://libopenraw.freedesktop.org/download/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '0ca233e81d6f6fef94ac13202ce9a66b584d482e' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
