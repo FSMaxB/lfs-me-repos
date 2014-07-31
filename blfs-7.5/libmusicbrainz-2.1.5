@@ -1,0 +1,38 @@
+#!/bin/bash
+pkgname=libmusicbrainz
+pkgver=2.1.5
+pkgver_postfix=
+
+sources=( "http://ftp.musicbrainz.org/pub/musicbrainz/historical/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-missing-includes-1.patch" )
+sha1sums=( '99e85701541e41bb367e37e3a6ac47415fe8748f'
+           '5295e14c1bcae65db00a89589a6ae7fd4b39c69a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-missing-includes-1.patch"
+    ./configure --prefix=/usr
+}
+
+lfs_me_build() {
+    make
+    pushd python
+    python setup.py build
+    popd
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -v -m644 -D docs/mb_howto.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/mb_howto.txt"
+
+    cd python
+    python setup.py install --prefix "${fakeroot_dir}"
+}
