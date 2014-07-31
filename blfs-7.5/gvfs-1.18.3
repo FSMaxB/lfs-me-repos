@@ -1,0 +1,30 @@
+#!/bin/bash
+pkgname=gvfs
+pkgver=1.18.3
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/1.18/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'd6e899c6915816589e834a455e0ae11570c1097b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --disable-gphoto2 \
+                --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
+
+lfs_me_postremove() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
