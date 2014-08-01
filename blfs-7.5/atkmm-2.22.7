@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=atkmm
+pkgver=2.22.7
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.22/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'c3273aa7b84fb163b0ad5bd3ee26b9d1cd4976bb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
