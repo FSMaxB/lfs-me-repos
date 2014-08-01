@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=midori
+pkgver=0.5.8
+pkgver_postfix=
+
+sources=( "http://www.midori-browser.org/downloads/${pkgname}_${pkgver}_all_.tar.bz2" )
+sha1sums=( '238bbf4935e409bc41fcba5b8407f3e30ea017f6' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}_${pkgver}_all_.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}"
+
+    ./configure --prefix=/usr --enable-gtk3 --enable-apidocs
+}
