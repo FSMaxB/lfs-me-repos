@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=zenity
+pkgver=3.10.2
+pkgver_postfix=
+
+lfs_me_prepare() {
+    cd "$build_dir"
+    git clone "git://git.gnome.org/zenity"
+
+    cd "${build_dir}/${pkgname}"
+    git checkout "ZENITY_${pkgver//./_}"
+    git cherry-pick -n 80bc8ce643979fec201c4ebd5cd6405b6310357f
+
+    ./autogen.sh --prefix=/usr
+                 --sysconfdir=/etc \
+                 --localstatedir=/var
+}
+
+lfs_me_check() {
+    return
+}
