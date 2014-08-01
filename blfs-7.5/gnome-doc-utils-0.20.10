@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=gnome-doc-utils
+pkgver=0.20.10
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '8320a30e1b7239aa33ba276da046090407a93bbf' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --mandir=/usr/share/man \
+                --localstatedir=/var \
+                --disable-scrollkeeper
+}
+
+lfs_me_check() {
+    return
+}
