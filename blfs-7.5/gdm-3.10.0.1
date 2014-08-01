@@ -1,0 +1,65 @@
+#!/bin/bash
+pkgname=gdm
+pkgver=3.10.0.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver:0:4}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '0950e7a864859e78ce6d0aba26813c8daf4c699f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    AUTOPOINT='intltoolize --automake -c' autoreconf -fi
+    cd $pkgbase-$pkgver
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --libexecdir=/usr/lib/gdm \
+                --localstatedir=/var \
+                --disable-static \
+                --disable-schemas-compile \
+                --with-at-spi-registryd-directory=/usr/lib/at-spi2-core \
+                --with-check-accelerated-directory=/usr/lib/gnome-session \
+                --with-authentication-agent-directory=/usr/lib/polkit-gnome \
+                --without-tcp-wrappers \
+                --without-console-kit \
+                --with-systemd
+
+    sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0 /g' -e 's/    if test "$export_dynamic" = yes && test -n "$export_dynamic_flag_spec"; then/      func_append compile_command " -Wl,-O1,--as-needed"\n      func_append finalize_command " -Wl,-O1,--as-needed"\n\0/' libtool
+}
+
+lfs_me_build() {
+    make -j1
+}
+
+lfs_me_check() {
+    make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    chmod 711 "${fakeroot_dir}/var/log/gdm"
+    rm -r "${fakeroot_dir}/var/run"
+}
+
+lfs_me_postinstall() {
+    getent group gdm >/dev/null 2>&1 || groupadd -g 120 gdm
+    getent passwd gdm > /dev/null 2>&1 || useradd -c 'Gnome Display Manager' -u 120 -g gdm -d /var/lib/gdm -s /sbin/nologin gdm
+    passwd -l gdm > /dev/null
+    chown -R gdm:gdm /var/lib/gdm > /dev/null
+    chown root:gdm /var/log/gdm > /dev/null
+
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+    dconf update
+}
+
+lfs_me_postremove() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+    dconf update
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+    getent passwd gdm >/dev/null 2>&1 && userdel gdm
+    getent group gdm >/dev/null 2>&1 && groupdel gdm
+}
