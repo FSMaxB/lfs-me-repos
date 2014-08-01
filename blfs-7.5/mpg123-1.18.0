@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=mpg123
+pkgver=1.18.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'd6e59eeb972a7d11dfcc7505cf1f3e0ae875f439' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --with-module-suffix=.so
+}
+
+lfs_me_check() {
+    return
+}
