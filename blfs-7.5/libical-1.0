@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=libical
+pkgver=1.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/freeassociation/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '25c75f6f947edb6347404a958b1444cceeb9f117' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    cmake ../${pkgname}-${pkgver} \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr
+}
+
+lfs_me_check() {
+    return
+}
