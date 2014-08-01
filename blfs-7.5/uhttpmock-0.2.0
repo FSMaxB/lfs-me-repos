@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=uhttpmock
+pkgver=0.2.0
+pkgver_postfix=
+
+sources=( "http://tecnocode.co.uk/downloads/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '96b04312fd46e80e959b735bbb1ca8ded44f22a3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
