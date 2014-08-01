@@ -1,0 +1,43 @@
+#!/bin/bash
+pkgname=pavucontrol
+pkgver=2.0
+pkgver_postfix=
+
+sources=( "http://freedesktop.org/software/pulseaudio/pavucontrol/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '5cf0fb666d2022b22599a6d052f56e0c86d3013d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-gtk3
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"[Desktop Entry]
+Version=1.0
+Name=PulseAudio Volume Control
+GenericName=Volume Control
+Comment=Adjust the volume level
+Exec=pavucontrol
+Icon=multimedia-volume-control
+StartupNotify=true
+Type=Application
+Categories=AudioVideo;Audio;
+GenericName[en_GB]=Volume Control" > pavucontrol.desktop
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/usr/share/applications"
+    install -Dm644 pavucontrol.desktop "${fakeroot_dir}/usr/share/applications/pavucontrol.desktop"
+}
