@@ -1,0 +1,22 @@
+#!/bin/bash
+pkgname=telepathy-glib
+pkgver=0.24.0
+pkgver_postfix=
+
+sources=( "http://telepathy.freedesktop.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '43a3e9f3e08725b689aba3baa487c9711d436888' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --libexecdir=/usr/lib/telepathy \
+                --enable-vala-bindings \
+                --enable-static=no
+}
+
+lfs_me_check() {
+    return
+}
