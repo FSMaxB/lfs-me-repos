@@ -27,3 +27,27 @@ lfs_me_prepare() {
 lfs_me_check() {
     return
 }
+
+lfs_me_postinstall() {
+    gtk-query-immodules-2.0 --update-cache
+    gtk-query-immodules-3.0 --update-cache
+
+    gtk-update-icon-cache -fq -t /usr/share/icons/hicolor
+
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+
+    dconf update
+}
+
+lfs_me_postremove() {
+    gtk-query-immodules-2.0 --update-cache
+    gtk-query-immodules-3.0 --update-cache
+
+    gtk-update-icon-cache -fq -t /usr/share/icons/hicolor
+
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+
+    dconf update
+
+    rm -f /etc/dconf/db/ibus
+}
