@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=geoclue
+pkgver=2.1.8
+pkgver_postfix=
+
+sources=( "http://freedesktop.org/software/geoclue/releases/${pkgver:0:3}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '7668085749d80552e9a92d65786516b45b98943f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+            --libexecdir="/usr/lib/${pkgname}2" --disable-static
+}
+
+lfs_me_check() {
+    return
+}
