@@ -1,0 +1,38 @@
+#!/bin/bash
+pkgname=gnome-online-accounts
+pkgver=3.10.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver:0:4}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '462ef8a6ecc10f383be5b00c4ff363e553da616f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+                --libexecdir=/usr/lib/$pkgname  \
+                --disable-static    \
+                --enable-exchange   \
+                --enable-facebook   \
+                --enable-flickr     \
+                --enable-google     \
+                --enable-imap-smtp  \
+                --enable-owncloud   \
+                --enable-kerberos   \
+                --enable-telepathy  \
+                --enable-windows-live
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
+
+lfs_me_postremove() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
