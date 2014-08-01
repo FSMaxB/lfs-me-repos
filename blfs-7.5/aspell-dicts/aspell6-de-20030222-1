@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=aspell6-de
+pkgver=20030222
+pkgver_postfix=1
+
+sources=( "ftp://ftp.gnu.org/gnu/aspell/dict/de/${pkgname}-${pkgver}-${pkgver_postfix}.tar.bz2" )
+sha1sums=( 'a06b1153404f6d1f9bd8aa03d596c14093e561c7' )
+
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}-${pkgver_postfix}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}-${pkgver_postfix}"
+
+    ./configure
+}
+
+lfs_me_check() {
+    return
+}
