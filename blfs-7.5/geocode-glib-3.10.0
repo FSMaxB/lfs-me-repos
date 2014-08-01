@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=geocode-glib
+pkgver=3.10.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/GNOME/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'e2d851850cc532b02aa93a86aa9ba23de93dfe31' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
