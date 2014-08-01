@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=totem-pl-parser
+pkgver=3.10.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '3181a750ad8a7a7073f52ae7cb8ded05a1573df9' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
