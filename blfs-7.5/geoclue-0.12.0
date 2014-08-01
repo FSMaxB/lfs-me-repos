@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=geoclue
+pkgver=0.12.0
+pkgver_postfix=
+
+sources=( "https://launchpad.net/geoclue/trunk/0.12/+download/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-gpsd_fix-1.patch" )
+sha1sums=( '0c7d3322ac80e5032b8dd5826ad76517f34c92fd'
+           '400929c2ed1652c5b7fa0113dd99ed0de16a389f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-gpsd_fix-1.patch"
+    sed -i "s@ -Werror@@" configure
+    sed -i "s@libnm_glib@libnm-glib@g" configure
+    sed -i "s@geoclue/libgeoclue.la@& -lgthread-2.0@g" providers/skyhook/Makefile.in
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
