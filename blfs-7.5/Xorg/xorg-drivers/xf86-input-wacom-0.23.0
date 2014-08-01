@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=xf86-input-wacom
+pkgver=0.23.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/linuxwacom/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '71ec3218cb9534cbca1e6916144eb6126fc20d2f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+    return
+}
