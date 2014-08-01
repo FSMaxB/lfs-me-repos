@@ -1,0 +1,33 @@
+#!/bin/bash
+pkgname=linux-firmware
+pkgver=20140603
+pkgver_postfix=a4f3bc0
+
+sources=()
+sha1sums=()
+
+lfs_me_prepare() {
+    cd "${build_dir}"
+    git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/${pkgname}.git
+
+    cd "${build_dir}/${pkgname}"
+    git checkout "$pkgver_postfix"
+
+    rm Makefile
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    install -d -m755 "${fakeroot_dir}/lib/firmware"
+    cp -a * "${fakeroot_dir}/lib/firmware/"
+    install -d -m755 "${fakeroot_dir}/usr/share/licenses/linux-firmware/"
+    rm -f "${fakeroot_dir}/lib/firmware/"{README*,configure,GPL*}
+    mv "${fakeroot_dir}/lib/firmware"/{LICEN*,WHENCE} "${fakeroot_dir}/usr/share/licenses/linux-firmware/"
+}
