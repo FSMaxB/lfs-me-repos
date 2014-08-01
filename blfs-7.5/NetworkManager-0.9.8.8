@@ -17,7 +17,9 @@ lfs_me_prepare() {
                 --localstatedir=/var \
                 --disable-ppp        \
                 --enable-doc         \
-                --without-iptables
+                --without-iptables   \
+                --with-session-tracking=systemd \
+                --with-kernel-firmware-dir=/lib/firmware
 }
 
 lfs_me_build() {
