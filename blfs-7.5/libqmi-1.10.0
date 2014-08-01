@@ -1,0 +1,16 @@
+#!/bin/bash
+pkgname=libqmi
+pkgver=1.10.0
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'b1edbad86aa1f8b187f37a275538f1c2ed8c415c' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+            --disable-static --with-tests
+}
