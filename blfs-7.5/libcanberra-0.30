@@ -1,0 +1,30 @@
+#!/bin/bash
+pkgname=libcanberra
+pkgver=0.30
+pkgver_postfix=
+
+sources=( "http://0pointer.de/lennart/projects/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'fd4c16e341ffc456d688ed3462930d17ca6f6c20' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --disable-oss \
+                --sysconfdir=/etc \
+                --enable-gtk-doc \
+                --localstatedir=/var \
+                --enable-alsa \
+                --enable-gstreamer \
+                --enable-pulse
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" docdir="/usr/share/doc/${pkgname}-${pkgver}" install
+}
