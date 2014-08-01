@@ -1,0 +1,16 @@
+#!/bin/bash
+pkgname=libmbim
+pkgver=1.8.0
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ed823958c47efdfb3e0dd9174d37e7b2b106f73f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+            --disable-static --with-tests
+}
