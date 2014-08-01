@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=gnome-menus
+pkgver=3.10.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver:0:4}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '29226e7a8ab59984cabb13545cc0ec28cba55398' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static
+}
+
+lfs_me_check() {
+    return
+}
