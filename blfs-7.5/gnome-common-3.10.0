@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=gnome-common
+pkgver=3.10.0
+pkgver_postfix=
+
+sources=( "http://download.gnome.org/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'e44fffbe5ba9926e43b716cf57263d9294d3080d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
