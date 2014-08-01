@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=caribou
+pkgver=0.4.4.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/GNOME/sources/${pkgname}/${pkgver:0:3}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'fda7b5bffdd041e19723c6ffe6f5f9051e8cedad' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    export PYTHON=/usr/bin/python
+    ./configure --prefix=/usr
+                --sysconfdir=/etc \
+                --libexecdir=/usr/lib/${pkgname} \
+                --disable-static \
+                --disable-gtk2-module \
+                --disable-schemas-compile
+
+    sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
+}
+
+lfs_me_check() {
+    make -k check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
