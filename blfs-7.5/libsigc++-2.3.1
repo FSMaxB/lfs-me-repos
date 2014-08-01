@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=libsigc++
+pkgver=2.3.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.3/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '6d23b44ab37b4f908c850c3d9898e42da54a0d8d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
