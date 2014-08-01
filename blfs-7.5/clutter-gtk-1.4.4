@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=clutter-gtk
+pkgver=1.4.4
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/1.4/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '15fa002070671eca0f14e2b7c9c0580b6393f14d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
