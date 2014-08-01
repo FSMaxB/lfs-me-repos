@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=gmime
+pkgver=2.6.19
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.6/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '1db06851e69838e916badefe9c00e36e15230f81' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static --enable-smime --enable-gtk-doc
+}
