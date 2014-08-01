@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=rarian
+pkgver=0.8.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.8/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '9b3f1bad1cdbb0de51d6f74431b20eb3647edc5a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --localstatedir=/var
+}
+
+lfs_me_check() {
+    return
+}
