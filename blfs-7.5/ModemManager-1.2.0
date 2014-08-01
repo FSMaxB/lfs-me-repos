@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=ModemManager
+pkgver=1.2.0
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/${pkgname}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '1e17965716a1b27a8b250e813dbeb135d88b0bb9' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --localstatedir=/var \
+                --with-polkit=permissive \
+                --enable-gtk-doc \
+                --disable-static
+}
+
+lfs_me_check() {
+    return
+}
