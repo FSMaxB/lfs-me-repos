@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=colord-gtk
+pkgver=0.1.25
+pkgver_postfix=
+
+sources=( "http://www.freedesktop.org/software/colord/releases/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ffb27568ff25860fbcc09cc32ba05469655b099d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr                \
+                --sysconfdir=/etc            \
+                --libexecdir=/usr/lib/colord \
+                --localstatedir=/var         \
+                --disable-static             \
+                --enable-vala
+}
+
+lfs_me_check() {
+    return
+}
