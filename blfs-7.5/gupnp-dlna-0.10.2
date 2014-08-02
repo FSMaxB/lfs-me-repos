@@ -1,0 +1,18 @@
+#!/bin/bash
+pkgname=gupnp-dlna
+pkgver=0.10.2
+pkgver_postfix=
+
+sources=( "http://download.gnome.org/sources/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'a5bd5aea20d8dd49a7a6dcb42a299cc0d16f8f92' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --localstatedir=/var \
+                --disable-static
+}
