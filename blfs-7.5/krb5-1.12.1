@@ -1,0 +1,68 @@
+#!/bin/bash
+pkgname=krb5
+pkgver=1.12.1
+pkgver_postfix=
+
+sources=( "http://web.mit.edu/kerberos/www/dist/${pkgname}/1.12/${pkgname}-${pkgver}-signed.tar"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/mitkrb-${pkgver}-db2_fix-1.patch"
+          "http://www.linuxfromscratch.org/blfs/downloads/7.5/blfs-bootscripts-20140301.tar.bz2" )
+sha1sums=( 'd59e8dc0fc9e1890e109cd033756539984e3d3fe'
+           '48d20805cd9ed18583e92b591c5d9bcd962acf64'
+           'be3bd33ee1bbd950b53f1707a409887c2c5d7721' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}-signed.tar" -C "$build_dir"
+    tar -xf "${build_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+    tar -xf "${sources_dir}/blfs-bootscripts-20140301.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/mitkrb-${pkgver}-db2_fix-1.patch"
+    cd src &&
+    sed -e "s@python2.5/Python.h@& python2.7/Python.h@g" \
+        -e "s@-lpython2.5]@&,\n  AC_CHECK_LIB(python2.7,main,[PYTHON_LIB=-lpython2.7])@g" \
+        -i configure.in
+    sed -e "s@interp->result@Tcl_GetStringResult(interp)@g" \
+        -i kadmin/testing/util/tcl_kadm5.c
+    sed -e 's@\^u}@^u cols 300}@' \
+        -i tests/dejagnu/config/default.exp
+    autoconf
+    ./configure --prefix=/usr            \
+                --sysconfdir=/etc        \
+                --localstatedir=/var/lib \
+                --with-system-et         \
+                --with-system-ss         \
+                --enable-dns-for-realm
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    make install &&
+
+    for LIBRARY in gssapi_krb5 gssrpc k5crypto kadm5clnt kadm5srv kdb5 kdb_ldap krad krb5 krb5support verto
+    do
+        [ -e  /usr/lib/lib$LIBRARY.so ] && chmod -v 755 /usr/lib/lib$LIBRARY.so
+    done
+
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libkrb5.so.3* "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libk5crypto.so.3* "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libkrb5support.so.0* "${fakeroot_dir}/lib"
+
+    ln -v -sf ../../lib/libkrb5.so.3.3        "${fakeroot_dir}/usr/lib/libkrb5.so"
+    ln -v -sf ../../lib/libk5crypto.so.3.1    "${fakeroot_dir}/usr/lib/libk5crypto.so"
+    ln -v -sf ../../lib/libkrb5support.so.0.1 "${fakeroot_dir}/usr/lib/libkrb5support.so"
+
+    mkdir -pv "${fakeroot_dir}/bin"
+    mv -v "${fakeroot_dir}/usr/bin/ksu" "${fakeroot_dir}/bin" 
+    chmod -v 755 "${fakeroot_dir}/bin/ksu"
+
+    install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -vfr ../doc/*  "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    unset LIBRARY
+
+    cd "${build_dir}/blfs-bootscripts-20140301"
+    make DESTDIR="$fakeroot_dir" -f Makefile.systemd install-krb5
+}
