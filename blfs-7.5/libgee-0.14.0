@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libgee
+pkgver=0.14.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/0.14/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ca6531c8ba45cc865f2ce7b93a8b3f96e1c1505e' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
