@@ -1,0 +1,20 @@
+#!/bin/bash
+pkgname=bash-completion
+pkgver=2.1
+pkgver_postfix=
+
+sources=( "http://bash-completion.alioth.debian.org/files/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'b74bf7d83646e1412bb07dbb1de09db1c9715599' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    
+    autoreconf --install
+    ./configure --prefix=/usr --sysconfdir=/etc
+}
+
+lfs_me_check() {
+    return
+}
