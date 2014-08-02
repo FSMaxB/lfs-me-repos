@@ -1,0 +1,40 @@
+#!/bin/bash
+pkgname=gnome-shell
+pkgver=3.10.4
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/GNOME/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '45f1b5ab213a8f5ebdd2b713e942accff4e66ad5' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --libexecdir=/usr/lib/gnome-shell \
+                --localstatedir=/var \
+                --disable-static \
+                --disable-schemas-compile
+
+    sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    
+    mkdir -pv "${fakeroot_dir}/usr/share/gnome-shell/modes"
+}
+
+lfs_me_postinstall() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
+
+lfs_me_postremove() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
