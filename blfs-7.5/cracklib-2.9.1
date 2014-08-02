@@ -1,0 +1,37 @@
+#!/bin/bash
+pkgname=cracklib
+pkgver=2.9.1
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+          "http://downloads.sourceforge.net/${pkgname}/${pkgname}-words-20080507.gz" )
+sha1sums=( '9db3e7a0cb828fcb94adfd69761791d212e22425'
+           'e0cea03e505e709b15b8b950d56cb493166607da' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --with-default-dict=/lib/cracklib/pw_dict \
+                --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/lib"
+    mv -v "$fakeroot_dir"/usr/lib/libcrack.so.* "${fakeroot_dir}/lib"
+    ln -sfv ../../lib/$(readlink "${fakeroot_dir}/usr/lib/libcrack.so") "${fakeroot_dir}/usr/lib/libcrack.so"
+
+    mkdir -pv "${fakeroot_dir}/usr/share/dict"
+    install -v -m644 -D "${sources_dir}/${pkgname}-words-20080507.gz" "${fakeroot_dir}/usr/share/dict/${pkgname}-words.gz"
+    gunzip -v "${fakeroot_dir}/usr/share/dict/${pkgname}-words.gz"
+    ln -v -sf cracklib-words "${fakeroot_dir}/usr/share/dict/words"
+    install -v -m755 -d      "${fakeroot_dir}/lib/cracklib"
+}
