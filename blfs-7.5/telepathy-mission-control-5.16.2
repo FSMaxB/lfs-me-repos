@@ -1,0 +1,32 @@
+#!/bin/bash
+pkgname=telepathy-mission-control
+pkgver=5.16.2
+pkgver_postfix=
+
+sources=( "http://telepathy.freedesktop.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '4c15d20b5f06f083a60bcd9b08141e99092863a3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --libexecdir=/usr/lib/telepathy \
+                --with-connectivity=nm \
+                --enable-gtk-doc \
+                --disable-upower \
+                --disable-static \
+                --disable-schemas-compile
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
+
+lfs_me_postremove() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+}
