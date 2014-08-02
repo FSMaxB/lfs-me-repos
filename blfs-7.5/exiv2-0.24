@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=exiv2
+pkgver=0.24
+pkgver_postfix=
+
+sources=( "http://www.exiv2.org/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '2f19538e54f8c21c180fa96d17677b7cff7dc1bb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    chmod -v 755 "${fakeroot_dir}/usr/lib/libexiv2.so"
+}
