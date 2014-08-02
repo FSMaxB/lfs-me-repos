@@ -16,17 +16,18 @@ lfs_me_prepare() {
                 --localstatedir=/var         \
                 --with-daemon-user=colord    \
                 --enable-vala                \
-                --enable-systemd-login       \
-                --enable-polkit              \
-                --disable-bash-completion    \
                 --disable-static             \
-                --enable-gtk-doc
+                --enable-gtk-doc             \
+                --libexecdir="/usr/lib/${pkgname}"
+}
+
+lfs_me_check() {
+    make -k check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
 }
 
 lfs_me_postinstall() {
     groupadd -g 71 colord
-    useradd -c "Color Daemon Owner" -d /var/lib/colord -u 71 \
-            -g colord -s /bin/false colord
+    useradd -c "Color Daemon Owner" -d /var/lib/colord -u 71 -g colord -s /bin/false colord
 }
 
 lfs_me_postremove() {
