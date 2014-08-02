@@ -1,0 +1,18 @@
+#!/bin/bash
+pkgname=gssdp
+pkgver=0.14.8
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver:0:4}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '1996864c7d79ba0daafe4ec2ba4c7aa2c6e2af80' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --localstatedir=/var \
+                --disable-static
+}
