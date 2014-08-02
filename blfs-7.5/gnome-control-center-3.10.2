@@ -1,0 +1,41 @@
+#!/bin/bash
+pkgname=gnome-control-center
+pkgver=3.10.2
+pkgver_postfix=
+
+sources=( "http://download.gnome.org/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ed52f9a96982bc9a4dce299ce1eea20a8ac8ba4a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    autoreconf -fi
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --localstatedir=/var \
+                --libexecdir="/usr/lib/$pkgname" \
+                --disable-static \
+                --disable-cups  \
+                --disable-krb5  \
+                --disable-silent-rules
+
+    sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0 /g' -e 's/    if test "$export_dynamic" = yes && test -n "$export_dynamic_flag_spec"; then/      func_append compile_command " -Wl,-O1,--as-needed"\n      func_append finalize_command " -Wl,-O1,--as-needed"\n\0/' libtool
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}
+
+lfs_me_postinstall() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
+
+lfs_me_postremove() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
