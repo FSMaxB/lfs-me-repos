@@ -11,12 +11,13 @@ lfs_me_prepare() {
 
     cd "${build_dir}/${pkgname}-${pkgver}"
 
-    ./configure --prefix=/usr                       \
-                --sysconfdir=/etc                   \
-                --localstatedir=/var                \
+    ./configure --prefix=/usr
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \ 
+                --localstatedir=/var \
                 --libexecdir=/usr/lib/gnome-session \
-                --disable-schemas-compile           \
-                --enable-systemd                    \
+                --disable-schemas-compile \
+                --enable-systemd \
                 --disable-gconf
 }
 
