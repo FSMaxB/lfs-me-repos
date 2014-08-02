@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=mod_dnssd
+pkgver=0.6
+pkgver_postfix=
+
+sources=( "http://0pointer.de/lennart/projects/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '22a90b4e3a5c042b47926888bbc41d79d9745b10' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i 's/unixd_setup_child/ap_&/' src/mod_dnssd.c
+    ./configure --prefix=/usr --disable-lynx
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+      install -D -m755 src/.libs/mod_dnssd.so "${fakeroot_dir}/usr/lib/httpd/modules/mod_dnssd.so"
+}
