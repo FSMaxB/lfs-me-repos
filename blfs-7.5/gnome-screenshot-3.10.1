@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=gnome-screenshot
+pkgver=3.10.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '48d0708c18bb22f9ed7c19a136ff7b346ceac4a5' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
