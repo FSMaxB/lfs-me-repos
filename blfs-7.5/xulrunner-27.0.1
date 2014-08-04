@@ -1,0 +1,106 @@
+#!/bin/bash
+pkgname=xulrunner
+pkgver=27.0.1
+pkgver_postfix=
+
+sources=( "http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/${pkgver}/source/firefox-${pkgver}.source.tar.bz2" )
+sha1sums=( '29dc759e36f2b9381e80ac48ce59635ea25033dc' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/firefox-${pkgver}.source.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/mozilla-release"
+
+    echo \
+"# If you have a multicore machine, firefox will now use all the cores by
+# default. Exceptionally, you can reduce the number of cores, e.g. to 1,
+# by uncommenting the next line and setting a valid number of CPU cores.
+#mk_add_options MOZ_MAKE_FLAGS="-j1"
+
+# If you have installed DBus-Glib comment out this line:
+#ac_add_options --disable-dbus
+
+# If you have installed wireless-tools comment out this line:
+#ac_add_options --disable-necko-wifi
+
+# If you have installed libnotify comment out this line:
+#ac_add_options --disable-libnotify
+
+# GStreamer is necessary for H.264 video playback in HTML5 Video Player;
+# to be enabled, also remember to set "media.gstreamer.enabled" to "true"
+# in about:config. If you have installed GStreamer comment out this line:
+#ac_add_options --disable-gstreamer
+
+# Uncomment these lines if you have installed optional dependencies:
+#ac_add_options --enable-system-hunspell
+ac_add_options --enable-startup-notification
+
+# Uncomment this line if you compiled Cairo with --enable-tee switch and want
+# to use it instead of the bundled one:
+ac_add_options --enable-system-cairo
+
+# If you have not installed Yasm then uncomment this line:
+#ac_add_options --disable-webm
+
+# Comment out following options if you have not installed
+# recommended dependencies:
+ac_add_options --enable-system-sqlite
+ac_add_options --with-system-libevent
+ac_add_options --with-system-libvpx
+ac_add_options --with-system-nspr
+ac_add_options --with-system-nss
+
+# It is recommended not to touch anything below this line
+ac_add_options --prefix=/usr
+ac_add_options --enable-application=xulrunner
+
+ac_add_options --disable-crashreporter
+ac_add_options --disable-installer
+ac_add_options --disable-updater
+ac_add_options --disable-debug
+ac_add_options --disable-tests
+ac_add_options --disable-mochitest
+
+ac_add_options --enable-optimize
+ac_add_options --enable-strip
+ac_add_options --enable-install-strip
+
+ac_add_options --enable-system-ffi
+ac_add_options --enable-system-pixman
+
+ac_add_options --enable-shared-js
+ac_add_options --with-pthreads
+
+ac_add_options --with-system-bz2
+ac_add_options --with-system-jpeg
+ac_add_options --with-system-png
+ac_add_options --with-system-zlib
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/xulrunner-build-dir" > mozconfig
+}
+
+lfs_me_build() {
+    make -f client.mk
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" -C xulrunner-build-dir install
+
+    mkdir -pv "${fakeroot_dir}/usr/lib/mozilla/plugins"
+    rm -rf "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}/plugins"
+    ln -sv ../mozilla/plugins "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}"
+
+    chmod -v 755 "${fakeroot_dir}/usr/lib/${pkgname}-devel-${pkgver}/sdk/bin/xpcshell"
+
+    for library in libmozalloc.so libmozjs.so libxul.so; do
+        ln -sfv "../../../${pkgname}-${pkgver}/$library"  "${fakeroot_dir}/usr/lib/${pkgname}-devel-${pkgver}/sdk/lib/$library"
+        ln -sfv "${pkgname}-${pkgver}/$library" "${fakeroot_dir}/usr/lib/$library"
+    done
+
+    ln -sfv "../${pkgname}-devel-${pkgver}/sdk/bin/run-mozilla.sh" "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}"
+    ln -sfv "../${pkgname}-devel-${pkgver}/sdk/bin/xpcshell" "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}"
+}
