@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=totem
+pkgver=3.10.1
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ee3802de84ac2cf34b38f91ae6de59b0d17ff4dc' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static --enable-gtk-doc
+}
+
+lfs_me_check() {
+    return
+}
