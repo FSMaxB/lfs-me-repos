@@ -34,7 +34,7 @@ lfs_me_install() {
     make DESTDIR="$fakeroot_dir" install
     make DESTDIR="$fakeroot_dir" install-private-headers
 
-    ln -v -sf tclsh8.6 "${fakroot_dir}/usr/bin/tclsh"
+    ln -v -sf tclsh8.6 "${fakeroot_dir}/usr/bin/tclsh"
     chmod -v 755 "${fakeroot_dir}/usr/lib/libtcl8.6.so"
 
     mkdir -v -p "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
