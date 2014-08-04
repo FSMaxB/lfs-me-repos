@@ -1,0 +1,39 @@
+#!/bin/bash
+pkgname=bind
+pkgver=9.9.5
+pkgver_postfix=
+
+sources=( "ftp://ftp.isc.org/isc/${pkgname}9/${pkgver}/${pkgname}-${pkgver}.tar.gz"
+          "http://www.linuxfromscratch.org/patches/blfs/7.5/${pkgname}-${pkgver}-use_iproute2-1.patch" )
+sha1sums=( 'f3fe8000628ec57f332aec1ad9587b767208a38f'
+           '5468649fb6f2ebe7e04ed17e8e9e10a69a85ef8b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-use_iproute2-1.patch"
+    ./configure --prefix=/usr           \
+                --sysconfdir=/etc       \
+                --localstatedir=/var    \
+                --mandir=/usr/share/man \
+                --enable-threads        \
+                --with-libtool          \
+                --disable-static        \
+                --with-randomdev=/dev/urandom
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    chmod -v 0755 "$fakeroot_dir"/usr/lib/lib{bind9,dns,isc{,cc,cfg},lwres}.so
+
+    install -v -m755 -d "$fakeroot_dir"/usr/share/doc/bind-9.9.5/{arm,misc}
+    install -v -m644    doc/arm/*.html "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/arm"
+    install -v -m644 doc/misc/{dnssec,ipv6,migrat*,options,rfc-compliance,roadmap,sdb} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/misc"
+}
