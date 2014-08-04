@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=gnome-system-monitor
+pkgver=3.10.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/3.10/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '287a67df5c44685dcb07f3a9b27adb750da74dd3' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
+
+lfs_me_postremove() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
