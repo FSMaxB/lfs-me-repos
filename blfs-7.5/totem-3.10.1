@@ -17,3 +17,13 @@ lfs_me_prepare() {
 lfs_me_check() {
     return
 }
+
+lfs_me_postinstall() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
+
+lfs_me_postremove() {
+    glib-compile-schemas /usr/share/glib-2.0/schemas
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
