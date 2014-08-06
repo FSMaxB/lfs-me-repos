@@ -1,0 +1,27 @@
+#!/bin/bash
+pkgname=libdca
+pkgver=0.0.5
+pkgver_postfix=
+
+sources=( "http://download.videolan.org/pub/videolan/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '3fa5188eaaa2fc83fb9c4196f6695a23cb17f3bc' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --mandir=/usr/share/man --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    rm -f "${fakeroot_dir}/usr/share/man/man1"/{extract_dts,dtsdec}.1
+    ln -s dcadec.1.gz "${fakeroot_dir}/usr/share/man/man1/dtsdec.1.gz"
+    ln -s extract_dca.1.gz "${fakeroot_dir}/usr/share/man/man1/extract_dts.1.gz"
+}
