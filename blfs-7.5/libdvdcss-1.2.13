@@ -1,0 +1,11 @@
+#!/bin/bash
+pkgname=libdvdcss
+pkgver=1.2.13
+pkgver_postfix=
+
+sources=( "http://download.videolan.org/pub/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( '1a4a5e55c7529da46386c1c333340eee2c325a77' )
+
+lfs_me_check() {
+    return
+}
