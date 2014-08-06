@@ -1,0 +1,140 @@
+#!/bin/bash
+pkgname=firefox
+pkgver=27.0.1
+pkgver_postfix=
+
+sources=( "http://ftp.mozilla.org/pub/mozilla.org/${pkgname}/releases/${pkgver}/source/${pkgname}-${pkgver}.source.tar.bz2" )
+sha1sums=( '29dc759e36f2b9381e80ac48ce59635ea25033dc' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.source.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/mozilla-release"
+
+    echo \
+'# If you have a multicore machine, firefox will now use all the cores by
+# default. Exceptionally, you can reduce the number of cores, e.g. to 1,
+# by uncommenting the next line and setting a valid number of CPU cores.
+#mk_add_options MOZ_MAKE_FLAGS="-j1"
+
+# If you have installed DBus-Glib comment out this line:
+#ac_add_options --disable-dbus
+
+# If you have installed wireless-tools comment out this line:
+#ac_add_options --disable-necko-wifi
+
+# If you have installed libnotify comment out this line:
+#ac_add_options --disable-libnotify
+
+# GStreamer is necessary for H.264 video playback in HTML5 Video Player;
+# to be enabled, also remember to set "media.gstreamer.enabled" to "true"
+# in about:config. If you have installed GStreamer comment out this line:
+#ac_add_options --disable-gstreamer
+
+# Uncomment these lines if you have installed optional dependencies:
+#ac_add_options --enable-system-hunspell
+ac_add_options --enable-startup-notification
+
+# Uncomment this line if you compiled Cairo with --enable-tee switch and want
+# to use it instead of the bundled one:
+ac_add_options --enable-system-cairo
+
+# If you have not installed Yasm then uncomment this line:
+#ac_add_options --disable-webm
+
+# If you have installed xulrunner uncomment the next two ac_add_options lines
+# and check that the sdk will be set by running pkg-config in a subshell
+# and has not become hardcoded or empty when you created this file
+ac_add_options --with-system-libxul
+ac_add_options --with-libxul-sdk=$(pkg-config --variable=sdkdir libxul)
+
+# Comment out following options if you have not installed
+# recommended dependencies:
+ac_add_options --enable-system-sqlite
+ac_add_options --with-system-libevent
+ac_add_options --with-system-libvpx
+ac_add_options --with-system-nspr
+ac_add_options --with-system-nss
+
+# It is recommended not to touch anything below this line
+ac_add_options --prefix=/usr
+ac_add_options --enable-application=browser
+
+ac_add_options --disable-crashreporter
+ac_add_options --disable-installer
+ac_add_options --disable-updater
+ac_add_options --disable-debug
+ac_add_options --disable-tests
+
+ac_add_options --enable-optimize
+ac_add_options --enable-strip
+ac_add_options --enable-install-strip
+
+ac_add_options --enable-gio
+ac_add_options --enable-official-branding
+ac_add_options --enable-safe-browsing
+ac_add_options --enable-url-classifier
+
+ac_add_options --enable-system-ffi
+ac_add_options --enable-system-pixman
+
+ac_add_options --with-pthreads
+
+ac_add_options --with-system-bz2
+ac_add_options --with-system-jpeg
+ac_add_options --with-system-png
+ac_add_options --with-system-zlib
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/firefox-build-dir' > mozconfig
+
+    sed -i 's@ ""@@' browser/base/Makefile.in
+}
+
+lfs_me_build() {
+    make -f client.mk
+
+    echo \
+"[Desktop Entry]
+Encoding=UTF-8
+Name=Firefox Web Browser
+Comment=Browse the World Wide Web
+GenericName=Web Browser
+Exec=firefox %u
+Terminal=false
+Type=Application
+Icon=firefox
+Categories=GNOME;GTK;Network;WebBrowser;
+MimeType=application/xhtml+xml;text/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;text/mml;x-scheme-handler/http;x-scheme-handler/https;
+StartupNotify=true" > "${build_dir}/firefox.desktop"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" -C firefox-build-dir install
+    ln -sfv ../lib/"${pkgname}-${pkgver}/${pkgname}" "${fakeroot_dir}/usr/bin"
+    ln -sfv ../xulrunner-"$pkgver" "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}/xulrunner"
+
+    mkdir -pv "${fakeroot_dir}/usr/lib/mozilla/plugins"
+    ln -sfv ../mozilla/plugins "${fakeroot_dir}/usr/lib/${pkgname}-${pkgver}"
+
+    mkdir -pv "${fakeroot_dir}/usr/share/applications"
+    mkdir -pv "${fakeroot_dir}/usr/share/pixmaps"
+    
+    cp "${build_dir}/firefox.desktop" "${fakeroot_dir}/usr/share/applications/firefox.desktop"
+
+}
+
+lfs_me_postinstall() {
+    ln -sfv "/usr/lib/${pkgname}-${pkgver}/browser/icons/mozicon128.png" "/usr/share/pixmaps/${pkgname}.png"
+    update-desktop-database -q
+    gtk-update-icon-cache -q -t -f usr/share/icons/hicolor
+}
+
+lfs_me_postremove() {
+    rm "/usr/share/pixmaps/${pkgname}.png"
+    update-desktop-database -q
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
