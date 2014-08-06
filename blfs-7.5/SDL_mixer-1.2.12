@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=SDL_mixer
+pkgver=1.2.12
+pkgver_postfix=
+
+sources=( "http://www.libsdl.org/projects/${pkgname}/release/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'a20fa96470ad9e1052f1957b77ffa68fb090b384' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -e "/CONFIG_FILE_ETC/s|/etc/timidity.cfg|/etc/timidity++/timidity.cfg|" \
+        -e "/DEFAULT_PATH/s|/etc/timidity|/etc/timidity++|" \
+        -e "/DEFAULT_PATH2/s|/usr/local/lib/timidity|/usr/lib/timidity|" \
+        -i timidity/config.h
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
