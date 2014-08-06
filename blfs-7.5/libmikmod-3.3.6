@@ -1,0 +1,22 @@
+#!/bin/bash
+pkgname=libmikmod
+pkgver=3.3.6
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/mikmod/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'c0d5c7df1f26b4244ba95ed261f580be2e52f789' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    mkdir build
+    cd build
+
+    ../configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
