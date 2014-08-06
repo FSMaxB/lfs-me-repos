@@ -1,0 +1,52 @@
+#!/bin/bash
+pkgname=fluidsynth
+pkgver=1.1.6
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '155de731e72e91e1d4b7f52c33d8171596fbf244' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    
+    cmake . -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_BUILD_TYPE=Release \
+            -Denable-ladspa=ON \
+            -DLIB_SUFFIX=""
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+'[Unit]
+Description=FluidSynth Daemon
+After=sound.target
+
+[Service]
+ExecStart=/usr/bin/fluidsynth $SYNTHOPTS $SOUNDFONT
+EnvironmentFile=/etc/conf.d/fluidsynth
+
+[Install]
+WantedBy=multi-user.target' > "${build_dir}/${pkgname}.systemd"
+
+echo \
+'SYNTHOPTS="-is -a alsa -m alsa_seq -r 48000"
+#SOUNDFONT=/path/to/a/soundfont' > "${build_dir}/${pkgname}.conf"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -Dm644 "${build_dir}/${pkgname}.systemd" \
+            "${fakeroot_dir}/lib/systemd/system/${pkgname}.service"
+
+    install -Dm644 "${build_dir}/${pkgname}.conf" \
+              "${fakeroot_dir}/etc/conf.d/${pkgname}"
+}
