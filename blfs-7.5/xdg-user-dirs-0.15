@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgname=xdg-user-dirs
+pkgver=0.15
+pkgver_postfix=
+
+sources=( "http://user-dirs.freedesktop.org/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '4e722682adcce33b4b9130b148bfbd9d49737814' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc
+}
+
+lfs_me_build() {
+    make
+
+    echo \
+"#!/bin/sh
+
+# Set up user directories like ~/Desktop and ~/Music
+[ -x /usr/bin/xdg-user-dirs-update ] && /usr/bin/xdg-user-dirs-update" > "${build_dir}/${pkgname}"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    install -D "$pkgname" "${fakeroot_dir}/etc/X11/xinit/xinitrc.d/${pkgname}"
+}
