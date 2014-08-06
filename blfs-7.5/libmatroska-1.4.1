@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=libmatroska
+pkgver=1.4.1
+pkgver_postfix=
+
+sources=( "http://dl.matroska.org/downloads/${pkgname}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'e08c42531b68d21980bf991192378cf8cf79b40f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}/make/linux"
+}
+
+lfs_me_build() {
+    make sharedlib
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make prefix="${fakeroot_dir}/usr" install
+}
