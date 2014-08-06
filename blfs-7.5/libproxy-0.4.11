@@ -1,0 +1,31 @@
+#!/bin/bash
+pkgname=libproxy
+pkgver=0.4.11
+pkgver_postfix=
+
+sources=( "http://libproxy.googlecode.com/files/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'c037969434095bc65d29437e11a7c9e0293a5149' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    mkdir build
+    cd build
+    
+    cmake .. \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DLIBEXEC_INSTALL_DIR=/usr/lib/libproxy \
+            -DCMAKE_SKIP_RPATH=ON \
+            -DPERL_VENDORINSTALL=yes \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DWITH_WEBKIT=OFF \
+            -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
+            -DCMAKE_C_FLAGS="${CFLAGS}" \
+            -DWITH_KDE4=OFF \
+            -DPYTHON_EXECUTABLE:FILEPATH=/usr/bin/python
+}
+
+lfs_me_check() {
+    return
+}
