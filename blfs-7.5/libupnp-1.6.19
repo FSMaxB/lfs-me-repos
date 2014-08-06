@@ -1,0 +1,11 @@
+#!/bin/bash
+pkgname=libupnp
+pkgver=1.6.19
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/sourceforge/pupnp/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'ee9e16ff42808521b62b7fc664fc9cba479ede88' )
+
+lfs_me_check() {
+    return
+}
