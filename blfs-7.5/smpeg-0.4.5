@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=smpeg
+pkgver=0.4.5
+pkgver_postfix=
+
+sources=() 
+sha1sums=()
+
+lfs_me_prepare() {
+
+    cd "$build_dir"
+    svn checkout "svn://svn.icculus.org/smpeg/tags/release_${pkgver//./_}"
+    cd "release_${pkgver//./_}"
+
+    ./autogen.sh
+    ./configure --prefix=/usr --mandir=/usr/share/man --disable-static
+}
+
+lfs_me_check() {
+    return
+}
