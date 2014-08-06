@@ -1,0 +1,30 @@
+#!/bin/bash
+pkgname=ladspa
+pkgver=1.13
+pkgver_postfix=
+
+sources=( "http://www.ladspa.org/download/${pkgname}_sdk_${pkgver}.tgz" )
+sha1sums=( '2b69e28afb62c0d97943124f48ed82de796f83ed' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}_sdk_${pkgver}.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}_sdk/src"
+    sed -e 's/mkdirhier/mkdir -p/' \
+        -e "s#-O3#${CFLAGS} ${LDFLAGS/,--as-needed/}#" \
+        -i makefile
+}
+
+lfs_me_build() {
+    make targets
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make INSTALL_PLUGINS_DIR="${fakeroot_dir}/usr/lib/ladspa/" \
+         INSTALL_INCLUDE_DIR="${fakeroot_dir}/usr/include/" \
+         INSTALL_BINARY_DIR="${fakeroot_dir}/usr/bin/" install
+}
