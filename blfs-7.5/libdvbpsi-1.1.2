@@ -1,0 +1,15 @@
+#!/bin/bash
+pkgname=libdvbpsi
+pkgver=1.1.2
+pkgver_postfix=
+
+sources=( "http://download.videolan.org/pub/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'ea1d7cb2dd9b380bbfabb879d1c77590a600ae40' )
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make prefix="${fakeroot_dir}/usr" install
+}
