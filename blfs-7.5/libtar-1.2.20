@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=libtar
+pkgver=1.2.20
+pkgver_postfix=
+
+sources=( "http://pkgbuild.com/~giovanni/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '24290ffa7a29f4335609a327deba4dd9e10ce056' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}"
+    export CFLAGS+=" -fPIC"
+
+    autoreconf -fi
+    ./configure --prefix=/usr \
+                --mandir=/usr/share/man \
+                --disable-static \
+                --disable-encap \
+                --disable-epkg-install
+}
+
+lfs_me_check() {
+    return
+}
