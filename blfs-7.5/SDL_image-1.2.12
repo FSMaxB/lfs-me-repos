@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=SDL_image
+pkgver=1.2.12
+pkgver_postfix=
+
+sources=( "http://www.libsdl.org/projects/${pkgname}/release/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '5e3e393d4e366638048bbb10d6a269ea3f4e4cf2' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
