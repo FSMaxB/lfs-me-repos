@@ -1,0 +1,29 @@
+#!/bin/bash
+pkgname=gnome-font-viewer
+pkgver=3.10.0
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'c2b72c3aa9af42fa8e990c322f7382749cb64d8a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_postinstall() {
+    update-desktop-database -q
+}
+
+lfs_me_postremove() {
+    update-desktop-database -q
+}
+
+
