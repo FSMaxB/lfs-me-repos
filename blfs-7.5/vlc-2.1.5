@@ -1,0 +1,55 @@
+#!/bin/bash
+pkgname=vlc
+pkgver=2.1.5
+pkgver_postfix=
+
+sources=( "http://download.videolan.org/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '7f1cb6324a04cf393896bbb5976ca9febd7b3efc' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e 's:truetype/freefont:TTF:g' modules/text_renderer/freetype.c
+    sed -i -e 's:truetype/ttf-dejavu:TTF:g' modules/visualization/projectm.cpp
+
+    CFLAGS+=" -I/usr/include/samba-4.0" CPPFLAGS+=" -I/usr/include/samba-4.0" \
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --disable-rpath \
+                --enable-faad \
+                --enable-nls \
+                --enable-lirc \
+                --enable-ncurses \
+                --enable-realrtsp \
+                --enable-aa \
+                --enable-vcdx \
+                --enable-upnp \
+                --enable-opus \
+                --enable-sftp \
+                LUAC=/usr/bin/luac  LUA_LIBS="`pkg-config --libs lua`"
+}
+
+lfs_me_check() {
+    make check 2>&1 | tee "${current_dir}/${pkgname}-check-log"
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    for res in 16 32 48 128; do
+            install -D -m644 "${build_dir}/${pkgname}-${pkgver}/share/icons/${res}x${res}/vlc.png" "${fakeroot_dir}/usr/share/icons/hicolor/${res}x${res}/apps/vlc.png"
+    done
+}
+
+lfs_me_postinstall() {
+    xdg-icon-resource forceupdate --theme hicolor &> /dev/null
+    /usr/lib/vlc/vlc-cache-gen -f /usr/lib/vlc/plugins
+    update-desktop-database -q
+}
+
+lfs_me_postremove() {
+    xdg-icon-resource forceupdate --theme hicolor &> /dev/null
+    update-desktop-database -q
+}
