@@ -1,0 +1,43 @@
+#!/bin/bash
+pkgname=python-setuptools
+pkgver=5.5.1
+pkgver_postfix=
+
+sources=( "http://pypi.python.org/packages/source/s/setuptools/setuptools-${pkgver}.tar.gz" )
+sha1sums=( '35a426ee37ba19dc1dd95fe22ff8355b290a8dc2' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/setuptools-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}"
+
+    cp -a "setuptools-${pkgver}"{,-python2}
+
+    cd "${build_dir}"/setuptools-${pkgver}
+    sed -i -e "s|^#\!.*/usr/bin/python|#!/usr/bin/python3|" setuptools/tests/test_resources.py
+    sed -i -e "s|^#\!.*/usr/bin/env python|#!/usr/bin/env python3|" setuptools/command/easy_install.py
+
+    cd "${build_dir}"/setuptools-${pkgver}-python2
+    sed -i -e "s|^#\!.*/usr/bin/python|#!/usr/bin/python2|" setuptools/tests/test_resources.py
+    sed -i -e "s|^#\!.*/usr/bin/env python|#!/usr/bin/env python2|" setuptools/command/easy_install.py
+}
+
+lfs_me_build() {
+    cd "${build_dir}/setuptools-${pkgver}"
+    python3 setup.py build
+
+    cd "${build_dir}/setuptools-${pkgver}-python2"
+    python2 setup.py build
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/setuptools-${pkgver}"
+    python3 setup.py install --prefix=/usr --root="${fakeroot_dir}" --optimize=1 --skip-build
+
+    cd "${build_dir}/setuptools-${pkgver}-python2"
+    python2 setup.py install --prefix=/usr --root="${fakeroot_dir}" --optimize=1 --skip-build
+}
