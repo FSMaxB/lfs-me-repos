@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=pyxdg
+pkgver=0.25
+pkgver_postfix=
+
+sources=( "http://people.freedesktop.org/~takluyver/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '1272ee62b8c3909ac4844a34a95f8b1fb3398af2' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    python2 setup.py install --optimize=1 --root="${fakeroot_dir}"
+    python3 setup.py install --optimize=1 --root="${fakeroot_dir}"
+}
