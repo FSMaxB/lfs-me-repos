@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=libmtp
+pkgver=1.1.6
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'f9e55c75399fc5f4deabcdfa58e1b01b2e6e3283' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    sed -i "/^Unable to open/d" "${fakeroot_dir}/lib/udev/rules.d/69-libmtp.rules"
+}
