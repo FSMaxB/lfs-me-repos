@@ -1,0 +1,32 @@
+#!/bin/bash
+pkgname=live-media
+pkgver=2014.07.25
+pkgver_postfix=
+
+sources=( "http://live555.com/liveMedia/public/live.${pkgver}.tar.gz" )
+sha1sums=( 'ef07b4d110bc0551d7497995e8d121c6789c890a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/live.${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/live"
+
+    sed -e 's/$(INCLUDES) -I. -O2 -DSOCKLEN_T/$(INCLUDES) -I. -O2 -I. -fPIC -DRTSPCLIENT_SYNCHRONOUS_INTERFACE=1 -DSOCKLEN_T/g' -i config.linux
+      ./genMakefiles linux
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    for dir in BasicUsageEnvironment groupsock liveMedia UsageEnvironment; do
+        install -dm755 ${fakeroot_dir}/usr/{bin,lib,include/${dir}}
+        install -m644 ${dir}/*.a "${fakeroot_dir}/usr/lib"
+        install -m644 ${dir}/include/*.h* "${fakeroot_dir}/usr/include/${dir}"
+    done
+
+    for testprog in `find testProgs -type f -perm 755`; do
+        install ${testprog} "${fakeroot_dir}/usr/bin"
+    done
+}
