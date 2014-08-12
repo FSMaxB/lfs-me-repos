@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=luasocket
+pkgver=3.0-rc1
+pkgver_postfix=
+
+sources=( "https://github.com/diegonehab/luasocket/archive/v${pkgver}.tar.gz" )
+sha1sums=( 'aff9122b26c01487c06a32133df78c1506af350f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/v${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" prefix=/usr install-unix
+}
