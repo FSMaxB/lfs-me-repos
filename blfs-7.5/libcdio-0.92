@@ -1,0 +1,25 @@
+#!/bin/bash
+pkgname=libcdio
+pkgver=0.92
+pkgver_postfix=
+
+sources=( "http://ftp.gnu.org/gnu/libcdio/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '530031897955729ddb7c850c183f234f7a6516b7' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    sed -i -e 's/\$(LIBCDIOPP_LIBS) \$(LTLIBICONV)/\$(LIBCDIOPP_LIBS) \$(LIBCDIO_LIBS) \$(LTLIBICONV)/g' example/C++/OO/Makefile.in
+    ./configure --prefix=/usr --disable-vcd-info --enable-cpp-progs --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make -j1 DESTDIR="$fakeroot_dir" install
+    sed -i "/LIBCDIO_SOURCE_PATH/s|.*|/* #undef LIBCDIO_SOURCE_PATH */|" "${fakeroot_dir}/usr/include/cdio/cdio_config.h"
+}
