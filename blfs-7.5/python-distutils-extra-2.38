@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=python-distutils-extra
+pkgver=2.38
+pkgver_postfix=
+
+sources=( "http://launchpad.net/${pkgname}/trunk/${pkgver}/+download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'db9ac81daf3e069b8838ae6d379abac2f0094663' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    python2 setup.py install --root="${fakeroot_dir}"
+    python3 setup.py install --root="${fakeroot_dir}"
+}
