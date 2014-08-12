@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=goom
+pkgver=2k4
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/project/${pkgname}/${pkgname}${pkgver}/0/${pkgname}-${pkgver}-0-src.tar.gz" )
+sha1sums=( '4856b86aadc67676c473a4664c5281bc05df278d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}-0-src.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}${pkgver}-0"
+
+    ./configure --prefix=/usr --without-xmms --without-sdl
+}
+
+lfs_me_check() {
+    return
+}
