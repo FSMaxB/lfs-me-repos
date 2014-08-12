@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libssh2
+pkgver=1.4.3
+pkgver_postfix=
+
+sources=( "http://www.libssh2.org/download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'c27ca83e1ffeeac03be98b6eef54448701e044b0' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
