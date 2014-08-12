@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=xosd
+pkgver=2.2.14
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/libxosd/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '1d459a62239c9fe842d835bb7f60eb2edd7c979f' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --mandir=/usr/share/man
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+
+    sed -i 's/AC_DEFUN(AM_PATH_LIBXOSD,/AC_DEFUN([AM_PATH_LIBXOSD],/' \
+              "${fakeroot_dir}/usr/share/aclocal/libxosd.m4"
+}
