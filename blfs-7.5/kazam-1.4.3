@@ -1,0 +1,35 @@
+#!/bin/bash
+pkgname=kazam
+pkgver=1.4.3
+pkgver_postfix=
+
+sources=( "https://launchpad.net/${pkgname}/stable/${pkgver}/+download/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '025bdf89447f786b461207ea96995ed4b24652ef' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}-0ubuntu1"
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    python3 setup.py install --root "${fakeroot_dir}"
+}
+
+lfs_me_postinstall() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+    gtk-update-icon-cache -q -t -f /usr/share/icons/gnome
+}
+
+lfs_me_postremove() {
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+    gtk-update-icon-cache -q -t -f /usr/share/icons/gnome
+}
