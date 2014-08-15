@@ -1,0 +1,26 @@
+#!/bin/bash
+pkgname=pangox-compat
+pkgver=0.0.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver:0:3}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'e02daa573769ddd41b2231f731525e5f8f26621b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --localstatedir=/var \
+                --disable-static
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make -j1 DESTDIR="$fakeroot_dir" install
+}
