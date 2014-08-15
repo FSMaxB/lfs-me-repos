@@ -1,0 +1,22 @@
+#!/bin/bash
+pkgname=xine-lib
+pkgver=1.2.6
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/sourceforge/xine/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'ac929eef2b7bf5c27699bbed612b953a01fccba5' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --with-wavpack \
+                --enable-vdpau \
+                --disable-optimizations
+}
+
+lfs_me_check() {
+    return
+}
