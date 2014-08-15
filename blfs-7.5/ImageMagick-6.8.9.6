@@ -1,0 +1,50 @@
+#!/bin/bash
+pkgname=ImageMagick
+pkgver=6.8.9.6
+pkgver_postfix=
+
+sources=( "ftp://ftp.sunet.se/pub/multimedia/graphics/${pkgname}/${pkgname}-${pkgver%.*}-${pkgver##*.}.tar.xz" )
+sha1sums=( 'd2e30cdc0e3becb781ac011f0452171926a72a2a' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver%.*}-${pkgver##*.}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver%.*}-${pkgver##*.}"
+
+    [[ $CARCH = "i686" ]] && EXTRAOPTS="--with-gcc-arch=i686"
+    [[ $CARCH = "x86_64" ]] && EXTRAOPTS="--with-gcc-arch=x86-64"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --with-modules \
+                --enable-hdri \
+                --with-openexr \
+                --with-xml \
+                --with-lcms2 \
+                --with-webp \
+                --with-gslib \
+                --with-perl \
+                --with-perl-options="INSTALLDIRS=vendor" \
+                --with-lqr \
+                --with-rsvg \
+                --with-openjp2 \
+                --without-gvc \
+                --without-djvu \
+                --without-autotrace \
+                --without-jbig \
+                --without-fpx \
+                --without-dps \
+                --without-fftw $EXTRAOPTS
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+}
+
+lfs_me_postinstall() {
+    return
+}
+
+lfs_me_postremove() {
+    return
+}
