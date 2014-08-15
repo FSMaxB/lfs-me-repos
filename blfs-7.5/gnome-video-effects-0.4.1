@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=gnome-video-effects
+pkgver=0.4.1
+pkgver_postfix=
+
+sources=( "http://download.gnome.org/sources/${pkgname}/${pkgver:0:3}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( '4ccf161fc45c54d3dead7bfdebcd59b3a2f8c02b' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --sysconfdir=/etc
+}
+
+lfs_me_check() {
+    return
+}
