@@ -1,0 +1,21 @@
+#!/bin/bash
+pkgname=gtkglext
+pkgver=1.2.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/sourceforge/gtkglext/${pkgname}-${pkgver}.tar.bz2" )
+sha1sums=( 'd84c9472af3438fbce84189613e5370b97d9d1e7' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    autoreconf --force --install
+    ./configure --prefix=/usr \
+                --disable-static
+}
+
+lfs_me_check() {
+    return
+}
