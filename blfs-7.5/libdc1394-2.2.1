@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libdc1394
+pkgver=2.2.1
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'b92c9670b68c4e5011148f16c87532bef2e5b808' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
