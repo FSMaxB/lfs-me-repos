@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=gavl
+pkgver=1.4.0
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/sourceforge/gmerlin/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'b1ef06942ff00b4d0c8dc361213a1542717855cc' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --without-doxygen --with-cpuflags=none
+}
+
+lfs_me_check() {
+    return
+}
