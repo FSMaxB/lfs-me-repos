@@ -1,0 +1,24 @@
+#!/bin/bash
+pkgname=tbb
+pkgver=4.2_20140601
+pkgver_postfix=
+
+sources=( "http://threadingbuildingblocks.org/sites/default/files/software_releases/source/${pkgname}${pkgver/\./}oss_src.tgz" )
+sha1sums=( 'f50c04a27f5e37c920a03be134dc57ccf909515d' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}${pkgver/\./}oss_src.tgz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}${pkgver/\./}oss"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    install -d "${fakeroot_dir}/usr/lib"
+    install -m755 build/linux_*/*.so* "${fakeroot_dir}/usr/lib"
+    install -d "${fakeroot_dir}/usr/include"
+    cp -a include/tbb "${fakeroot_dir}/usr/include"
+}
