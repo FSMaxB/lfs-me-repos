@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libraw1394
+pkgver=2.1.0
+pkgver_postfix=
+
+sources=( "ftp://ftp.kernel.org/pub/linux/libs/ieee1394/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'e7d5d05a6c60b9e2d05786c50a083370c6039099' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
