@@ -1,0 +1,45 @@
+#!/bin/bash
+pkgname=wxgtk
+pkgver=2.8.12.1
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/wxpython/wxPython-src-${pkgver}.tar.bz2" )
+sha1sums=( '05688dc03d61631750f5904273122bb40a2115f5' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/wxPython-src-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/wxPython-src-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --libdir=/usr/lib \
+                --with-gtk=2 \
+                --with-opengl \
+                --enable-unicode \
+                --enable-graphics_ctx  \
+                --disable-optimize \
+                --enable-mediactrl \
+                --with-regex=builtin \
+                --with-libpng=sys \
+                --with-libxpm=sys \
+                --with-libjpeg=sys \
+                --with-libtiff=sys \
+                --with-sdl \
+                --disable-precomp-headers
+}
+
+lfs_me_build() {
+    make
+    make -C locale allmo
+    make -C contrib/src
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    make -C contrib/src DESTDIR="${fakeroot_dir}" install
+    install -D -m644 docs/licence.txt "${fakeroot_dir}/usr/share/licenses/${pkgname}/LICENSE"
+}
