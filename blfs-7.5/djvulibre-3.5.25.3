@@ -1,0 +1,34 @@
+#!/bin/bash
+pkgname=djvulibre
+pkgver=3.5.25.3
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/project/djvu/DjVuLibre/3.5.25/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'ad35056aabb1950f385360ff59520a82a6f779ec' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-3.5.25"
+
+    ./configure --prefix=/usr --disable-desktopfiles
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make DESTDIR="$fakeroot_dir" install
+    for sz in 22 32 48 64; do
+        install -Dm644 desktopfiles/prebuilt-hi${sz}-djvu.png "${fakeroot_dir}/usr/share/icons/hicolor/${sz}x${sz}/mimetypes/image-vnd.djvu.mime.png"
+    done
+}
+
+lfs_me_postinstall() {
+    gtk-update-icon-cache -q -f /usr/share/icons/hicolor
+}
+
+lfs_me_postremove() {
+    gtk-update-icon-cache -q -f /usr/share/icons/hicolor
+}
