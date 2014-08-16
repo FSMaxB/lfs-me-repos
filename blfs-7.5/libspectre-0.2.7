@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=libspectre
+pkgver=0.2.7
+pkgver_postfix=
+
+sources=( "http://libspectre.freedesktop.org/releases/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( 'a7efd97b82b84ff1bb7a0d88c7e35ad10cc84ea8' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+    return
+}
