@@ -1,0 +1,19 @@
+#!/bin/bash
+pkgname=t1lib
+pkgver=5.1.2
+pkgver_postfix=
+
+sources=( "http://www.ibiblio.org/pub/Linux/libs/graphics/${pkgname}-${pkgver}.tar.gz" )
+sha1sums=( '4b4fc22c8688eefaaa8cfc990f0039f95f4287de' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr
+}
+
+lfs_me_check() {
+    return
+}
