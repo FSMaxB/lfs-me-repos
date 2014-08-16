@@ -1,0 +1,72 @@
+#!/bin/bash
+pkgname=p7zip
+pkgver=9.20.1
+pkgver_postfix=
+
+sources=( "http://downloads.sourceforge.net/project/${pkgname}/${pkgname}/${pkgver}/${pkgname}_${pkgver}_src_all.tar.bz2" )
+sha1sums=( '1cd567e043ee054bf08244ce15f32cb3258306b7' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}_${pkgver}_src_all.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}_${pkgver}"
+
+    rm GUI/kde4/p7zip_compress.desktop
+    [[ $(uname -m) = x86_64 ]] \
+            && cp makefile.linux_amd64_asm makefile.machine \
+            || cp makefile.linux_x86_asm_gcc_4.X makefile.machine
+
+    sed -i 's/wx-config/wx-config-2.8/g' CPP/7zip/TEST/TestUI/makefile CPP/7zip/UI/{FileManager,GUI,P7ZIP}/makefile
+
+    echo \
+"[Desktop Entry]
+Encoding=UTF-8
+Name=7-Zip FM
+GenericName=7-Zip File Manager
+Type=Application
+Categories=GTK;Utility;Archiving;Compression;
+Terminal=false
+Icon=p7zip
+Exec=7zFM" > 7zFM.desktop
+}
+
+lfs_me_build() {
+    make all4 OPTFLAG="${CXXFLAGS}"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    make install \
+        DEST_DIR="${fakeroot_dir}" \
+        DEST_HOME="/usr" \
+        DEST_MAN="/usr/share/man"
+
+    # Licenses
+    install -d "${fakeroot_dir}/usr/share/licenses/p7zip"
+    ln -s -t "${fakeroot_dir}/usr/share/licenses/p7zip" /usr/share/doc/p7zip/DOCS/License.txt /usr/share/doc/p7zip/DOCS/unRarLicense.txt
+
+    # Integration with stuff...
+    install -Dm644 GUI/p7zip_32.png "${fakeroot_dir}/usr/share/icons/hicolor/32x32/apps/p7zip.png"
+    install -d "${fakeroot_dir}"/usr/share/{applications,kde4/services/ServiceMenus}
+    cp GUI/kde4/* "${fakeroot_dir}"/usr/share/kde4/services/ServiceMenus/
+    cp 7zFM.desktop "${fakeroot_dir}"/usr/share/applications/
+    ln -s 7zCon.sfx "${fakeroot_dir}"/usr/lib/p7zip/7z.sfx
+
+    find GUI/help -type d -exec chmod 755 {} \;
+    cp -r GUI/help "${fakeroot_dir}/usr/lib/p7zip/"
+
+    chmod -R u+w "${fakeroot_dir}/usr"
+}
+
+lfs_me_postinstall() {
+    update-desktop-database -q
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
+
+lfs_me_postremove() {
+    update-desktop-database -q
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor
+}
