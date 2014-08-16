@@ -1,0 +1,23 @@
+#!/bin/bash
+pkgname=gtksourceview
+pkgver=3.10.2
+pkgver_postfix=
+
+sources=( "http://ftp.gnome.org/pub/gnome/sources/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=( 'e886f3c54e01ada2eab8fee14fde2efa3d2c2feb' )
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --localstatedir=/var \
+                --disable-static \
+                --enable-glade-catalog
+}
+
+lfs_me_check() {
+    return
+}
