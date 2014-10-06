@@ -4,16 +4,16 @@ pkgver=4.2
 pkgver_postfix=
 
 sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
-          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-fixes-12.patch" )
+          "http://www.linuxfromscratch.org/patches/downloads/bash/${pkgname}-${pkgver}-fixes-13.patch" )
 sha1sums=( '487840ab7134eb7901fbb2e49b0ee3d22de15cb8'
-           '1721977bab0b2c1c693e3abb6e69dedc4eb41993' )
+           'ad579f77cd7f97b0750dc1e47ba4e27ad8944443' )
 
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 
     cd "${build_dir}/${pkgname}-${pkgver}"
 
-    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-12.patch"
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-13.patch"
 
     ./configure --prefix=/usr                                 \
                 --bindir=/bin                                 \
