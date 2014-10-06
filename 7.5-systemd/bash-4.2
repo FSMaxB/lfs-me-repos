@@ -1,19 +1,19 @@
 #!/bin/bash
 pkgname=bash
-pkgver=4.3
+pkgver=4.2
 pkgver_postfix=
 
 sources=( "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
-		  "http://www.linuxfromscratch.org/patches/lfs/systemd/${pkgname}-${pkgver}-upstream_fixes-4.patch" )
-sha1sums=( 	'45ac3c5727e7262334f4dfadecdf601b39434e84'
-			'ebaf070154e67f984931fc60f063aeab5e9c528e')
+          "http://www.linuxfromscratch.org/patches/lfs/7.5-systemd/${pkgname}-${pkgver}-fixes-12.patch" )
+sha1sums=( '487840ab7134eb7901fbb2e49b0ee3d22de15cb8'
+           '1721977bab0b2c1c693e3abb6e69dedc4eb41993' )
 
 lfs_me_prepare() {
     tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
 
     cd "${build_dir}/${pkgname}-${pkgver}"
 
-    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-upstream_fixes-4.patch"
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-fixes-12.patch"
 
     ./configure --prefix=/usr                                 \
                 --bindir=/bin                                 \
