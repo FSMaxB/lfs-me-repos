@@ -90,6 +90,10 @@ lfs_me_check() {
 
 lfs_me_install() {
 	make DESTDIR="$fakeroot_dir" install
+
+    #fix for 2nd pass of gcc
+    mkdir -pv "${fakeroot_dir}/tools/lib/${_pkgbase}/$LFS_TGT/${pkgver}/include-fixed"
+    cat "${build_dir}/${_pkgbase}-${pkgver}/gcc/"{limitx.h,glimits.h,limity.h} > "${fakeroot_dir}/tools/lib/${_pkgbase}/$LFS_TGT/${pkgver}/include-fixed/limits.h"
 }
 
 # vim:set syntax=sh et:
