@@ -1,0 +1,37 @@
+pkgbuild_version=2
+_pkgbase=linux
+pkgname="${_pkgbase}-headers"
+pkgver=3.16.5
+
+sources=(
+    "https://www.kernel.org/pub/linux/kernel/v3.x/${_pkgbase}-${pkgver}.tar.xz"
+)
+sha1sums=(
+    ea1843eaa54bad0542739fd42b1359f139c03414
+)
+
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${_pkgbase}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${_pkgbase}-${pkgver}"
+
+    make mrproper
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	make INSTALL_HDR_PATH=dest headers_install
+    
+    mkdir -pv "${fakeroot_dir}/tools/include"
+    cp -rv dest/include/* "${fakeroot_dir}/tools/include/"
+}
+
+# vim:set syntax=sh et:
