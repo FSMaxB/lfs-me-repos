@@ -43,7 +43,7 @@ lfs_me_check() {
 }
 
 lfs_me_preinstall() {
-    [ ! -z $LFS ] && [ ! -z $LFS_TGT ] || lfs_me_error "The LFS_TGT environment variabl isn't set!" false
+    [ -z $LFS_TGT ] && lfs_me_error "The LFS_TGT environment variabl isn't set!" false
 }
 
 lfs_me_postinstall() {
