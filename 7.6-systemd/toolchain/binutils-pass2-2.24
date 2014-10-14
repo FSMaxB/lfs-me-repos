@@ -1,0 +1,49 @@
+pkgbuild_version=2
+_pkgbase=binutils
+pkgname="${_pkgbase}-pass2"
+pkgver=2.24
+
+dependencies=(
+	'glibc'
+	'libstdc++'
+    'gcc-pass1'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/binutils/${_pkgbase}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+    7ac75404ddb3c4910c7594b51ddfc76d4693debb
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${_pkgbase}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${_pkgbase}-${pkgver}"
+
+    [ ! -z $LFS ] && [ ! -z $LFS_TGT ] || lfs_me_error "LFS and LFS_TGT environment variables aren't set!" false
+
+    CC=$LFS_TGT-gcc                \
+    AR=$LFS_TGT-ar                 \
+    RANLIB=$LFS_TGT-ranlib         \
+    "../${_pkgbase}-${pkgver}/configure"   \
+        --prefix=/tools            \
+        --disable-nls              \
+        --disable-werror           \
+        --with-lib-path=/tools/lib \
+        --with-sysroot
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	make DESTDIR="$fakeroot_dir" install
+    
+    make -C ld clean
+    make -C ld LIB_PATH=/usr/lib:/lib
+    mkdir -pv "${fakeroot_dir}/tools/bin"
+    cp -v ld/ld-new "${fakeroot_dir}/tools/bin"
+}
+
+# vim:set syntax=sh et:
