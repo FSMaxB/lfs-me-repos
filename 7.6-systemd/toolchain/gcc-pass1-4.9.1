@@ -32,7 +32,7 @@ lfs_me_prepare() {
     tar -xf "${sources_dir}/mpfr-${_mpfr_ver}.tar.xz"
     mv -v "mpfr-${_mpfr_ver}" mpfr
     tar -xf "${sources_dir}/gmp-${_gmp_ver}.tar.xz"
-    mv -v "gmp-${_gmp_ver}" gmp
+    mv -v "gmp-${_gmp_ver/[a-z]/}" gmp
     tar -xf "${sources_dir}/mpc-${_mpc_ver}.tar.gz"
     mv -v "mpc-${_mpc_ver}" mpc
 
