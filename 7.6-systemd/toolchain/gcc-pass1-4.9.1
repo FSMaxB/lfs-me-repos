@@ -1,0 +1,95 @@
+pkgbuild_version=2
+_pkgbase=gcc
+pkgname="${_pkgbase}-pass1"
+pkgver=4.9.1
+
+_mpfr_ver=3.1.2
+_gmp_ver=6.0.0a
+_mpc_ver=1.0.2
+
+dependencies=(
+	'binutils-pass1'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${_pkgbase}/${_pkgbase}-${pkgver}/${_pkgbase}-${pkgver}.tar.bz2"
+    "http://www.mpfr.org/mpfr-${_mpfr_ver}/mpfr-${_mpfr_ver}.tar.xz"
+    "http://ftp.gnu.org/gnu/gmp/gmp-${_gmp_ver}.tar.xz"
+    "http://www.multiprecision.org/mpc/download/mpc-${_mpc_ver}.tar.gz"
+)
+sha1sums=(
+    3f303f403053f0ce79530dae832811ecef91197e
+    03e593cc6e26639ef5e60be1af8dc527209e5172
+    1aaf78358ab9e34aeb61f3ae08174ee9118ece98
+    5072d82ab50ec36cc8c0e320b5c377adb48abe70
+)
+
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${_pkgbase}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${_pkgbase}-${pkgver}"
+
+    tar -xf "${sources_dir}/mpfr-${_mpfr_ver}.tar.xz"
+    mv -v "mpfr-${_mpfr_ver}" mpfr
+    tar -xf "${sources_dir}/gmp-${_gmp_ver}.tar.xz"
+    mv -v "gmp-${_gmp_ver}" gmp
+    tar -xf "${sources_dir}/mpc-${_mpc_ver}.tar.gz"
+    mv -v "mpc-${_mpc_ver}" mpc
+
+    #prepend /tools to path of dynamic loader
+    for file in $(find gcc/config -name linux64.h -o -name linux.h -o -name sysv4.h)
+    do
+        cp -uv $file{,.orig}
+        sed -e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' -e 's@/usr@/tools@g' $file.orig > $file
+        echo '
+#undef STANDARD_STARTFILE_PREFIX_1
+#undef STANDARD_STARTFILE_PREFIX_2
+#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"
+#define STANDARD_STARTFILE_PREFIX_2 ""' >> $file
+        touch $file.orig
+    done
+
+    #fix problem with stack protection
+    sed -i '/k prot/agcc_cv_libc_provides_ssp=yes' gcc/configure
+    #fix problem detected upstream
+    sed -i 's/if \((code.*))\)/if (\1 \&\& \!DEBUG_INSN_P (insn))/' gcc/sched-deps.c
+
+    mkdir -v "../${_pkgbase}-build"
+    cd "../${_pkgbase}-build"
+
+    [ ! -z $LFS ] && [ ! -z $LFS_TGT ] || lfs_me_error "LFS and LFS_TGT environment variables aren't set!" false
+
+    "../${_pkgbase}-${pkgver}/configure"                               \
+        --target=$LFS_TGT                                \
+        --prefix=/tools                                  \
+        --with-sysroot=$LFS                              \
+        --with-newlib                                    \
+        --without-headers                                \
+        --with-local-prefix=/tools                       \
+        --with-native-system-header-dir=/tools/include   \
+        --disable-nls                                    \
+        --disable-shared                                 \
+        --disable-multilib                               \
+        --disable-decimal-float                          \
+        --disable-threads                                \
+        --disable-libatomic                              \
+        --disable-libgomp                                \
+        --disable-libitm                                 \
+        --disable-libquadmath                            \
+        --disable-libsanitizer                           \
+        --disable-libssp                                 \
+        --disable-libvtv                                 \
+        --disable-libcilkrts                             \
+        --disable-libstdc++-v3                           \
+        --enable-languages=c,c++
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set syntax=sh et:
