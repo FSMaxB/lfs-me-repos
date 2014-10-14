@@ -1,0 +1,64 @@
+pkgbuild_version=2
+pkgname=glibc
+pkgver=2.20
+
+dependencies=(
+	'binutils-pass1'
+	'gcc-pass1'
+    'linux-headers'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/glibc/glibc-2.20.tar.xz"
+)
+sha1sums=(
+    0ddd02ceb41f7cd049fac691a7864047b87b6351
+)
+
+lfs_me_prepare() {
+    [ -r /usr/include/rpc/types.h ] || lfs_me_error "rpc headers '/usr/include/rpc/types.h' not found!" false
+
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+    mkdir -v "../${pkgname}-build"
+    cd "../${pkgname}-build"
+
+    [ ! -z $LFS ] && [ ! -z $LFS_TGT ] || lfs_me_error "LFS and LFS_TGT environment variables aren't set!" false
+
+    "../${pkgname}-${pkgver}/configure"                             \
+        --prefix=/tools                               \
+        --host=$LFS_TGT                               \
+        --build=$("../${pkgname}-${pkgver}/scripts/config.guess") \
+        --disable-profile                             \
+        --enable-kernel=2.6.32                        \
+        --with-headers=/tools/include                 \
+        libc_cv_forced_unwind=yes                     \
+        libc_cv_ctors_header=yes                      \
+        libc_cv_c_cleanup=yes
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_preinstall() {
+    [ ! -z $LFS ] && [ ! -z $LFS_TGT ] || lfs_me_error "The LFS_TGT environment variabl isn't set!" false
+}
+
+lfs_me_postinstall() {
+    cd "$build_dir"
+    echo 'main(){}' > dummy.c
+    $LFS_TGT-gcc dummy.c
+    case $(uname -m) in
+        x86_64)
+            readelf -l a.out | grep -E ': /tools/lib(|64)/ld-linux-x86-64.so.2' || lfs_me_error "Wrong dynamic loader" false
+            ;;
+        *)
+            readelf -l a.out | grep -E ': /tools/lib/ld-linux.so.2' || lfs_me_error "Wrong dynamic loader" false
+            ;;
+    esac
+
+}
+
+# vim:set syntax=sh et:
