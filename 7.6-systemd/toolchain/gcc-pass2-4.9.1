@@ -1,0 +1,107 @@
+pkgbuild_version=2
+_pkgbase=gcc
+pkgname="${_pkgbase}-pass2"
+pkgver=4.9.1
+
+_mpfr_ver=3.1.2
+_gmp_ver=6.0.0a
+_mpc_ver=1.0.2
+
+dependencies=(
+	'gcc-pass1'
+    'binutils-pass2'
+	'glibc'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${_pkgbase}/${_pkgbase}-${pkgver}/${_pkgbase}-${pkgver}.tar.bz2"
+    "http://www.mpfr.org/mpfr-${_mpfr_ver}/mpfr-${_mpfr_ver}.tar.xz"
+    "http://ftp.gnu.org/gnu/gmp/gmp-${_gmp_ver}.tar.xz"
+    "http://www.multiprecision.org/mpc/download/mpc-${_mpc_ver}.tar.gz"
+)
+sha1sums=(
+    3f303f403053f0ce79530dae832811ecef91197e
+    03e593cc6e26639ef5e60be1af8dc527209e5172
+    1aaf78358ab9e34aeb61f3ae08174ee9118ece98
+    5072d82ab50ec36cc8c0e320b5c377adb48abe70
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${_pkgbase}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${_pkgbase}-${pkgver}"
+
+    tar -xf "${sources_dir}/mpfr-${_mpfr_ver}.tar.xz"
+    mv -v "mpfr-${_mpfr_ver}" mpfr
+    tar -xf "${sources_dir}/gmp-${_gmp_ver}.tar.xz"
+    mv -v "gmp-${_gmp_ver/[a-z]/}" gmp
+    tar -xf "${sources_dir}/mpc-${_mpc_ver}.tar.gz"
+    mv -v "mpc-${_mpc_ver}" mpc
+
+    #prepend /tools before path of dynamic loader
+    for file in $(find gcc/config -name linux64.h -o -name linux.h -o -name sysv4.h)
+    do
+        cp -uv $file{,.orig}
+        sed -e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
+        -e 's@/usr@/tools@g' $file.orig > $file
+        echo '
+#undef STANDARD_STARTFILE_PREFIX_1
+#undef STANDARD_STARTFILE_PREFIX_2
+#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"
+#define STANDARD_STARTFILE_PREFIX_2 ""' >> $file
+        touch $file.orig
+    done
+
+    #fix problem detected upstream
+    sed -i 's/if \((code.*))\)/if (\1 \&\& \!DEBUG_INSN_P (insn))/' gcc/sched-deps.c
+
+    mkdir -v "../${_pkgbase}-build"
+    cd "../${_pkgbase}-build"
+
+    [ ! -z $LFS_TGT ] || lfs_me_error "The LFS_TGT environment variable isn't set!" false
+
+    CC=$LFS_TGT-gcc                                      \
+    CXX=$LFS_TGT-g++                                     \
+    AR=$LFS_TGT-ar                                       \
+    RANLIB=$LFS_TGT-ranlib                               \
+    "../${_pkgbase}-${pkgver}/configure"                               \
+        --prefix=/tools                                  \
+        --with-local-prefix=/tools                       \
+        --with-native-system-header-dir=/tools/include   \
+        --enable-languages=c,c++                         \
+        --disable-libstdcxx-pch                          \
+        --disable-multilib                               \
+        --disable-bootstrap                              \
+        --disable-libgomp
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	make DESTDIR="$fakeroot_dir" install
+
+    mkdir -pv "${fakeroot_dir}/tools/bin/"
+    ln -sv gcc "${fakeroot_dir}/tools/bin/cc"
+}
+
+lfs_me_preinstall() {
+    [ -z $LFS_TGT ] && lfs_me_error "The LFS_TGT environment variabl isn't set!" false
+}
+
+lfs_me_postinstall() {
+    cd "$build_dir"
+    echo 'main(){}' > dummy.c
+    cc dummy.c
+    case $(uname -m) in
+        x86_64)
+            readelf -l a.out | grep -E ': /tools/lib(|64)/ld-linux-x86-64.so.2' || lfs_me_error "Wrong dynamic loader" false
+            ;;
+        *)
+            readelf -l a.out | grep -E ': /tools/lib/ld-linux.so.2' || lfs_me_error "Wrong dynamic loader" false
+            ;;
+    esac
+
+}
+
+# vim:set syntax=sh et:
