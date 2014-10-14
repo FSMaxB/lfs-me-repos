@@ -1,0 +1,40 @@
+pkgbuild_version=2
+pkgname=libstdc++
+pkgver=4.9.1
+
+dependencies=(
+	'glibc'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/gcc/gcc-${pkgver}/gcc-${pkgver}.tar.bz2"
+)
+sha1sums=(
+    3f303f403053f0ce79530dae832811ecef91197e
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/gcc-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/gcc-${pkgver}"
+
+    mkdir -pv ../gcc-build
+    cd ../gcc-build
+
+    [ -z $LFS_TGT ] && lfs_me_error "The LFS_TGT environment variable isn't set!" false
+
+    "../gcc-${pkgver}/${pkgname}-v3/configure" \
+        --host=$LFS_TGT                 \
+        --prefix=/tools                 \
+        --disable-multilib              \
+        --disable-shared                \
+        --disable-nls                   \
+        --disable-libstdcxx-threads     \
+        --disable-libstdcxx-pch         \
+        --with-gxx-include-dir="/tools/${LFS_TGT}/include/c++/${pkgver}"
+}
+
+lfs_me_check() {
+    return
+}
+
+# vim:set syntax=sh et:
