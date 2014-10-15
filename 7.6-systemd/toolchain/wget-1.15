@@ -1,9 +1,10 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=wget
 pkgver=1.15
 
 dependencies=(
 	'util-linux'
+    'openssl'
 )
 sources=(
     "http://ftp.gnu.org/gnu/wget/${pkgname}-${pkgver}.tar.xz"
@@ -17,7 +18,7 @@ lfs_me_prepare() {
 
 	cd "${build_dir}/${pkgname}-${pkgver}"
 
-	./configure --prefix=/tools --without-ssl
+	./configure --prefix=/tools --with-ssl=openssl
 }
 
 # vim:set syntax=sh et:
