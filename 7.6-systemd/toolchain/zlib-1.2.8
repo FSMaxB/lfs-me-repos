@@ -1,0 +1,24 @@
+pkgbuild_version=3
+pkgname=zlib
+pkgver=1.2.8
+
+dependencies=(
+	'glibc'
+    'gcc-pass2'
+)
+sources=(
+    "http://www.zlib.net/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+    b598beb7acc96347cbd1020b71aef7871d374677
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/tools
+}
+
+# vim:set syntax=sh et:
