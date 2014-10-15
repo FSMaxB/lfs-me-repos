@@ -1,0 +1,23 @@
+pkgbuild_version=2
+pkgname=file
+pkgver=5.19
+
+dependencies=(
+    'glibc'
+)
+sources=(
+    "ftp://ftp.astron.com/pub/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+    0dff09eb44fde1998be79e8d312e9be4456d31ee
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/tools
+}
+
+# vim:set syntax=sh et:
