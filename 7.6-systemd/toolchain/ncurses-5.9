@@ -30,4 +30,17 @@ lfs_me_check() {
     return
 }
 
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+    make DESTDIR="$fakeroot_dir" install
+
+    for lib in ncurses form panel menu
+    do
+        rm -vf "${fakeroot_dir}/tools/lib/lib${lib}.so"
+        echo "INPUT(-l${lib}w)" > "${fakeroot_dir}/tools/lib/lib${lib}.so"
+        ln -sfv "lib${lib}w.a" "/tools/lib/lib${lib}.a"
+    done
+}
+
 # vim:set syntax=sh et:
