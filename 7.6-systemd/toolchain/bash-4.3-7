@@ -1,0 +1,39 @@
+pkgbuild_version=2
+pkgname=bash
+_basever=4.3
+_patch=7
+pkgver="${_basever}-${_patch}"
+
+dependencies=(
+	'glibc'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${_basever}.tar.gz"
+    "http://www.linuxfromscratch.org/patches/lfs/systemd/${pkgname}-${_basever}-upstream_fixes-${_patch}.patch"
+)
+sha1sums=(
+    45ac3c5727e7262334f4dfadecdf601b39434e84
+    69f1cc8e0a95a4505d95fdc8ca9afcd76edef27c
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${_basever}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${_basever}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${_basever}-upstream_fixes-${_patchh}.patch"
+
+	./configure --prefix=/tools --without-bash-malloc
+}
+
+lfs_me_check() {
+	make tests 2>&1 | tee "${log_dir}/last-check.log"
+}
+
+lfs_me_install() {
+	make DESTDIR="$fakeroot_dir" install
+
+    ln -sv bash "${fakeroot_dir}/tools/bin/sh"
+}
+
+# vim:set syntax=sh et:
