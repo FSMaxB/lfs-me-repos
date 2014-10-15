@@ -1,0 +1,32 @@
+pkgbuild_version=2
+pkgname=util-linux
+pkgver=2.25.1
+
+dependencies=(
+	'coreutils'
+)
+sources=(
+    "https://www.kernel.org/pub/linux/utils/${pkgname}/v${pkgver:0:4}/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+    ea748e27d3ce3c27ebb3b25ebc08288d45efdb90
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure                        \
+        --prefix=/tools                \
+        --without-python               \
+        --disable-makeinstall-chown    \
+        --without-systemdsystemunitdir \
+        PKG_CONFIG=""
+}
+
+lfs_me_check() {
+    return
+}
+
+# vim:set syntax=sh et:
