@@ -1,0 +1,41 @@
+pkgbuild_version=2
+pkgname=gettext
+pkgver=0.19.2
+
+dependencies=(
+	'gcc-pass2'
+	'bash'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+    81b6ee521412b8042085342ab4df19f11b280e41
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+    cd "${pkgname}-tools"
+
+	EMACS="no" ./configure --prefix=/tools --disable-shared
+}
+
+lfs_me_build() {
+	make -C gnulib-lib
+    make -C src msgfmt
+    make -C src msgmerge
+    make -C src xgettext
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    mkdir -pv "${fakeroot_dir}/tools/bin"
+    cp -v src/{msgfmt,msgmerge,xgettext} "${fakeroot_dir}/tools/bin"
+}
+
+# vim:set syntax=sh et:
