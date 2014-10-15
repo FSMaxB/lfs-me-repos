@@ -1,0 +1,23 @@
+pkgbuild_version=2
+pkgname=rsync
+pkgver=3.1.1
+
+dependencies=(
+	'perl'
+)
+sources=(
+    "http://samba.org/ftp/${pkgname}/src/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+    c84faba04f721d393feccfa0476bfeed9b5b5250
+)
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure --prefix=/tools
+}
+
+# vim:set syntax=sh et:
