@@ -1,0 +1,35 @@
+pkgbuild_version=2
+pkgname=dejagnu
+pkgver=1.5.1
+
+dependencies=(
+	'expect'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+    eb16fb455690592a97f22acd17e8fc2f1b5c54c2
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/tools
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+	make check 2>&1 | tee "${log_dir}/last-check.log"
+}
+
+lfs_me_install() {
+	make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set syntax=sh et:
