@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=gettext
 pkgver=0.19.2
 
@@ -16,13 +16,13 @@ sha1sums=(
 lfs_me_prepare() {
 	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
 
-	cd "${build_dir}/${pkgname}-${pkgver}"
-    cd "${pkgname}-tools"
+	cd "${build_dir}/${pkgname}-${pkgver}/${pkgname}-tools"
 
 	EMACS="no" ./configure --prefix=/tools --disable-shared
 }
 
 lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}/${pkgname}-tools"
 	make -C gnulib-lib
     make -C src msgfmt
     make -C src msgmerge
@@ -34,6 +34,7 @@ lfs_me_check() {
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}/${pkgname}-tools"
     mkdir -pv "${fakeroot_dir}/tools/bin"
     cp -v src/{msgfmt,msgmerge,xgettext} "${fakeroot_dir}/tools/bin"
 }

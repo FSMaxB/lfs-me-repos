@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 _pkgbase=linux
 pkgname="${_pkgbase}-headers"
 pkgver=3.16.5
@@ -28,6 +28,7 @@ lfs_me_check() {
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${_pkgbase}-${pkgver}"
 	make INSTALL_HDR_PATH=dest headers_install
     
     mkdir -pv "${fakeroot_dir}/tools/include"

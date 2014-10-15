@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 _pkgbase=binutils
 pkgname="${_pkgbase}-pass2"
 pkgver=2.24
@@ -22,6 +22,9 @@ lfs_me_prepare() {
 
     [ ! -z $LFS ] && [ ! -z $LFS_TGT ] || lfs_me_error "LFS and LFS_TGT environment variables aren't set!" false
 
+    mkdir "../${_pkgbase}-build"
+    cd "../${_pkgbase}-build"
+
     CC=$LFS_TGT-gcc                \
     AR=$LFS_TGT-ar                 \
     RANLIB=$LFS_TGT-ranlib         \
@@ -33,11 +36,17 @@ lfs_me_prepare() {
         --with-sysroot
 }
 
+lfs_me_build() {
+	cd "${build_dir}/${_pkgbase}-build"
+    make
+}
+
 lfs_me_check() {
     return
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${_pkgbase}-build"
 	make DESTDIR="$fakeroot_dir" install
     
     make -C ld clean

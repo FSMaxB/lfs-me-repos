@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=expect
 pkgver=5.45
 
@@ -26,11 +26,18 @@ lfs_me_prepare() {
         --with-tclinclude=/tools/include
 }
 
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver}"
+    make
+}
+
 lfs_me_check() {
-	make test 2>&1 | tee "${log_dir}/last-check.log"
+	cd "${build_dir}/${pkgname}${pkgver}"
+	make test
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver}"
 	make DESTDIR="$fakeroot_dir" SCRIPTS="" install
 }
 

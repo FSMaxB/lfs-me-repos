@@ -1,9 +1,10 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=libstdc++
 pkgver=4.9.1
 
 dependencies=(
 	'glibc'
+    'gcc-pass1'
 )
 sources=(
 	"http://ftp.gnu.org/gnu/gcc/gcc-${pkgver}/gcc-${pkgver}.tar.bz2"
@@ -33,8 +34,18 @@ lfs_me_prepare() {
         --with-gxx-include-dir="/tools/${LFS_TGT}/include/c++/${pkgver}"
 }
 
+lfs_me_build() {
+	cd "${build_dir}/gcc-build"
+    make 
+}
+
 lfs_me_check() {
     return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/gcc-build"
+    make DESTDIR="$fakeroot_dir" install
 }
 
 # vim:set syntax=sh et:

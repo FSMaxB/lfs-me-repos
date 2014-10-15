@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 _pkgbase=binutils
 pkgname="${_pkgbase}-pass1"
 pkgver=2.24
@@ -28,11 +28,18 @@ lfs_me_prepare() {
         --disable-werror
 }
 
+lfs_me_build() {
+	cd "${build_dir}/${_pkgbase}-build"
+    pwd
+    make
+}
+
 lfs_me_check() {
     return
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${_pkgbase}-build"
     case $(uname -m) in
         x86_64) mkdir -pv "${fakeroot_dir}/tools/lib" && ln -sv lib "${fakeroot_dir}/tools/lib64"
     esac

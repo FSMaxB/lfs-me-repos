@@ -1,9 +1,10 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=tcl
 pkgver=8.6.2
 
 dependencies=(
 	'gcc-pass2'
+    'zlib'
 )
 sources=(
 	"http://downloads.sourceforge.net/project/tcl/Tcl/8.6.2/tcl8.6.2-src.tar.gz"
@@ -20,11 +21,18 @@ lfs_me_prepare() {
 	./configure --prefix=/tools
 }
 
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+    make
+}
+
 lfs_me_check() {
-	TZ=UTC make test 2>&1 | tee "${log_dir}/last-check.log"
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+	TZ=UTC make test
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
 	make DESTDIR="$fakeroot_dir" install
     make DESTDIR="$faekroot_dir" install-private-headers
 

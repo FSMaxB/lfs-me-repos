@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=bash
 _basever=4.3
 _patch=7
@@ -26,11 +26,18 @@ lfs_me_prepare() {
 	./configure --prefix=/tools --without-bash-malloc
 }
 
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${_basever}"
+    make
+}
+
 lfs_me_check() {
-	make tests 2>&1 | tee "${log_dir}/last-check.log"
+	cd "${build_dir}/${pkgname}-${_basever}"
+	make tests
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${_basever}"
 	make DESTDIR="$fakeroot_dir" install
 
     ln -sv bash "${fakeroot_dir}/tools/bin/sh"

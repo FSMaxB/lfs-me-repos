@@ -1,9 +1,10 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=openssl
 pkgver=1.0.1j
 
 dependencies=(
 	'perl'
+    'zlib'
 )
 sources=(
     "http://www.openssl.org/source/${pkgname}-${pkgver}.tar.gz"
@@ -24,15 +25,19 @@ lfs_me_prepare() {
     
     ./config                  \
         --prefix=/tools       \
+        --openssldir=/tools/etc/ssl \
+        --libdir=lib          \
         shared                \
         zlib-dynamic
 }
 
 lfs_me_check() {
-	make test 2>&1 | tee "${log_dir}/last-check.log"
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make test
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
     #disable static libraries
     sed -i 's# libcrypto.a##;s# libssl.a##' Makefile
 	make INSTALL_PREFIX="$fakeroot_dir" MANDIR="/tools/share/man" MANSUFFIX=ssl install

@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 _pkgbase=gcc
 pkgname="${_pkgbase}-pass1"
 pkgver=4.9.1
@@ -84,11 +84,17 @@ lfs_me_prepare() {
         --enable-languages=c,c++
 }
 
+lfs_me_build() {
+	cd "${build_dir}/${_pkgbase}-build"
+    make
+}
+
 lfs_me_check() {
     return
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${_pkgbase}-build"
 	make DESTDIR="$fakeroot_dir" install
 
     #fix for 2nd pass of gcc

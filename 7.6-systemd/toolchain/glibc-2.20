@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=glibc
 pkgver=2.20
 
@@ -38,8 +38,18 @@ lfs_me_prepare() {
         libc_cv_c_cleanup=yes
 }
 
+lfs_me_build() {
+    cd "${build_dir}/${pkgname}-build"
+    make
+}
+
 lfs_me_check() {
     return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/${pkgname}-build"
+    make DESTDIR="$fakeroot_dir" install
 }
 
 lfs_me_preinstall() {

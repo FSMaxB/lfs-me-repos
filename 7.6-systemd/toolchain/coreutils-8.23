@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=coreutils
 pkgver=8.23
 
@@ -21,7 +21,8 @@ lfs_me_prepare() {
 }
 
 lfs_me_check() {
-	make RUN_EXPENSIVE_TESTS=yes check 2>&1 | tee "${log_dir}/last-check.log"
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make RUN_EXPENSIVE_TESTS=yes check
 }
 
 # vim:set syntax=sh et:

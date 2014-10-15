@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=perl
 pkgver=5.20.0
 
@@ -25,6 +25,7 @@ lfs_me_check() {
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
     mkdir -pv "${fakeroot_dir}/tools/bin"
     cp -v perl cpan/podlators/pod2man "${fakeroot_dir}/tools/bin"
     mkdir -pv "${fakeroot_dir}/tools/lib/${pkgname}${pkgver:0:1}/${pkgver}"

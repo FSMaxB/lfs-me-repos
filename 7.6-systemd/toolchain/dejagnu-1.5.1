@@ -1,4 +1,4 @@
-pkgbuild_version=2
+pkgbuild_version=3
 pkgname=dejagnu
 pkgver=1.5.1
 
@@ -25,10 +25,12 @@ lfs_me_build() {
 }
 
 lfs_me_check() {
-	make check 2>&1 | tee "${log_dir}/last-check.log"
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make check
 }
 
 lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
 	make DESTDIR="$fakeroot_dir" install
 }
 
