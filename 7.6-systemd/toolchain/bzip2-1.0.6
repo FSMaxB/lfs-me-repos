@@ -1,0 +1,29 @@
+pkgbuild_version=2
+pkgname=bzip2
+pkgver=1.0.6
+
+dependencies=(
+    "glibc"
+)
+sources=(
+    "http://www.bzip.org/${pkgver}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+    3f89f861209ce81a6bab1fd1998c0ef311712002
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	make PREFIX="${fakeroot_dir}/tools" install
+}
+
+# vim:set syntax=sh et:
