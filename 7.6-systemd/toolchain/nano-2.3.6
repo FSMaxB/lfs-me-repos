@@ -1,0 +1,30 @@
+pkgbuild_version=2
+pkgname=nano
+pkgver=2.3.6
+
+dependencies=(
+	'ncurses'
+	'bash'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+    7dd39f21bbb1ab176158e0292fd61c47ef681f6d
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+    
+    ./configure           \
+        --prefix=/tools   \
+        --enable-utf8
+}
+
+lfs_me_check() {
+    return
+}
+
+# vim:set syntax=sh et:
