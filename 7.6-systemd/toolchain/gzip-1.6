@@ -1,0 +1,24 @@
+pkgbuild_version=2
+pkgname=gzip
+pkgver=1.6
+
+dependencies=(
+	'glibc'
+	'bash'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+    05bd01fc90178b806e0c13f9526e2ad392084085
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/tools
+}
+
+# vim:set syntax=sh et:
