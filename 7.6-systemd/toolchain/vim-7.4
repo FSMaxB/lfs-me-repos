@@ -1,0 +1,39 @@
+pkgbuild_version=3
+pkgname=vim
+pkgver=7.4
+
+dependencies=(
+	'ncurses'
+    'perl'
+    'gawk'
+)
+sources=(
+    "ftp://ftp.vim.org/pub/vim/unix/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+    601abf7cc2b5ab186f40d8790e542f86afca86b7
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+
+	./configure --prefix=/tools --with-features=huge --with-x=no --enable-gui=no
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	make
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set syntax=sh et:
