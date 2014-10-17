@@ -75,6 +75,7 @@ install=(
 	'vim-7.4'
 	'curl-7.37.1'
 	'git-2.1.0'
+	'lfs-me-2.1.1'
 )
 
 mkdir -v pkg
