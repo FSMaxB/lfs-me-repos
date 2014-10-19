@@ -2,6 +2,24 @@ pkgbuild_version=3
 pkgname=glibc
 pkgver=2.20
 
+_info_pages=(
+    'lib.info'
+    'lib.info-1'
+    'lib.info-2'
+    'lib.info-3'
+    'lib.info-4'
+    'lib.info-5'
+    'lib.info-6'
+    'lib.info-7'
+    'lib.info-8'
+    'lib.info-9'
+    'lib.info-10'
+    'lib.info-11'
+    'lib.info-12'
+    'lib.info-13'
+    'lib.info-14'
+)
+
 dependencies=(
 	'binutils-pass1'
 	'gcc-pass1'
@@ -50,10 +68,13 @@ lfs_me_check() {
 lfs_me_install() {
     cd "${build_dir}/${pkgname}-build"
     make DESTDIR="$fakeroot_dir" install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/tools/share/info/dir"
 }
 
 lfs_me_preinstall() {
-    [ -z $LFS_TGT ] && lfs_me_error "The LFS_TGT environment variabl isn't set!" false
+    [ ! -z $LFS_TGT ] || lfs_me_error "The LFS_TGT environment variabl isn't set!" false
 }
 
 lfs_me_postinstall() {
@@ -69,6 +90,21 @@ lfs_me_postinstall() {
             ;;
     esac
 
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/tools/share/info/${info_page}" /tools/share/info/dir 2> /dev/null
+    done
 }
+
+lfs_me_postremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/tools/share/info/${info_page}" /tools/share/info/dir 2> /dev/null
+    done
+}
+
+
 
 # vim:set syntax=sh et:
