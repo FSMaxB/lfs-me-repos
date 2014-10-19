@@ -3,6 +3,16 @@ _pkgbase=binutils
 pkgname="${_pkgbase}-pass1"
 pkgver=2.24
 
+_info_pages=(
+    'binutils.info'
+    'ld.info'
+    'bfd.info'
+    'gprof.info'
+    'as.info'
+    'configure.info'
+    'standards.info'
+)
+
 sources=(
     "http://ftp.gnu.org/gnu/binutils/${_pkgbase}-${pkgver}.tar.bz2"
 )
@@ -44,6 +54,25 @@ lfs_me_install() {
         x86_64) mkdir -pv "${fakeroot_dir}/tools/lib" && ln -sv lib "${fakeroot_dir}/tools/lib64"
     esac
 	make DESTDIR="$fakeroot_dir" install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/tools/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/tools/share/info/${info_page}" /tools/share/info/dir 2> /dev/null
+    done
+}
+
+lfs_me_postremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/tools/share/info/${info_page}" /tools/share/info/dir 2> /dev/null
+    done
 }
 
 # vim:set syntax=sh et:
