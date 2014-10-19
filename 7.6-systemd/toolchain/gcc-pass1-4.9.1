@@ -7,6 +7,16 @@ _mpfr_ver=3.1.2
 _gmp_ver=6.0.0a
 _mpc_ver=1.0.2
 
+_info_pages=(
+    'binutils.info'
+    'ld.info'
+    'bfd.info'
+    'gprof.info'
+    'as.info'
+    'configure.info'
+    'standards.info'
+)
+
 dependencies=(
 	'binutils-pass1'
 )
@@ -100,6 +110,25 @@ lfs_me_install() {
     #fix for 2nd pass of gcc
     mkdir -pv "${fakeroot_dir}/tools/lib/${_pkgbase}/$LFS_TGT/${pkgver}/include-fixed"
     cat "${build_dir}/${_pkgbase}-${pkgver}/gcc/"{limitx.h,glimits.h,limity.h} > "${fakeroot_dir}/tools/lib/${_pkgbase}/$LFS_TGT/${pkgver}/include-fixed/limits.h"
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/tools/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/tools/share/info/${info_page}" /tools/share/info/dir 2> /dev/null
+    done
+}
+
+lfs_me_postremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/tools/share/info/${info_page}" /tools/share/info/dir 2> /dev/null
+    done
 }
 
 # vim:set syntax=sh et:
