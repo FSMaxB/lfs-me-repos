@@ -37,6 +37,7 @@ lfs_me_install() {
 }
 
 lfs_me_postinstall() {
+    echo "Adding info pages"
     for info_page in ${_info_pages[@]}
     do
         install-info "/tools/share/info/${info_page}" /tools/share/info/dir
@@ -44,6 +45,7 @@ lfs_me_postinstall() {
 }
 
 lfs_me_preremove() {
+    echo "Removing info pages"
     for info_page in ${_info_pages[@]}
     do
         install-info --delete "/tools/share/info/${info_page}" /tools/share/info/dir
