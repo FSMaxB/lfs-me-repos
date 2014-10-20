@@ -1,8 +1,9 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=libevent
 pkgver=2.0.21
 
 dependencies=(
+    "!$pkgname"
     'openssl'
 )
 sources=(

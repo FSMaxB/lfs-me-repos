@@ -1,8 +1,9 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=file
 pkgver=5.19
 
 dependencies=(
+    "!$pkgname"
     'glibc'
 )
 sources=(

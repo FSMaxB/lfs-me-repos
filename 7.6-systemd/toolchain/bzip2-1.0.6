@@ -1,9 +1,10 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=bzip2
 pkgver=1.0.6
 
 dependencies=(
-    "glibc"
+    "!$pkgname"
+    'glibc'
 )
 sources=(
     "http://www.bzip.org/${pkgver}/${pkgname}-${pkgver}.tar.gz"

@@ -1,8 +1,11 @@
-pkgbuild_version=3
+pkgbuild_version=4
 _pkgbase=linux
 pkgname="${_pkgbase}-headers"
 pkgver=3.16.5
 
+dependencies=(
+    "!$pkgname"
+)
 sources=(
     "https://www.kernel.org/pub/linux/kernel/v3.x/${_pkgbase}-${pkgver}.tar.xz"
 )

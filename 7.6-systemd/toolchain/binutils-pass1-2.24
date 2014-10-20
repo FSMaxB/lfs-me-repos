@@ -1,4 +1,4 @@
-pkgbuild_version=3
+pkgbuild_version=4
 _pkgbase=binutils
 pkgname="${_pkgbase}-pass1"
 pkgver=2.24
@@ -13,6 +13,9 @@ _info_pages=(
     'standards.info'
 )
 
+dependencies=(
+    "!$pkgname"
+)
 sources=(
     "http://ftp.gnu.org/gnu/binutils/${_pkgbase}-${pkgver}.tar.bz2"
 )

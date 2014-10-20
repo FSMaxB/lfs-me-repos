@@ -1,7 +1,10 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=grep
 pkgver=2.20
 
+dependencies=(
+    "!$pkgname"
+)
 sources=(
     "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz"
 )

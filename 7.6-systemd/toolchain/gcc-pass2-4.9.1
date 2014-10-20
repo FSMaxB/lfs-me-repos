@@ -1,4 +1,4 @@
-pkgbuild_version=3
+pkgbuild_version=4
 _pkgbase=gcc
 pkgname="${_pkgbase}-pass2"
 pkgver=4.9.1
@@ -23,6 +23,7 @@ _info_pages=(
 )
 
 dependencies=(
+    "!$pkgname"
 	'gcc-pass1'
     'binutils-pass2'
 	'glibc'

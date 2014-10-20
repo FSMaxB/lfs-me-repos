@@ -1,8 +1,9 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=m4
 pkgver=1.4.17
 
 dependencies=(
+    "!$pkgname"
 	'glibc'
 	'bash'
 )

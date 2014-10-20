@@ -1,8 +1,9 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=expect
 pkgver=5.45
 
 dependencies=(
+    "!$pkgname"
 	'tcl'
 )
 sources=(

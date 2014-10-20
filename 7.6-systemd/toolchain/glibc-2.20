@@ -1,4 +1,4 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=glibc
 pkgver=2.20
 
@@ -21,6 +21,7 @@ _info_pages=(
 )
 
 dependencies=(
+    "!$pkgname"
 	'binutils-pass1'
 	'gcc-pass1'
     'linux-headers'

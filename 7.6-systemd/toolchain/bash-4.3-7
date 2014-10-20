@@ -1,10 +1,11 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=bash
 _basever=4.3
 _patch=7
 pkgver="${_basever}-${_patch}"
 
 dependencies=(
+    "!$pkgname"
 	'glibc'
 )
 sources=(

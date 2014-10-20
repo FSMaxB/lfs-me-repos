@@ -1,8 +1,9 @@
-pkgbuild_version=3
+pkgbuild_version=4
 pkgname=coreutils
 pkgver=8.23
 
 dependencies=(
+    "!$pkgname"
 	'glibc'
 )
 sources=(
