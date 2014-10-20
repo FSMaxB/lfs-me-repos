@@ -67,7 +67,7 @@ lfs_me_postinstall() {
     done
 }
 
-lfs_me_postremove() {
+lfs_me_preremove() {
     echo "Removing info pages"
     for info_page in ${_info_pages[@]}
     do
