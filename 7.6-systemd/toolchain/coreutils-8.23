@@ -18,7 +18,10 @@ lfs_me_prepare() {
 
 	cd "${build_dir}/${pkgname}-${pkgver}"
 
-	./configure --prefix=/tools --enable-install-program=hostname
+	./configure \
+        --prefix=/tools \
+        --enable-install-program=hostname \
+        --enable-no-install-program=kill
 }
 
 lfs_me_check() {
