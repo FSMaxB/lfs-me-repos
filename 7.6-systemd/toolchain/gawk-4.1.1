@@ -2,6 +2,11 @@ pkgbuild_version=3
 pkgname=gawk
 pkgver=4.1.1
 
+_info_pages=(
+    'gawkinet.info'
+    'gawk.info'
+)
+
 dependencies=(
     'bash'
     'glibc'
@@ -20,6 +25,28 @@ lfs_me_prepare() {
 	cd "${build_dir}/${pkgname}-${pkgver}"
 
 	./configure --prefix=/tools
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+    make DESTDIR="$fakeroot_dir" install
+
+    #don't remove info pages
+    rm "${fakeroot_dir}/tools/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/tools/share/info/${info_page}" /tools/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/tools/share/info/${info_page}" /tools/share/info/dir
+    done
 }
 
 # vim:set syntax=sh et:
