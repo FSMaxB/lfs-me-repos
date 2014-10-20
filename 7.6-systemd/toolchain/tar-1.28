@@ -2,6 +2,13 @@ pkgbuild_version=4
 pkgname=tar
 pkgver=1.28
 
+_info_pages=(
+    'tar.info-3'
+    'tar.info-2'
+    'tar.info-1'
+    'tar.info'
+)
+
 dependencies=(
     "!$pkgname"
 	'glibc'
@@ -19,6 +26,30 @@ lfs_me_prepare() {
 	cd "${build_dir}/${pkgname}-${pkgver}"
 
 	./configure --prefix=/tools
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/tools/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/tools/share/info/${info_page}" /tools/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/tools/share/info/${info_page}" /tools/share/info/dir
+    done
 }
 
 # vim:set syntax=sh et:
