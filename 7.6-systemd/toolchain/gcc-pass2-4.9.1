@@ -7,6 +7,21 @@ _mpfr_ver=3.1.2
 _gmp_ver=6.0.0a
 _mpc_ver=1.0.2
 
+#man pages to be deleted
+_man_pages=(
+    '7/gpl.7'
+    '7/gfdl.7'
+    '7/fsf-funding.7'
+)
+
+_info_pages=(
+    'gccint.info'
+    'gcc.info'
+    'cppinternals.info'
+    'cpp.info'
+    'gccinstall.info'
+)
+
 dependencies=(
 	'gcc-pass1'
     'binutils-pass2'
@@ -89,10 +104,25 @@ lfs_me_install() {
 
     mkdir -pv "${fakeroot_dir}/tools/bin/"
     ln -sv gcc "${fakeroot_dir}/tools/bin/cc"
+
+    #don't overwrite man pages from pass1
+    for man_page in ${_man_pages[@]}
+    do
+        rm "${fakeroot_dir}/tools/share/man/man${man_page}"
+    done
+    #don't overwrite info pages ( especially from part 1 )
+    rm "${fakeroot_dir}/tools/share/info/dir"
+    for info_page in ${_info_pages[@]}
+    do
+        rm "${fakeroot_dir}/tools/share/info/${info_page}"
+    done
+    #don't overwrite files from libstdc++
+    rm "${fakeroot_dir}/tools/share/${_pkgbase}-${pkgver}/python/libstdcxx/"{{,v6/}__init__.py,v6/printers.py}
+    rm "${fakeroot_dir}/tools/lib64/lib"{stdc,supc}++{.la,.a}
 }
 
 lfs_me_preinstall() {
-    [ -z $LFS_TGT ] && lfs_me_error "The LFS_TGT environment variabl isn't set!" false
+    [ ! -z $LFS_TGT ] || lfs_me_error "The LFS_TGT environment variabl isn't set!" false
 }
 
 lfs_me_postinstall() {
@@ -107,7 +137,6 @@ lfs_me_postinstall() {
             readelf -l a.out | grep -E ': /tools/lib/ld-linux.so.2' || lfs_me_error "Wrong dynamic loader" false
             ;;
     esac
-
 }
 
 # vim:set syntax=sh et:
