@@ -75,10 +75,13 @@ install=(
 	'vim-7.4'
 	'curl-7.37.1'
 	'git-2.1.0'
-	'lfs-me-2.1.1'
+	'lfs-me-3.0.2'
 )
 
 mkdir -v pkg
+
+[ -f build-toolchain.log ] && rm build-toolchain.log
+touch build-toolchain.log
 
 for package in "${install[@]}"
 do
@@ -86,10 +89,10 @@ do
 	then
 		shift "$#" #remove commandline parameters
 		echo "BUILDING ${package}"
-		lfs-me build "$package" --no-cert-check
-		[ ! $? -eq 0 ] && echo "Building '$package' failed!" && exit 1
+		lfs-me build "$package" --no-cert-check | tee -a build-toolchain.log
+		[ ! ${PIPESTATUS[0]} -eq 0 ] && echo "Building '$package' failed!" && exit 1
 		mv "${package}.pkg" pkg/
-		lfs-me install "pkg/${package}.pkg"
-		[ ! $? -eq 0 ] && echo "Installing '$package' failed!" && exit 1
+		lfs-me install "pkg/${package}.pkg" | tee -a build-toolchain.log
+		[ ! ${PIPESTATUS[0]} -eq 0 ] && echo "Installing '$package' failed!" && exit 1
 	fi
 done
