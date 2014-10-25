@@ -5,6 +5,7 @@ pkgver=3.0.2
 dependencies=(
     "!$pkgname"
 	'bash'
+    'bc'
     'rsync'
     'coreutils'
     'grep'
@@ -16,7 +17,7 @@ sources=(
     "${pkgname}-${pkgver}.tar.gz::https://github.com/FSMaxB/${pkgname}/archive/${pkgver}.tar.gz"
 )
 sha1sums=(
-    810c97f80dc55e4d9b1045c626beaf435a2bc928
+    8e08ef0cc5c5c139916e11efb4cee0fa43c4d90b
 )
 
 lfs_me_prepare() {
