@@ -79,6 +79,7 @@ install=(
 	'lfs-me-3.0.2'
 	'groff-1.22.2'
 	'less-458'
+	'libpipeline-1.3.0'
 )
 
 mkdir -v pkg
