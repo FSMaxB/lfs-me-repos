@@ -1,0 +1,43 @@
+pkgbuild_version=4
+pkgname=gdbm
+pkgver=1.11
+
+dependencies=(
+    "!$pkgname"
+	'bash'
+	'glibc'
+)
+sources=(
+    "http://ftp.gnu.org/gnu/${pgkname}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+    ce433d0f192c21d41089458ca5c8294efe9806b4
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/tools --enable-libgdbm-compat
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+    make DESTDIR="$fakeroot_dir" install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/tools/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    install-info  "/tools/share/info/${pkgname}.info" /tools/share/info/dir
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    install-info  --delete "/tools/share/info/${pkgname}.info" /tools/share/info/dir
+}
+
+# vim:set syntax=sh et:

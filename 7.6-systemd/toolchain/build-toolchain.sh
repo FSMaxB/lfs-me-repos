@@ -80,6 +80,7 @@ install=(
 	'groff-1.22.2'
 	'less-458'
 	'libpipeline-1.3.0'
+	'gdbm-1.11'
 )
 
 mkdir -v pkg
