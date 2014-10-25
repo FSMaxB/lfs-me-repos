@@ -1,0 +1,29 @@
+pkgbuild_version=4
+pkgname=less
+pkgver=458
+
+dependencies=(
+    "!$pkgname"
+    'glibc'
+    'ncurses'
+)
+sources=(
+    "http://www.greenwoodsoftware.com/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+    d5b07180d3dad327ccc8bc66818a31577e8710a2
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/tools
+}
+
+lfs_me_check() {
+    return
+}
+
+# vim:set syntax=sh et:
