@@ -77,6 +77,7 @@ install=(
 	'git-2.1.0'
 	'bc-1.06.95'
 	'lfs-me-3.0.2'
+	'groff-1.22.2'
 )
 
 mkdir -v pkg
