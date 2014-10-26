@@ -1,0 +1,90 @@
+pkgbuild_version=4
+pkgname=binutils
+pkgver=2.24
+
+_info_pages=(
+	'bfd.info'
+	'binutils.info'
+	'ld.info'
+	'configure.info'
+	'gprof.info'
+	'as.info'
+)
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+	'zlib'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+	"http://www.linuxfromscratch.org/patches/lfs/7.6-systemd/${pkgname}-${pkgver}-load_gcc_lto_plugin_by_default-1.patch"
+	"http://www.linuxfromscratch.org/patches/lfs/7.6-systemd/${pkgname}-${pkgver}-lto_testsuite-1.patch"
+)
+
+sha1sums=(
+	7ac75404ddb3c4910c7594b51ddfc76d4693debb
+	7e0350ed0ce3ca2037e84cbe14f0d27398a0fd98
+	4728ea12b44834bad839ec2243145c9bf00c7d1f
+)
+
+lfs_me_prepare() {
+	expect -c "spawn ls" | grep -q "spawn ls" || lfs_me_error "No more ptys" false
+
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	rm -fv etc/standards.info
+	sed -i.bak '/^INFO/s/standards.info //' etc/Makefile.in
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-load_gcc_lto_plugin_by_default-1.patch"
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-lto_testsuite-1.patch"
+
+	mkdir "../${pkgname}-build"
+	cd "../${pkgname}-build"
+
+	"../${pkgname}-${pkgver}/configure" \
+				--prefix=/usr	\
+				--enable-shared	\
+				--disable-werror
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-build"
+	make tooldir=/usr
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-build"
+	make -k check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-build"
+	make DESTDIR="$fakeroot_dir" tooldir=/usr install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+# vim:set syntax=sh et:

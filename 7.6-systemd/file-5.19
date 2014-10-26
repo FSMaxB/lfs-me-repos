@@ -1,0 +1,17 @@
+pkgbuild_version=4
+pkgname=file
+pkgver=5.19
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+	'zlib'
+)
+sources=(
+	"ftp://ftp.astron.com/pub/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	0dff09eb44fde1998be79e8d312e9be4456d31ee
+)
+
+# vim:set syntax=sh et:
