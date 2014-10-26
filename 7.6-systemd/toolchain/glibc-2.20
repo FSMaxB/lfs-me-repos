@@ -3,21 +3,21 @@ pkgname=glibc
 pkgver=2.20
 
 _info_pages=(
-    'lib.info'
-    'lib.info-1'
-    'lib.info-2'
-    'lib.info-3'
-    'lib.info-4'
-    'lib.info-5'
-    'lib.info-6'
-    'lib.info-7'
-    'lib.info-8'
-    'lib.info-9'
-    'lib.info-10'
-    'lib.info-11'
-    'lib.info-12'
-    'lib.info-13'
-    'lib.info-14'
+    'libc.info'
+    'libc.info-1'
+    'libc.info-2'
+    'libc.info-3'
+    'libc.info-4'
+    'libc.info-5'
+    'libc.info-6'
+    'libc.info-7'
+    'libc.info-8'
+    'libc.info-9'
+    'libc.info-10'
+    'libc.info-11'
+    'libc.info-12'
+    'libc.info-13'
+    'libc.info-14'
 )
 
 dependencies=(
