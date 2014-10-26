@@ -1,7 +1,7 @@
 # This package is to be installed from outside the chroot.
 # Removal of this package isn't supported!
 
-pkgbuild_version=4
+pkgbuild_version=5
 pkgname=filesystem
 pkgver=0
 
