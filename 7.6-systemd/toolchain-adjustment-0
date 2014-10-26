@@ -37,15 +37,35 @@ lfs_me_preinstall() {
 
 	cd "${build_dir}"
 	echo 'main(){}' > dummy.c
-	cc dummy.c -v -Wl,--verbose &> /dev/null
-    case $(uname -m) in
-        x86_64)
-            readelf -l a.out | grep -E ': /lib(|64)/ld-linux-x86-64.so.2' || ( lfs_me_postremove; lfs_me_error "Wrong dynamic loader" false )
-            ;;
-        *)
-            readelf -l a.out | grep -E ': /lib/ld-linux.so.2' || ( lfs_me_postremove; lfs_me_error "Wrong dynamic loader" false )
-            ;;
-    esac
+	cc dummy.c -v -Wl,--verbose &> dummy.log
+	! readelf -l a.out | grep -E ': /lib(|64)/ld-linux(|-x86-64).so.2' && lfs_me_postremove && lfs_me_error "Wrong dynamic loader" false
+
+	grep -o '/usr/lib.*/crt[1in].*succeeded' dummy.log > succeeded.log
+	cat succeeded.log
+	for lib in crt{1,i,n}.o
+	do
+		! grep -q "$lib" succeeded.log && lfs_me_postremove && lfs_me_error "Wrong startfiles" false
+	done
+	
+	grep -B1 '^ /usr/include' dummy.log > include.log
+	cat include.log
+	! grep -q "^#include <" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+	
+	grep 'SEARCH.*/usr/lib' dummy.log | sed 's|; |\n|g' > searchdir.log
+	cat searchdir.log
+	for path in 'SEARCH_DIR("/usr/lib")' 'SEARCH_DIR("/lib")'
+	do
+		! grep -q "$path" searchdir.log && lfs_me_postremove && lfs_me_error "Wrong searchdir" false
+	done
+
+	grep -E '/lib(|64)/libc\.so\.6 ' dummy.log > libc.log
+	cat libc.log
+	! grep -q "succeeded" libc.log && lfs_me_postremove && lfs_me_error "Wrong libc" false
+
+	grep found dummy.log > found.log
+	cat found.log
+	! grep -q -E '/lib(|64)/ld-linux(|-x86-64)\.so\.2' found.log && lfs_me_postremove && lfs_me_error "Wrong dynamic linker" false
+	true	#prevent error because of non zero exit status
 }
 
 lfs_me_postremove() {
@@ -56,6 +76,8 @@ lfs_me_postremove() {
 	mv -v "/tools/$(/tools/bin/gcc -dumpmachine)/bin/"{ld-old,ld}
 	mv -v /tools/bin/{ld,ld-new}
 	mv -v /tools/bin/{ld-old,ld}
+	
+	[ ! $? -eq 0 ] && lfs_me_error "Non zero exit status" false
 }
 
 # vim:set syntax=sh et:
