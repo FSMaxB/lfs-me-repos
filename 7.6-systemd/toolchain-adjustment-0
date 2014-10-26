@@ -1,0 +1,61 @@
+pkgbuild_version=4
+pkgname=toolchain-adjustment
+pkgver=0
+
+dependencies=(
+    "!$pkgname"
+)
+
+lfs_me_prepare() {
+	return
+}
+
+lfs_me_build() {
+	return
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	return
+}
+
+lfs_me_preinstall() {
+	#backup and replace linker
+	mv -v /tools/bin/{ld,ld-old}
+	mv -v "/tools/$(/tools/bin/gcc -dumpmachine)/bin/"{ld,ld-old}
+	mv -v /tools/bin/{ld-new,ld}
+	ln -sv /tools/bin/ld "/tools/$(/tools/bin/gcc -dumpmachine)/bin/ld"
+
+	#create spec files
+	/tools/bin/gcc -dumpspecs | sed -e 's@/tools@@g'                   \
+		-e '/\*startfile_prefix_spec:/{n;s@.*@/usr/lib/ @}' \
+		-e '/\*cpp:/{n;s@$@ -isystem /usr/include@}' >      \
+		`dirname $(/tools/bin/gcc --print-libgcc-file-name)`/specs
+
+	cd "${build_dir}"
+	echo 'main(){}' > dummy.c
+	cc dummy.c -v -Wl,--verbose &> /dev/null
+    case $(uname -m) in
+        x86_64)
+            readelf -l a.out | grep -E ': /lib(|64)/ld-linux-x86-64.so.2' || ( lfs_me_postremove; lfs_me_error "Wrong dynamic loader" false )
+            ;;
+        *)
+            readelf -l a.out | grep -E ': /lib/ld-linux.so.2' || ( lfs_me_postremove; lfs_me_error "Wrong dynamic loader" false )
+            ;;
+    esac
+}
+
+lfs_me_postremove() {
+	#remove specs file
+	rm `dirname $(/tools/bin/gcc --print-libgcc-file-name)`/specs
+
+	#replay backup
+	mv -v "/tools/$(/tools/bin/gcc -dumpmachine)/bin/"{ld-old,ld}
+	mv -v /tools/bin/{ld,ld-new}
+	mv -v /tools/bin/{ld-old,ld}
+}
+
+# vim:set syntax=sh et:
