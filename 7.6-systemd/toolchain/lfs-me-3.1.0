@@ -1,6 +1,6 @@
 pkgbuild_version=5
 pkgname=lfs-me
-pkgver=3.0.2
+pkgver=3.1.0
 
 dependencies=(
     "!$pkgname"
@@ -17,7 +17,7 @@ sources=(
     "${pkgname}-${pkgver}.tar.gz::https://github.com/FSMaxB/${pkgname}/archive/${pkgver}.tar.gz"
 )
 sha1sums=(
-    8e08ef0cc5c5c139916e11efb4cee0fa43c4d90b
+    ccdc9f1a794758c4b5c5fc4d1c02f1538ac48849
 )
 
 lfs_me_prepare() {

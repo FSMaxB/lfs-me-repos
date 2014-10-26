@@ -76,7 +76,7 @@ install=(
 	'curl-7.37.1'
 	'git-2.1.0'
 	'bc-1.06.95'
-	'lfs-me-3.0.2'
+	'lfs-me-3.1.0'
 	'groff-1.22.2'
 	'less-458'
 	'libpipeline-1.3.0'
