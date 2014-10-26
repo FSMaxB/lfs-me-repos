@@ -1,4 +1,4 @@
-pkgbuild_version=4
+pkgbuild_version=5
 pkgname=binutils
 pkgver=2.24
 
@@ -67,8 +67,6 @@ lfs_me_install() {
 
     #don't overwrite info pages
     rm "${fakeroot_dir}/usr/share/info/dir"
-}
-
 }
 
 lfs_me_postinstall() {
