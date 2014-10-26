@@ -83,7 +83,7 @@ lfs_me_install() {
     install -dv -m 1777 "$fakeroot_dir"/tmp "$fakeroot_dir"/var/tmp
 
     #creating /usr
-    mkdir -pv "$fakeroot_dir"/usr/{,local/}{bin,include,lib,sbin,src}
+    mkdir -pv "$fakeroot_dir"/usr/{,local/}{bin,include,lib,src}
     mkdir -pv "$fakeroot_dir"/usr/{,local/}share/{color,dict,doc,info,locale,man}
     mkdir -v  "$fakeroot_dir"/usr/{,local/}share/{misc,terminfo,zoneinfo}
     mkdir -v  "$fakeroot_dir"/usr/libexec
@@ -92,6 +92,7 @@ lfs_me_install() {
     #creating symlinks
     ln -sv usr/bin "${fakeroot_dir}/bin"
     ln -sv usr/bin "${fakeroot_dir}/sbin"
+    ln -sv usr/bin "${fakeroot_dir}/usr/sbin"
     ln -sv usr/lib "${fakeroot_dir}/lib"
     case $(uname -m) in
     x86_64)
