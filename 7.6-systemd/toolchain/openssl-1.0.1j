@@ -1,4 +1,4 @@
-pkgbuild_version=4
+pkgbuild_version=5
 pkgname=openssl
 pkgver=1.0.1j
 

@@ -1,4 +1,4 @@
-pkgbuild_version=4
+pkgbuild_version=5
 pkgname=coreutils
 pkgver=8.23
 
