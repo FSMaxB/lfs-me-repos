@@ -1,4 +1,4 @@
-pkgbuild_version=4
+pkgbuild_version=5
 _pkgbase=gcc
 pkgname="${_pkgbase}-pass2"
 pkgver=4.9.1
@@ -22,6 +22,12 @@ _info_pages=(
     'gccinstall.info'
 )
 
+overwrite=(
+    '/tools/lib64/libstdc++.la'
+    '/tools/lib64/libstdc++.a'
+    '/tools/lib64/libsupc++.la'
+    '/tools/lib64/libsupc++.a'
+)
 dependencies=(
     "!$pkgname"
 	'gcc-pass1'
@@ -119,7 +125,6 @@ lfs_me_install() {
     done
     #don't overwrite files from libstdc++
     rm "${fakeroot_dir}/tools/share/${_pkgbase}-${pkgver}/python/libstdcxx/"{{,v6/}__init__.py,v6/printers.py}
-    rm "${fakeroot_dir}/tools/lib64/lib"{stdc,supc}++{.la,.a}
 }
 
 lfs_me_preinstall() {
