@@ -1,0 +1,47 @@
+pkgbuild_version=5
+pkgname=bzip2
+pkgver=1.0.6
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+)
+sources=(
+	"http://www.bzip.org/${pkgver}/${pkgname}-${pkgver}.tar.gz"
+	"http://www.linuxfromscratch.org/patches/lfs/7.6-systemd/${pkgname}-${pkgver}-install_docs-1.patch"
+)
+
+sha1sums=(
+	3f89f861209ce81a6bab1fd1998c0ef311712002
+	86fa168b260bb12651ebfa6d47939e926e067036
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-install_docs-1.patch"
+
+	sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile
+
+	sed -i "s@(PREFIX)/man@(PREFIX)/share/man@g" Makefile
+
+	make -f Makefile-libbz2_so
+	make clean
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make PREFIX="${fakeroot_dir}/usr" install
+
+	cp -v bzip2-shared "${fakeroot_dir}/usr/bin/bzip2"
+	cp -av libbz2.so* "${fakeroot_dir}/usr/lib"
+	ln -sv libbz2.so.1.0 "${fakeroot_dir}/usr/lib/libbz2.so"
+}
+
+# vim:set syntax=sh et:
