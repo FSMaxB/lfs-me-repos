@@ -92,7 +92,7 @@ lfs_me_install() {
     #creating symlinks
     ln -sv usr/bin "${fakeroot_dir}/bin"
     ln -sv usr/bin "${fakeroot_dir}/sbin"
-    ln -sv usr/bin "${fakeroot_dir}/usr/sbin"
+    ln -sv bin "${fakeroot_dir}/usr/sbin"
     ln -sv usr/lib "${fakeroot_dir}/lib"
     case $(uname -m) in
     x86_64)
