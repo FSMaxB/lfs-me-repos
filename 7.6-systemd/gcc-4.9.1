@@ -13,6 +13,13 @@ _info_pages=(
 	'gcc.info'
 )
 
+overwrite=(
+	'/usr/lib/libstdc++.la'
+	'/usr/lib/libstdc++.so'
+	'/usr/lib/libstdc++.so.6'
+	'/usr/lib/libgcc_s.so'
+	'/usr/lib/libgcc_s.so.1'
+)
 dependencies=(
     "!$pkgname"
 	'binutils'
@@ -93,22 +100,22 @@ lfs_me_postinstall() {
 	cat succeeded.log
 	for lib in crt{1,i,n}.o
 	do
-		! grep -q "pc-linux-gnu/${pkgver}/.*${lib}" succeeded.log && lfs_me_postremove && lfs_me_error "Wrong startfiles" false
+		! grep -q "/usr/lib.*/gcc/.*-linux-gnu/${pkgver}/.*${lib}" succeeded.log && lfs_me_postremove && lfs_me_error "Wrong startfiles" false
 	done
 
 	grep -B4 '^ /usr/include' dummy.log > include.log
 	cat include.log
 	! grep -q "^#include <" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
-	! grep -q "^ /usr/lib/gcc/.*-linux-gnu/${pkgver}/include" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+	! grep -q "^ /usr/lib.*/gcc/.*-linux-gnu/${pkgver}/include" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
 	! grep -q "^ /usr/local/include" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
-	! grep -q "^ /usr/lib/gcc/.*-linux-gnu/${pkgver}/include-fixed" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+	! grep -q "^ /usr/lib.*/gcc/.*-linux-gnu/${pkgver}/include-fixed" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
 	! grep -q "^ /usr/include" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
 
 	grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g' > searchdir.log
-	! grep -q '^SEARCH_DIR("/usr/.*-linux-gnu/lib.*")' && lfs_me_error "Missing search path!" false
-	! grep -q '^SEARCH_DIR("/usr/local/lib.*")' && lfs_me_error "Missing search path!" false
-	! grep -q '^SEARCH_DIR("/lib.*")' && lfs_me_error "Missing search path!" false
-	! grep -q '^SEARCH_DIR("/usr/lib")' && lfs_me_error "Missing search path!" false
+	! grep -q '^SEARCH_DIR("/usr/.*-linux-gnu/lib.*")' searchdir.log && lfs_me_error "Missing search path!" false
+	! grep -q '^SEARCH_DIR("/usr/local/lib.*")' searchdir.log && lfs_me_error "Missing search path!" false
+	! grep -q '^SEARCH_DIR("/lib.*")' searchdir.log && lfs_me_error "Missing search path!" false
+	! grep -q '^SEARCH_DIR("/usr/lib")' searchdir.log && lfs_me_error "Missing search path!" false
 
 	grep -E '/lib(|64)/libc\.so\.6 ' dummy.log > libc.log
 	cat libc.log
