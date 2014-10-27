@@ -27,6 +27,10 @@ overwrite=(
     '/tools/lib64/libstdc++.a'
     '/tools/lib64/libsupc++.la'
     '/tools/lib64/libsupc++.a'
+    "/tools/share/${_pkgbase}-${pkgver}/python/libstdcxx/v6/__init__.py"
+    "/tools/share/${_pkgbase}-${pkgver}/python/libstdcxx/v6/printers.py}"
+    "/tools/share/${_pkgbase}-${pkgver}/python/libstdcxx/__init__.py"
+    "/tools/share/${_pkgbase}-${pkgver}/python/libstdcxx/v6/printers.py"
 )
 dependencies=(
     "!$pkgname"
@@ -123,8 +127,6 @@ lfs_me_install() {
     do
         rm "${fakeroot_dir}/tools/share/info/${info_page}"
     done
-    #don't overwrite files from libstdc++
-    rm "${fakeroot_dir}/tools/share/${_pkgbase}-${pkgver}/python/libstdcxx/"{{,v6/}__init__.py,v6/printers.py}
 }
 
 lfs_me_preinstall() {
