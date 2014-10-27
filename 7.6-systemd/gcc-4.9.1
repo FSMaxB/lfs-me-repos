@@ -1,0 +1,136 @@
+pkgbuild_version=5
+pkgname=gcc
+pkgver=4.9.1
+
+_info_pages=(
+	'libquadmath.info'
+	'cppinternals.info'
+	'gccint.info'
+	'cpp.info'
+	'libitm.info'
+	'gccinstall.info'
+	'libgomp.info'
+	'gcc.info'
+)
+
+dependencies=(
+    "!$pkgname"
+	'binutils'
+	'mpc'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}/${pkgname}-${pkgver}.tar.bz2"
+	"http://www.linuxfromscratch.org/patches/lfs/7.6-systemd/${pkgname}-${pkgver}-upstream_fixes-1.patch"
+)
+
+sha1sums=(
+	3f303f403053f0ce79530dae832811ecef91197e
+	d01ead56609594d4d6e53720b86e4e1aae0b5d91
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	#fix problem identified upstream
+	sed -i 's/if \((code.*))\)/if (\1 \&\& \!DEBUG_INSN_P (insn))/' gcc/sched-deps.c
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-upstream_fixes-1.patch"
+
+	mkdir -v "../${pkgname}-build"
+	cd "../${pkgname}-build"
+	
+	SED=sed								\
+	"../${pkgname}-${pkgver}/configure"	\
+			--prefix=/usr				\
+			--enable-languages=c,c++	\
+			--disable-multilib			\
+			--disable-bootstrap			\
+			--with-system-zlib
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-build"
+	make
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-build"
+	ulimit -s 32768
+	make -k check
+
+	"../${pkgname}-${pkgver}/contrib/test_summary"
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-build"
+	make DESTDIR="$fakeroot_dir" install
+
+	#compatibility symlinks
+	mkdir -pv "${fakeroot_dir}/usr/lib"
+	ln -sv ../bin/cpp "${fakeroot_dir}/usr/lib"
+	ln -sv gcc "${fakeroot_dir}/usr/bin/cc"
+
+	install -v -dm755 "${fakeroot_dir}/usr/lib/bfd-plugins"
+	ln -sfv "../../libexec/gcc/$(gcc -dumpmachine)/${pkgver}/liblto_plugin.so" "${fakeroot_dir}/usr/lib/bfd-plugins/"
+
+	#move misplaced file
+	mkdir -pv "${fakeroot_dir}/usr/share/gdb/auto-load/usr/lib"
+    mv -v "${fakeroot_dir}/usr/"lib*/*gdb.py "${fakeroot_dir}/usr/share/gdb/auto-load/usr/lib"
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+lfs_me_postinstall() {
+	cd "${build_dir}"
+	echo 'main(){}' > dummy.c
+	cc dummy.c -v -Wl,--verbose &> dummy.log
+	! readelf -l a.out | grep ': /lib' | grep -E ': /lib(|64)/ld-linux(|-x86-64)\.so\.2' && lfs_me_error "Wrong dynamic linker!" false
+
+	grep -o '/usr/lib.*/crt[1in].*succeeded' dummy.log > succeeded.log
+	cat succeeded.log
+	for lib in crt{1,i,n}.o
+	do
+		! grep -q "pc-linux-gnu/${pkgver}/.*${lib}" succeeded.log && lfs_me_postremove && lfs_me_error "Wrong startfiles" false
+	done
+
+	grep -B4 '^ /usr/include' dummy.log > include.log
+	cat include.log
+	! grep -q "^#include <" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+	! grep -q "^ /usr/lib/gcc/.*-linux-gnu/${pkgver}/include" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+	! grep -q "^ /usr/local/include" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+	! grep -q "^ /usr/lib/gcc/.*-linux-gnu/${pkgver}/include-fixed" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+	! grep -q "^ /usr/include" include.log && lfs_me_postremove && lfs_me_error "Wrong include" false
+
+	grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g' > searchdir.log
+	! grep -q '^SEARCH_DIR("/usr/.*-linux-gnu/lib.*")' && lfs_me_error "Missing search path!" false
+	! grep -q '^SEARCH_DIR("/usr/local/lib.*")' && lfs_me_error "Missing search path!" false
+	! grep -q '^SEARCH_DIR("/lib.*")' && lfs_me_error "Missing search path!" false
+	! grep -q '^SEARCH_DIR("/usr/lib")' && lfs_me_error "Missing search path!" false
+
+	grep -E '/lib(|64)/libc\.so\.6 ' dummy.log > libc.log
+	cat libc.log
+	! grep -q "succeeded" libc.log && lfs_me_postremove && lfs_me_error "Wrong libc" false
+
+	grep found dummy.log > found.log
+	cat found.log
+	! grep -q -E '/lib(|64)/ld-linux(|-x86-64)\.so\.2' found.log && lfs_me_postremove && lfs_me_error "Wrong dynamic linker" false
+
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+# vim:set syntax=sh et:
