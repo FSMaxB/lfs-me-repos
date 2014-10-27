@@ -1,0 +1,44 @@
+pkgbuild_version=5
+pkgname=acl
+pkgver=2.2.52
+
+dependencies=(
+    "!$pkgname"
+	'attr'
+)
+sources=(
+	"http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver}.src.tar.gz"
+)
+
+sha1sums=(
+	537dddc0ee7b6aa67960a3de2d36f1e2ff2059d9
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.src.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	#documentation in versioned directory
+	sed -i -e 's|/@pkg_name@|&-@pkg_version@|' include/builddefs.in
+
+	#fix broken tests
+	sed -i "s:| sed.*::g" test/{sbits-restore,cp,misc}.test
+
+	#fix but that causes segfault
+	sed -i -e "/TABS-1;/a if (x > (TABS-1)) x = (TABS-1);" libacl/__acl_to_any_text.c
+
+	./configure --prefix=/usr --libexecdir=/usr/lib
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install install-dev install-lib
+	chmod -v 755 "${fakeroot_dir}/usr/lib/libacl.so"
+}
+
+# vim:set syntax=sh et:

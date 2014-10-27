@@ -8,4 +8,4 @@ This is a list of all modifications I remember making to what's written in the b
 * gcc: move /usr/lib*/*.gdb.py instead of /usr/lib/*gdb.py
 * bzip2: didn't do the last 3 lines described in the book and modified the 3 before them so that things get installed to /usr/lib and /usr/bin
 * ncurses: didn't move libraries from /usr/lib to /lib ( first line after make install )
-* attr: didn't move library to /lib
+* attr and acl: didn't move library to /lib
