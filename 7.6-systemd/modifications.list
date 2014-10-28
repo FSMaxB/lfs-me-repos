@@ -10,3 +10,4 @@ This is a list of all modifications I remember making to what's written in the b
 * ncurses: didn't move libraries from /usr/lib to /lib ( first line after make install )
 * attr and acl: didn't move library to /lib
 * libcap: didn't move library to /lib and sed Make.Rules
+* sed: configure withou --bindir
