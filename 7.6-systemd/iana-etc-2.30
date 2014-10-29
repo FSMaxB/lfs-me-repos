@@ -1,0 +1,26 @@
+pkgbuild_version=5
+pkgname=iana-etc
+pkgver=2.30
+
+dependencies=(
+    "!$pkgname"
+)
+sources=(
+	"http://anduin.linuxfromscratch.org/sources/LFS/lfs-packages/conglomeration/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+
+sha1sums=(
+	218593bcb9264014c4e397d838b2c218eac9df06
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set syntax=sh et:
