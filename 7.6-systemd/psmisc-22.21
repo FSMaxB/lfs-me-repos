@@ -1,0 +1,21 @@
+pkgbuild_version=5
+pkgname=psmisc
+pkgver=22.21
+
+dependencies=(
+    "!$pkgname"
+	'ncurses'
+)
+sources=(
+	"http://downloads.sourceforge.net/project/${pkgname}/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha1sums=(
+	09fabbef4539b58b6b8738a73da3d21d5daa1a58
+)
+
+lfs_me_check() {
+	return
+}
+
+# vim:set syntax=sh et:
