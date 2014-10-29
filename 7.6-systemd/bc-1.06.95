@@ -1,0 +1,58 @@
+pkgbuild_version=5
+pkgname=bc
+pkgver=1.06.95
+
+_info_pages=(
+	'dc.info'
+	'bc.info'
+)
+
+dependencies=(
+    "!$pkgname"
+	'readline'
+)
+sources=(
+	"http://alpha.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+
+sha1sums=(
+	18717e0543b1dda779a71e6a812f11b8261a705a
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-memory_leak-1.patch"
+
+	./configure --prefix=/usr           \
+	            --with-readline         \
+				--mandir=/usr/share/man \
+				--infodir=/usr/share/info
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	echo "quit" | ./bc/bc -l Test/checklib.b
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    install-info  "/usr/share/info/${pkgname}.info" /usr/share/info/dir
+}
+
+lfs_me_preremove() {
+    echo "Adding info pages"
+    install-info  --delete "/usr/share/info/${pkgname}.info" /usr/share/info/dir
+}
+
+# vim:set syntax=sh et:
