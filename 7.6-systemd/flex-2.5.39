@@ -1,0 +1,61 @@
+pkgbuild_version=5
+pkgname=flex
+pkgver=2.5.39
+
+_info_pages=(
+	'flex.info'
+	'flex.info-1'
+	'flex.info-2'
+)
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+	'm4'
+)
+sources=(
+	"http://prdownloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+
+sha1sums=(
+	267794c709d5c50f2dcb48ff5d8dcbbfe40f953e
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	sed -i -e '/test-bison/d' tests/Makefile.in
+
+	./configure --prefix=/usr \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+	ln -sv flex "${fakeroot_dir}/usr/bin/lex"
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+# vim:set syntax=sh et:
