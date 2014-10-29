@@ -1,0 +1,85 @@
+pkgbuild_version=5
+pkgname=e2fsprogs
+pkgver=1.42.12
+
+_info_pages=(
+	'com_err.info'
+	'libext2fs.info'
+)
+
+dependencies=(
+    "!$pkgname"
+)
+sources=(
+	"http://downloads.sourceforge.net/project/${pkgname}/${pkgname}/v${pkgver}/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha1sums=(
+	083c1bb0d1e85672e8038a2fadf70b24e7409db7
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	mkdir -v build
+	cd build
+
+	LIBS=-L/tools/lib                    \
+	CFLAGS=-I/tools/include              \
+	PKG_CONFIG_PATH=/tools/lib/pkgconfig \
+	../configure \
+				--prefix=/usr           \
+				--with-root-prefix=""   \
+				--enable-elf-shlibs     \
+				--disable-libblkid      \
+				--disable-libuuid       \
+				--disable-uuidd         \
+				--disable-fsck
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}/build"
+	make
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}/build"
+	ln -sfv /tools/lib/lib{blk,uu}id.so.1 lib
+	make LD_LIBRARY_PATH=/tools/lib check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}/build"
+	make DESTDIR="$fakeroot_dir" install
+	make DESTDIR="$fakeroot_dir" install-libs
+
+	chmod -v u+w "${fakeroot_dir}/usr/lib/"{libcom_err,libe2p,libext2fs,libss}.a
+
+	gunzip -v "${fakeroot_dir}/usr/share/info/libext2fs.info.gz"
+
+	makeinfo -o      doc/com_err.info ../lib/et/com_err.texinfo
+	install -v -m644 doc/com_err.info "${fakeroot_dir}/usr/share/info"
+
+	mv -v "$fakeroot_dir"/{{usr,}sbin,bin}/* "${fakeroot_dir}/usr/bin"
+	mv -v "$fakeroot_dir"/lib "${fakeroot_dir}/usr/lib"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+# vim:set syntax=sh et:
