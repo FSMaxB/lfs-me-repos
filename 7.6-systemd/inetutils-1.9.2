@@ -1,0 +1,50 @@
+pkgbuild_version=5
+pkgname=inetutils
+pkgver=1.9.2
+
+dependencies=(
+    "!$pkgname"
+	'libcap'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/inetutils/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha1sums=(
+	b5aa9902e3a82bfd6e75b9aa80b72111e5418447
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	echo '#define PATH_PROCNET_DEV "/proc/net/dev"' >> ifconfig/system/linux.h 
+
+	./configure --prefix=/usr  \
+				--localstatedir=/var   \
+				--disable-logger       \
+				--disable-whois        \
+				--disable-servers
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+	make DESTDIR="$fakeroot_dir" install-html
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    install-info  "/usr/share/info/${pkgname}.info" /usr/share/info/dir
+}
+
+lfs_me_preremove() {
+    echo "Adding info pages"
+    install-info  --delete "/usr/share/info/${pkgname}.info" /usr/share/info/dir
+}
+
+# vim:set syntax=sh et:
