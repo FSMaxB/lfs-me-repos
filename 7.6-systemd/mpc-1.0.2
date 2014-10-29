@@ -33,12 +33,6 @@ lfs_me_install() {
 	cd "${build_dir}/${pkgname}-${pkgver}"
 	make DESTDIR="$fakeroot_dir" install
 	make DESTDIR="$fakeroot_dir" install-html
-}
-
-lfs_me_install() {
-	cd "${build_dir}/${pkgname}-${pkgver}"
-	make DESTDIR="$fakeroot_dir" install
-	make DESTDIR="$fakeroot_dir" install-html
 
     #don't overwrite info pages
     rm "${fakeroot_dir}/usr/share/info/dir"
