@@ -1,0 +1,64 @@
+pkgbuild_version=5
+pkgname=shadow
+pkgver=4.2.1
+
+overwrite=(
+	'/usr/share/man/man3/getspnam.3'
+	'/usr/share/man/man5/passwd.5'
+)
+dependencies=(
+    "!$pkgname"
+	'acl'
+)
+sources=(
+	"http://pkg-shadow.alioth.debian.org/releases/${pkgname}-${pkgver}.tar.xz"
+)
+
+sha1sums=(
+	0917cbadd4ce0c7c36670e5ecd37bbed92e6d82d
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	#disable installation of the groups program
+	sed -i 's/groups$(EXEEXT) //' src/Makefile.in
+	find man -name Makefile.in -exec sed -i 's/groups\.1 / /' {} \;
+
+	#more secuer SHA-512 passwords and changing the location of mail
+	sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
+	       -e 's@/var/spool/mail@/var/mail@' etc/login.defs
+
+	sed -i 's/1000/999/' etc/useradd
+	
+	./configure --sysconfdir=/etc --with-group-name-max-length=32
+}
+
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+	#copy all executables to /usr/bin
+	mv "${fakeroot_dir}/bin/"* "${fakeroot_dir}/sbin/"* "${fakeroot_dir}/usr/sbin/"* "${fakeroot_dir}/usr/bin/"
+}
+
+lfs_me_postinstall() {
+	#enable shadowed passwords
+	pwconv
+	grpconv
+}
+
+lfs_me_preremove() {
+	#disable shadowed passwords
+	pwunconv
+	grpunconv
+}
+
+# vim:set syntax=sh et:
