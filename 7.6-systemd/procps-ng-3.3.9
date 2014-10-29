@@ -1,0 +1,36 @@
+pkgbuild_version=5
+pkgname=procps-ng
+pkgver=3.3.9
+
+dependencies=(
+    "!$pkgname"
+	'ncurses'
+)
+sources=(
+	"http://sourceforge.net/projects/${pkgname}/files/Production/${pkgname}-${pkgver}.tar.xz"
+)
+
+sha1sums=(
+	088c77631745fc75ee41fc29c254a4069be4869a
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr                           \
+				--exec-prefix=                          \
+				--libdir=/usr/lib                       \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}" \
+				--disable-static                        \
+				--disable-kill
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	sed -i -r 's|(pmap_initname)\\\$|\1|' testsuite/pmap.test/pmap.exp
+	make check
+}
+
+# vim:set syntax=sh et:
