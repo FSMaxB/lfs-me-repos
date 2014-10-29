@@ -1,0 +1,76 @@
+pkgbuild_version=5
+pkgname=readline
+pkgver=6.3
+
+_info_pages=(
+	'readline.info'
+	'history.info'
+	'rluserman.info'
+)
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+	'ncurses'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+	"http://www.linuxfromscratch.org/patches/lfs/7.6-systemd/${pkgname}-${pkgver}-upstream_fixes-2.patch"
+)
+
+sha1sums=(
+	017b92dc7fd4e636a2b5c9265a77ccc05798c9e1
+	bf9ac0c64e56a7aaffd69eac55b1013248be7d36
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-upstream_fixes-2.patch"
+
+	sed -i '/MV.*old/d' Makefile.in
+	sed -i '/{OLDSUFF}/c:' support/shlib-install
+
+	./configure --prefix=/usr \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make SHLIB_LIBS=-lncurses
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" SHLIB_LIBS=-lncurses install
+
+	#install the documentation
+	install -v -m644 doc/*.{ps,pdf,html,dvi} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+# vim:set syntax=sh et:

@@ -18,3 +18,4 @@ This is a list of all modifications I remember making to what's written in the b
 * e2fsprogs: no --bindir, copy binaries and libraries to /usr/{bin,lib}
 * coreutils: didn't move binaries to /bin
 * grep: without --bindir
+* readline: didn't move libraries to /lib
