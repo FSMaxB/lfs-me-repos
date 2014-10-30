@@ -1,0 +1,46 @@
+pkgbuild_version=5
+pkgname=diffutils
+pkgver=3.3
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+	'bash'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+)
+
+sha1sums=(
+	6463cce7d3eb73489996baefd0e4425928ecd61e
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed -i 's:= @mkdir_p@:= /bin/mkdir -p:' po/Makefile.in.in
+
+	./configure --prefix=/usr
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    install-info  "/usr/share/info/${pkgname}.info" /usr/share/info/dir
+}
+
+lfs_me_preremove() {
+    echo "Adding info pages"
+    install-info  --delete "/usr/share/info/${pkgname}.info" /usr/share/info/dir
+}
+
+# vim:set syntax=sh et:
