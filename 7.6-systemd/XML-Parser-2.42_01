@@ -1,0 +1,31 @@
+pkgbuild_version=5
+pkgname=XML-Parser
+pkgver=2.42_01
+
+dependencies=(
+    "!$pkgname"
+	'expat'
+	'perl'
+)
+sources=(
+	"http://cpan.metacpan.org/authors/id/T/TO/TODDR/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha1sums=(
+	2fd519619aa47c8c330365358c6783f4e5ed916c
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	perl Makefile.PL
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make test
+}
+
+# vim:set syntax=sh et:
