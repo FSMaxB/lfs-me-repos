@@ -1,0 +1,40 @@
+pkgbuild_version=5
+pkgname=dbus
+pkgver=1.8.8
+
+dependencies=(
+    "!$pkgname"
+	'expat'
+)
+sources=(
+	"http://dbus.freedesktop.org/releases/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha1sums=(
+	e0d10e8b4494383c7e366ac80a942ba45a705a96
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr                       \
+	            --sysconfdir=/etc                   \
+				--localstatedir=/var                \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}"  \
+				--with-console-auth-dir=/run/console
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+	ln -sv /etc/machine-id "${fakeroot_dir}/var/lib/dbus"
+}
+
+# vim:set syntax=sh et:
