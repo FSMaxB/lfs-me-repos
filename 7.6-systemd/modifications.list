@@ -26,3 +26,9 @@ This is a list of all modifications I remember making to what's written in the b
 * xz: didn't move binaries and libraries to /bin | /lib
 * gzip: without --bindir and didn't move binaries
 * kmod: without --bindir and --with-rootlibdir also didn't create symlinks
+* systemd:
+	- KILL=/usr/bin/kill
+	- without --with-rootlibdir and --with-rootprefix
+	- without --enable-split-usr
+	- without for loop that links binaries 
+	- don't move libnss*

@@ -1,0 +1,101 @@
+pkgbuild_version=5
+pkgname=systemd
+pkgver=216
+
+dependencies=(
+    "!$pkgname"
+	'acl'
+	'bash'
+	'kbd'
+	'kmod'
+	'libcap'
+)
+sources=(
+	"http://www.freedesktop.org/software/systemd/${pkgname}-${pkgver}.tar.xz"
+	"http://www.linuxfromscratch.org/patches/lfs/7.6-systemd/${pkgname}-${pkgver}-compat-1.patch"
+)
+
+sha1sums=(
+	0d933a2f76db5d30f52429e9b172323bc6abd49a
+	a541716c3ab62a6fae35d6bdb27767b569a942ba
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	cat > config.cache << "EOF"
+KILL=/usr/bin/kill
+HAVE_BLKID=1
+BLKID_LIBS="-lblkid"
+BLKID_CFLAGS="-I/tools/include/blkid"
+cc_cv_CFLAGS__flto=no
+EOF
+
+	sed -i "s:blkid/::" $(grep -rl "blkid/blkid.h")
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-compat-1.patch"
+
+	./configure --prefix=/usr                                           \
+				--sysconfdir=/etc                                       \
+				--localstatedir=/var                                    \
+				--config-cache                                          \
+				--disable-gudev                                         \
+				--disable-firstboot                                     \
+				--disable-ldconfig                                      \
+				--disable-sysusers                                      \
+				--without-python                                        \
+				--docdir=/usr/share/doc/systemd-216                     \
+				--with-dbuspolicydir=/etc/dbus-1/system.d               \
+				--with-dbusinterfacedir=/usr/share/dbus-1/interfaces    \
+				--with-dbussessionservicedir=/usr/share/dbus-1/services \
+				--with-dbussystemservicedir=/usr/share/dbus-1/system-services
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	if [[ -d /tools/lib ]]
+	then
+		make LIBRARY_PATH=/tools/lib
+	else
+		make
+	fi
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	sed -e "s:test/udev-test.pl::g"              \
+	    -e "s:test-bus-cleanup\$(EXEEXT) ::g"    \
+		-e "s:test-condition-util\$(EXEEXT) ::g" \
+		-e "s:test-dhcp6-client\$(EXEEXT) ::g"   \
+		-e "s:test-engine\$(EXEEXT) ::g"         \
+		-e "s:test-journal-flush\$(EXEEXT) ::g"  \
+		-e "s:test-path-util\$(EXEEXT) ::g"      \
+		-e "s:test-sched-prio\$(EXEEXT) ::g"     \
+		-e "s:test-strv\$(EXEEXT) ::g"           \
+		-i Makefile
+	make check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	if [[ -d /tools/lib ]]
+	then
+		make LD_LIBRARY_PATH=/tools/lib DESTDIR="$fakeroot_dir" install
+	else
+		make DESTDIR="$fakeroot_dir" install
+	fi
+
+	sed -i "s:0775 root lock:0755 root root:g" "${fakeroot_dir}/usr/lib/tmpfiles.d/legacy.conf"
+	
+	rm -rfv "${fakeroot_dir}/usr/lib/rpm"
+
+	sed -i "s:0775 root lock:0755 root root:g" "${fakeroot_dir}/usr/lib/tmpfiles.d/legacy.conf"
+}
+
+lfs_me_postinstall() {
+	systemd-machine-id-setup
+}
+
+# vim:set syntax=sh et:
