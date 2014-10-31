@@ -25,3 +25,4 @@ This is a list of all modifications I remember making to what's written in the b
 * findutils: didn't move binaries to /bin
 * xz: didn't move binaries and libraries to /bin | /lib
 * gzip: without --bindir and didn't move binaries
+* kmod: without --bindir and --with-rootlibdir also didn't create symlinks
