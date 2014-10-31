@@ -1,0 +1,24 @@
+pkgbuild_version=5
+pkgname=intltool
+pkgver=0.50.2
+
+dependencies=(
+    "!$pkgname"
+	'XML-Parser'
+)
+sources=(
+	"http://launchpad.net/intltool/trunk/${pkgver}/+download/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha1sums=(
+	7fddbd8e1bf94adbf1bc947cbf3b8ddc2453f8ad
+)
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+	install -v -Dm644 doc/I18N-HOWTO "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/I18N-HOWTO"
+}
+
+# vim:set syntax=sh et:
