@@ -1,0 +1,47 @@
+pkgbuild_version=5
+pkgname=kbd
+pkgver=2.0.2
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+)
+sources=(
+	"https://www.kernel.org/pub/linux/utils/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+	"http://www.linuxfromscratch.org/patches/lfs/7.6-systemd/${pkgname}-${pkgver}-backspace-1.patch"
+)
+
+sha1sums=(
+	0278812bc29963809fb4703512cfaf9e1518c787
+	44f2fb0ac18db4f717421db756db4897f88dc08c
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-backspace-1.patch"
+
+	sed -i 's/\(RESIZECONS_PROGS=\)yes/\1no/g' configure
+	sed -i 's/resizecons.8 //' docs/man/man8/Makefile.in
+
+	./configure --prefix=/usr
+
+	if [[ -d /tools/lib/pkgconfig ]]
+	then
+		PKG_CONFIG_PATH=/tools/lib/pkgconfig ./configure --prefix=/usr --disable-vlock
+	else
+		./configure --prefix=/usr --disable-vlock
+	fi
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+	mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+	cp -R -v docs/doc/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set syntax=sh et:
