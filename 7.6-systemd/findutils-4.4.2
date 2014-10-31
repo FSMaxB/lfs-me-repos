@@ -1,0 +1,55 @@
+pkgbuild_version=5
+pkgname=findutils
+pkgver=4.4.2
+
+_info_pages=(
+	'find-maint.info'
+	'find.info'
+)
+
+dependencies=(
+    "!$pkgname"
+	'glibc'
+	'bash'
+)
+sources=(
+	"http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+
+sha1sums=(
+	e8dd88fa2cc58abffd0bfc1eddab9020231bb024
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --localstatedir=/var/lib/locate
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+    #don't overwrite info pages
+    rm "${fakeroot_dir}/usr/share/info/dir"
+}
+
+lfs_me_postinstall() {
+    echo "Adding info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+lfs_me_preremove() {
+    echo "Removing info pages"
+    for info_page in ${_info_pages[@]}
+    do
+        install-info --delete "/usr/share/info/${info_page}" /usr/share/info/dir
+    done
+}
+
+# vim:set syntax=sh et:

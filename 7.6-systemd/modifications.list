@@ -22,3 +22,4 @@ This is a list of all modifications I remember making to what's written in the b
 * bash: move binaries to /usr/bin
 * inetutils: didn't move binaries to /bin and /sbin
 * perl: didn't create /etc/hosts
+* findutils: didn't move binaries to /bin
