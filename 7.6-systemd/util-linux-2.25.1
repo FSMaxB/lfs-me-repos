@@ -1,0 +1,54 @@
+pkgbuild_version=5
+pkgname=util-linux
+pkgver=2.25.1
+
+dependencies=(
+    "!$pkgname"
+	'shadow'
+	'coreutils'
+	'systemd'
+)
+sources=(
+	"https://www.kernel.org/pub/linux/utils/${pkgname}/v2.25/${pkgname}-${pkgver}.tar.xz"
+)
+
+sha1sums=(
+	ea748e27d3ce3c27ebb3b25ebc08288d45efdb90
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed -e 's/2^64/(2^64/' -e 's/E </E) <=/' -e 's/ne /eq /' -i tests/ts/ipcs/limits2
+
+	
+
+	./configure ADJTIME_PATH=/var/lib/hwclock/adjtime \
+	            --docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	if [[ "$UID" -eq 0 ]]
+	then
+		chown -Rv nobody .
+		su nobody -s /bin/bash -c "PATH=$PATH make -k check"
+	else
+		make -k check
+	fi
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+
+	mkdir -pv "${fakeroot_dir}/var/lib/hwclock"
+
+	#don't overwrite nologin that is already provided by shadow
+	rm -v "${fakeroot_dir}/usr/share/man/man8/nologin.8"
+	rm -v "${fakeroot_dir}/sbin/nologin"
+}
+
+# vim:set syntax=sh et:

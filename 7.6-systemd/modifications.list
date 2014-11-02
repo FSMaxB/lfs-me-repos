@@ -33,3 +33,4 @@ This is a list of all modifications I remember making to what's written in the b
 	- without for loop that links binaries 
 	- don't move libnss*
 * dbus: didn't move libraries
+* util-linux: removed /sbin/nologin and it's manpage because it conflicts with shadow
