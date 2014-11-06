@@ -1,0 +1,36 @@
+pkgbuild_version=5
+pkgname=man-db
+pkgver=2.6.7.1
+
+dependencies=(
+    "!$pkgname"
+	'bash'
+	'gdbm'
+	'zlib'
+	'groff'
+	'libpipeline'
+	'less'
+)
+sources=(
+	"http://download.savannah.gnu.org/releases/man-db/man-db-2.6.7.1.tar.xz"
+)
+
+sha1sums=(
+	4c6f322529b929fb70263584f79dff6d615908ec
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr	\
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}" \
+				--sysconfdir=/etc                      \
+				--disable-setuid                       \
+				--with-browser=/usr/bin/lynx           \
+				--with-vgrind=/usr/bin/vgrind          \
+				--with-grap=/usr/bin/grap
+}
+
+# vim:set syntax=sh et:
