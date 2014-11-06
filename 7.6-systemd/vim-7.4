@@ -1,0 +1,65 @@
+pkgbuild_version=5
+pkgname=vim
+pkgver=7.4
+
+dependencies=(
+    "!$pkgname"
+	'perl'
+	'gawk'
+)
+sources=(
+	"ftp://ftp.vim.org/pub/${pkgname}/unix/${pkgname}-${pkgver}.tar.bz2"
+)
+
+sha1sums=(
+	601abf7cc2b5ab186f40d8790e542f86afca86b7
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	
+	echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
+	./configure --prefix=/usr
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	make
+
+cat > vimrc << "EOF"
+" Begin /etc/vimrc
+
+set nocompatible
+set backspace=2
+syntax on
+if (&term == "iterm") || (&term == "putty")
+	set background=dark
+endif
+
+" End /etc/vimrc
+EOF
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	make -j1 test
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	make DESTDIR="$fakeroot_dir" install
+
+	ln -sv vim "${fakeroot_dir}/usr/bin/vi"
+	for L in  "${fakeroot_dir}"/usr/share/man/{,*/}man1/vim.1; do
+	    ln -sv vim.1 $(dirname $L)/vi.1
+	done
+
+	ln -sv ../${pkgname}/${pkgname}${pkgver}/doc "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+	mkdir -pv "${fakeroot_dir}/etc"
+	mv -v vimrc "${fakeroot_dir}/etc/"
+}
+
+# vim:set syntax=sh et:
