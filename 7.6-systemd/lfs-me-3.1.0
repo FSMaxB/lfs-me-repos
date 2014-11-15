@@ -1,0 +1,47 @@
+pkgbuild_version=5
+pkgname=lfs-me
+pkgver=3.1.0
+
+dependencies=(
+    "!$pkgname"
+	'bash'
+    'bc'
+    'rsync'
+    'coreutils'
+    'grep'
+    'sed'
+    'gawk'
+    'make'
+)
+sources=(
+    "${pkgname}-${pkgver}.tar.gz::https://github.com/FSMaxB/${pkgname}/archive/${pkgver}.tar.gz"
+)
+sha1sums=(
+    ccdc9f1a794758c4b5c5fc4d1c02f1538ac48849
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+    mkdir -pv "${fakeroot_dir}/usr"{/bin,/share/{,/doc}/lfs-me}
+
+    install -v -m 755 lfs-me "${fakeroot_dir}/usr/bin"
+    install -v -m 644 README.md Changelog.md KNOWN_ISSUES "${fakeroot_dir}/usr/share/doc/lfs-me"
+    install -v -m 644 PKGBUILD.proto "${fakeroot_dir}/usr/share/lfs-me"
+    cp -rv examples "${fakeroot_dir}/usr/share/doc/lfs-me/"
+}
+
+# vim:set syntax=sh et:

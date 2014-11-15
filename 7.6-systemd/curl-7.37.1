@@ -1,0 +1,32 @@
+pkgbuild_version=5
+pkgname=curl
+pkgver=7.37.1
+
+dependencies=(
+    "!$pkgname"
+	'openssl'
+    'zlib'
+)
+sources=(
+    "http://curl.haxx.se/download/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+    612081014c8393fa4747f28706d72542514a14aa
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure \
+        --prefix=/usr     \
+        --disable-static    \
+        --enable-threaded-resolver
+}
+
+lfs_me_check() {
+    return
+}
+
+# vim:set syntax=sh et:

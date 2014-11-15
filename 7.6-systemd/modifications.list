@@ -35,3 +35,15 @@ This is a list of all modifications I remember making to what's written in the b
 * dbus: didn't move libraries
 * util-linux: removed /sbin/nologin and it's manpage because it conflicts with shadow
 * tar: without --bindir
+
+* Install additional packages:
+	- nano-2.3.6
+	- fakeroot-1.18.4
+	- rsync-3.1.1
+	- openssl-1.0.1j
+	- wget-1.15
+	- libevent-2.0.21
+	- tmux-1.9a
+	- curl-7.37.1
+	- git-2.1.0
+	- lfs-me-3.1.0

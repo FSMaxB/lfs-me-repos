@@ -1,0 +1,47 @@
+pkgbuild_version=5
+pkgname=openssl
+pkgver=1.0.1j
+
+dependencies=(
+    "!$pkgname"
+	'perl'
+    'zlib'
+)
+sources=(
+    "http://www.openssl.org/source/${pkgname}-${pkgver}.tar.gz"
+    "http://www.linuxfromscratch.org/patches/blfs/7.6-systemd/${pkgname}-${pkgver/[a-z]/i}-fix_parallel_build-1.patch"
+)
+sha1sums=(
+    cff86857507624f0ad42d922bb6f77c4f1c2b819
+    0236daae8cf60962242685d64eb0f06d434d4124
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+    patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver/[a-z]/i}-fix_parallel_build-1.patch"
+
+    
+    ./config                  \
+        --prefix=/usr	       \
+        --openssldir=/etc/ssl \
+        --libdir=lib          \
+        shared                \
+        zlib-dynamic
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make test
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+    #disable static libraries
+    sed -i 's# libcrypto.a##;s# libssl.a##' Makefile
+	make INSTALL_PREFIX="$fakeroot_dir" MANDIR="/usr/share/man" MANSUFFIX=ssl install
+}
+
+# vim:set syntax=sh et:
