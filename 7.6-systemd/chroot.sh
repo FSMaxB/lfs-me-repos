@@ -17,13 +17,23 @@ export LFS
 #copy resolv.conf so that internet works
 cp -v -L /etc/resolv.conf "${LFS}/etc/"
 
-chroot "$LFS" /tools/bin/env -i \
-	HOME=/root					\
-	TERM="$TERM"				\
-	PS1='\u:\w\$ '				\
-	PATH="/usr/bin:/tools/bin:/usr/local/bin"	\
-	MANPATH="/usr/share/man:/tools/share/man"	\
-	/tools/bin/bash --login +h
+if [ -d "${LFS}/tools" ]
+then #toolchain still exists
+	chroot "$LFS" /tools/bin/env -i \
+		HOME=/root					\
+		TERM="$TERM"				\
+		PS1='\u:\w\$ '				\
+		PATH="/usr/bin:/tools/bin:/usr/local/bin"	\
+		MANPATH="/usr/share/man:/tools/share/man"	\
+		/tools/bin/bash --login +h
+else	#toolchain has been removed
+	chroot "$LFS" /bin/env -i \
+		HOME=/root					\
+		TERM="$TERM"				\
+		PS1='\u:\w\$ '				\
+		PATH="/usr/bin:/usr/local/bin"	\
+		/bin/bash --login
+fi
 
 rm -v "${LFS}/etc/resolv.conf"
 
