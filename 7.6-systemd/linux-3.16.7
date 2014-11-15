@@ -1,0 +1,74 @@
+pkgbuild_version=5
+pkgname=linux
+pkgver=3.16.7
+
+#fix: disable logs to make nconfig work. This is just a hack, don't do this in your PKGBUILD!
+do_logs=false
+
+backup=(
+    "/boot/vmlinuz-${pkgver}-lfs-7.6-systemd"
+	"/boot/System.map-${pkgver}"
+	"/boot/config-${pkgver}"
+)
+dependencies=(
+    "!$pkgname"
+	'coreutils'
+)
+sources=( "http://www.kernel.org/pub/${pkgname}/kernel/v3.x/${pkgname}-${pkgver}.tar.xz" )
+sha1sums=(
+	75eba50b7b0ce14cb17b2cbd2546e3ebfeea4109
+)
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    make mrproper
+	
+	echo -e "NOTICE: This PKGBUILD disables logging of the output!"
+    echo -e "${color_bblue}If you want to use an existing kernel configuration, put it in '${build_dir}/${pkgname}-${pkgver}/.config' now.${color_reset}"
+    lfs_me_pause
+
+    if [[ ! -f .config ]]
+    then
+        #if .config doesn't exist, make a default configuration
+        make defconfig
+    fi
+
+    make LC_ALL= nconfig 2> /dev/null
+}
+
+lfs_me_build() {
+    cd "${build_dir}/${pkgname}-${pkgver}"
+	cat > usb.conf << EOF
+# Begin /etc/modprobe.d/usb.conf
+
+install ohci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i ohci_hcd ; true
+install uhci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i uhci_hcd ; true
+
+# End /etc/modprobe.d/usb.conf"
+EOF
+
+    make
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    make INSTALL_MOD_PATH="$fakeroot_dir" modules_install
+
+    install -D -v arch/x86/boot/bzImage "${fakeroot_dir}/boot/vmlinuz-${pkgver}-lfs-7.6-systemd"
+    install -v System.map "${fakeroot_dir}/boot/System.map-${pkgver}"
+    install -v .config "${fakeroot_dir}/boot/config-${pkgver}"
+
+    install -vd "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+    cp -vr Documentation/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+
+    install -v -m755 -D usb.conf "${fakeroot_dir}/etc/modprobe.d/usb.conf"
+}
+
+# vim:set syntax=sh et:
