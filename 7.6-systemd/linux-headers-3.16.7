@@ -1,7 +1,7 @@
 pkgbuild_version=5
 _pkgbase=linux
 pkgname="${_pkgbase}-headers"
-pkgver=3.16.5
+pkgver=3.16.7
 
 dependencies=(
     "!$pkgname"
@@ -10,9 +10,8 @@ sources=(
     "https://www.kernel.org/pub/linux/kernel/v3.x/${_pkgbase}-${pkgver}.tar.xz"
 )
 sha1sums=(
-    ea1843eaa54bad0542739fd42b1359f139c03414
+	75eba50b7b0ce14cb17b2cbd2546e3ebfeea4109
 )
-
 
 lfs_me_prepare() {
 	tar -xf "${sources_dir}/${_pkgbase}-${pkgver}.tar.xz" -C "$build_dir"
