@@ -1,0 +1,39 @@
+pkgbuild_version=5
+pkgname=lsb-release
+pkgver=1.4
+
+dependencies=(
+    "!$pkgname"
+)
+sources=(
+	"http://sourceforge.net/projects/lsb/files/${pkgname/-/_}/${pkgver}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	ecf883ada9bf4e1feca3f2e1494bd798792aee18
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	sed -i "s|n/a|unavailable|" lsb_release
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	./help2man -N --include ./lsb_release.examples \
+	              --alt_version_key=program_version ./lsb_release > lsb_release.1
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	install -v -Dm 644 lsb_release.1 "${fakeroot_dir}/usr/share/man/man1/lsb_release.1"
+	install -v -Dm 755 lsb_release "${fakeroot_dir}/usr/bin/lsb_release"
+}
+
+# vim:set syntax=sh et:
