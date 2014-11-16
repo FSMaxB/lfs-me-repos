@@ -1,0 +1,54 @@
+pkgbuild_version=5
+pkgname=tcl
+pkgver=8.6.2
+
+dependencies=(
+    "!$pkgname"
+)
+sources=(
+	"http://downloads.sourceforge.net/${pkgname}/${pkgname}${pkgver}-src.tar.gz"
+	"http://downloads.sourceforge.net/${pkgname}/${pkgname}${pkgver}-html.tar.gz"
+)
+sha1sums=(
+	f01ee98da154f83ce4b1c2db752decf734384954
+	5db7c14a5fa930e32f041dde0e849cc290f83d76
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}${pkgver}-src.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+	tar -xf "${sources_dir}/${pkgname}${pkgver}-html.tar.gz" --strip-components=1 -C "../"
+
+	./configure --prefix=/usr           \
+	            --without-tzdata        \
+				--mandir=/usr/share/man \
+				$([ $(uname -m) = x86_64 ] && echo --enable-64bit)
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+	make &&
+
+	sed -e "s@^\(TCL_SRC_DIR='\).*@\1/usr/include'@" \
+	    -e "/TCL_B/s@='\(-L\)\?.*unix@='\1/usr/lib@" \
+		    -i tclConfig.sh
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+	make test
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+	make DESTDIR="$fakeroot_dir" install &&
+	make DESTDIR="$fakeroot_dir" install-private-headers &&
+	ln -v -sf tclsh8.6 "${fakeroot_dir}/usr/bin/tclsh" &&
+	chmod -v 755 "${fakeroot_dir}/usr/lib/libtcl8.6.so"
+
+	mkdir -v -p "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
+	cp -v -r  ../html/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set syntax=sh et:
