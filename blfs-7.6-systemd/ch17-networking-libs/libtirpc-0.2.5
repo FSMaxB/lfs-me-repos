@@ -1,0 +1,30 @@
+pkgbuild_version=5
+pkgname=libtirpc
+pkgver=0.2.5
+
+dependencies=(
+    "!$pkgname"
+)
+sources=(
+	"http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	d95afbfc2dbf24586a057a36859bbc3c0ca4ff8a
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr	\
+				--sysconfdir=/etc \
+				--disable-static \
+				--disable-gssapi
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set syntax=sh et:
