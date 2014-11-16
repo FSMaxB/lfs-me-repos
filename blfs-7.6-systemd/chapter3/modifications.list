@@ -1,0 +1,3 @@
+* bash startup files
+	- removed /bin /sbin /usr/sbin paths from /etc/profile
+	- /etc/profile.d without --owner=root and --group=root because this is handled by fakeroot
