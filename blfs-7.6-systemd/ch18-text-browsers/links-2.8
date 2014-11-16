@@ -1,0 +1,37 @@
+pkgbuild_version=5
+pkgname=links
+pkgver=2.8
+
+dependencies=(
+    "!$pkgname"
+	'gpm'
+	'openssl'
+)
+sources=(
+	"http://links.twibright.com/download/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	a808d80d910b7d3ad86f4c5089e64f35113b69f2
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --mandir=/usr/share/man
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+	install -v -d -m755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
+	install -v -m644 doc/links_cal/* KEYS BRAILLE_HOWTO \
+	    "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set syntax=sh et:
