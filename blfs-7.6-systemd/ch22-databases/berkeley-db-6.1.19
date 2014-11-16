@@ -1,0 +1,44 @@
+pkgbuild_version=5
+pkgname=berkeley-db
+pkgver=6.1.19
+
+dependencies=(
+    "!$pkgname"
+	'tcl'
+	'sharutils'
+)
+sources=(
+	"http://download.oracle.com/${pkgname}/db-${pkgver}.tar.gz"
+)
+sha1sums=(
+	e266f8ab73f4f1ea276d203ce85426e5a6831501
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/db-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/db-${pkgver}/build_unix"
+	
+	../dist/configure --prefix=/usr	\
+				--enable-compat185 \
+				--enable-dbm \
+				--disable-static \
+				--enable-cxx \
+				--enable-tcl --with-tcl=/usr/lib
+}
+
+lfs_me_build() {
+	cd "${build_dir}/db-${pkgver}/build_unix"
+	make
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/db-${pkgver}/build_unix"
+	make DESTDIR="$fakeroot_dir" docdir="/usr/share/doc/db-${pkgver}" install
+}
+
+# vim:set syntax=sh et:
