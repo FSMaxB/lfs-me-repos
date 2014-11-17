@@ -1,1 +1,4 @@
 * ca-certificates: SSLDIR as local variable, therefore no unset
+* Linux-PAM
+	- without --enable-securedir=/lib/security
+	- don't move libraries to /lib

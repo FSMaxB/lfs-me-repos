@@ -1,0 +1,58 @@
+pkgbuild_version=5
+pkgname=Linux-PAM
+pkgver=1.1.8
+
+dependencies=(
+    "!$pkgname"
+	'berkeley-db'
+	'libtirpc'
+)
+sources=(
+	"http://linux-pam.org/library/${pkgname}-${pkgver}.tar.bz2"
+	"http://linux-pam.org/documentation/${pkgname}-${pkgver}-docs.tar.bz2"
+)
+sha1sums=(
+	f8ce53c67363f78d520392fa1c253c4978058be1
+	aa0c1cc23742091c2f3144af236108d9310d508b
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}-docs.tar.bz2" --strip-components=1
+
+	./configure --prefix=/usr	\
+				--sysconfdir=/etc \
+				--libdir=/usr/lib \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make &&
+
+	cat > other << "EOF"
+# Begin /etc/pam.d/other
+
+auth            required        pam_unix.so     nullok
+account         required        pam_unix.so
+session         required        pam_unix.so
+password        required        pam_unix.so     nullok
+
+# End /etc/pam.d/other
+EOF
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+
+	install -v -m 755 -d "${fakeroot_dir}/etc/pam.d" &&
+	install -v -m 744 other "${fakeroot_dir}/etc/pam.d/" &&
+
+	chmod -v 4755 "${fakeroot_dir}/sbin/unix_chkpwd"
+}
+
+# vim:set ts=4 syntax=sh:
