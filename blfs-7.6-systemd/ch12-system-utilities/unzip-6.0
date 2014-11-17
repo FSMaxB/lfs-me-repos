@@ -1,0 +1,43 @@
+pkgbuild_version=5
+pkgname=unzip
+pkgver=6.0
+
+dependencies=(
+    "!$pkgname"
+)
+sources=(
+	"http://downloads.sourceforge.net/infozip/${pkgname}${pkgver/\./}.tar.gz"
+)
+sha1sums=(
+	abf7de8a4018a983590ed6f5cbd990d4740f8a22
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}${pkgver/\./}.tar.gz" -C "$build_dir"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	case `uname -m` in
+	  i?86)
+		sed -i -e 's/DASM_CRC"/DASM_CRC -DNO_LCHMOD"/' unix/Makefile
+		make -f unix/Makefile linux
+		;;
+	*)
+		sed -i -e 's/CFLAGS="-O -Wall/& -DNO_LCHMOD/' unix/Makefile
+		make -f unix/Makefile linux_noasm
+		;;
+	esac
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	make check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver/\./}"
+	make prefix="${fakeroot_dir}/usr" MANDIR="${fakeroot_dir}/usr/share/man/man1" install
+}
+
+# vim:set ts=4 syntax=sh:
