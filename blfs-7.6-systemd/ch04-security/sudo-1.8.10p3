@@ -1,0 +1,60 @@
+pkgbuild_version=5
+pkgname=sudo
+pkgver=1.8.10p3
+
+dependencies=(
+    "!$pkgname"
+	'Linux-PAM'
+)
+sources=(
+	"http://www.sudo.ws/sudo/dist/${pkgname}-${pkgver}.tar.gz"
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	 ./configure --prefix=/usr              \
+				--libexecdir=/usr/lib      \
+				--with-all-insults         \
+				--with-env-editor          \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}" \
+				--with-passprompt="[sudo] password for %p"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make &&
+
+	cat > sudo << "EOF"
+# Begin /etc/pam.d/sudo
+
+# include the default auth settings
+auth      include     system-auth
+
+# include the default account settings
+account   include     system-account
+
+# Set default environment variables for the service user
+session   required    pam_env.so
+
+# include system session defaults
+session   include     system-session
+
+# End /etc/pam.d/sudo
+EOF
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	env LC_ALL=C make check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+	install -v -Dm 644 sudo "${fakeroot_dir}/etc/pam.d/sudo"
+}
+
+# vim:set ts=4 syntax=sh:
