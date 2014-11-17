@@ -1,0 +1,49 @@
+pkgbuild_version=5
+pkgname=sqlite
+pkgver=3.8.6
+_urlver=3080600
+
+dependencies=(
+	"!$pkgname"
+	'unzip'
+)
+sources=(
+	"http://sqlite.org/2014/${pkgname}-autoconf-${_urlver}.tar.gz"
+	"http://sqlite.org/2014/${pkgname}-doc-${_urlver}.zip"
+)
+sha1sums=(
+	c4b2911bc4a6e1dc2b411aa21d8c4f524113eb64
+	8c3d3a9f97b10fb43d6fce61079ed1ab93472913
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-autoconf-${_urlver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-autoconf-${_urlver}"
+	unzip -q "${sources_dir}/${pkgname}-doc-${_urlver}.zip" &&
+
+	./configure --prefix=/usr --disable-static        \
+	            CFLAGS="-g -O2 -DSQLITE_ENABLE_FTS3=1 \
+				-DSQLITE_ENABLE_COLUMN_METADATA=1     \
+				-DSQLITE_ENABLE_UNLOCK_NOTIFY=1       \
+				-DSQLITE_SECURE_DELETE=1"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-autoconf-${_urlver}"
+	make
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-autoconf-${_urlver}"
+	make DESTDIR="$fakeroot_dir" install &&
+
+	install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
+	cp -v -R sqlite-doc-3080600/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set ts=4 syntax=sh:
