@@ -3,3 +3,7 @@ In this file I'll collect some problems I encountered while installing (B)LFS an
 No icons
 --------
 I had the Problem that PNG-Icons didn't work with GTK applications. I fixed by updating the MIME cache with "update-mime-database /usr/share/mime"
+
+Not being able to change password
+---------------------------------
+When passwd didn't let me change a user's password, I fixed it with pwconv.
