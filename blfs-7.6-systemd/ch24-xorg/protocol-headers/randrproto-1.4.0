@@ -1,0 +1,39 @@
+pkgbuild_version=5
+pkgname=randrproto
+pkgver=1.4.0
+
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+	'util-macros'
+)
+
+sources=(
+	"http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	65d2fc4440adf1557cde2b36901a3de21ab189c1
+)
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set ts=4 syntax=sh:

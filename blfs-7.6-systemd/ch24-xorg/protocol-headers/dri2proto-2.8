@@ -1,0 +1,39 @@
+pkgbuild_version=5
+pkgname=dri2proto
+pkgver=2.8
+
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+	'util-macros'
+)
+
+sources=(
+	"http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	2bc4e8f00778b1f3fe58b4c4f93607ac2adafbbf
+)
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+
+    ./configure $XORG_CONFIG
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set ts=4 syntax=sh:
