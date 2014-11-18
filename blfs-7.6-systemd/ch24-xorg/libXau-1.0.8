@@ -1,0 +1,25 @@
+pkgbuild_version=5
+pkgname=libXau
+pkgver=1.0.8
+
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+	'xorg-protocol-headers'
+)
+sources=(
+	"http://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	d9512d6869e022d4e9c9d33f6d6199eda4ad096b
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+# vim:set ts=4 syntax=sh:
