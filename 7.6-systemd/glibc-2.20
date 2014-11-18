@@ -106,7 +106,7 @@ lfs_me_install() {
 
 	#config for nscd
 	mkdir -pv "${fakeroot_dir}/etc"
-	cp -v "../${pkgname}-${pkgver}/nscd/nscd.conf" "${fakeroot_dir}/nscd.conf"
+	cp -v "../${pkgname}-${pkgver}/nscd/nscd.conf" "${fakeroot_dir}/etc/nscd.conf"
 	mkdir -pv "${fakeroot_dir}/var/cache/nscd"
 
 	#systemd files for nscd	
