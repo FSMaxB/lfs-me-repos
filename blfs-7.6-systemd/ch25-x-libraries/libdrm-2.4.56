@@ -1,0 +1,25 @@
+pkgbuild_version=5
+pkgname=libdrm
+pkgver=2.4.56
+
+dependencies=(
+	"!$pkgname"
+	'xorg-libraries'
+)
+sources=(
+	"http://dri.freedesktop.org/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	c61feed76db0ca729febbc45794d13d04a3eeb53
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	sed -e "/pthread-stubs/d" -i configure.ac &&
+	autoreconf -fiv &&
+	./configure --prefix=/usr --enable-udev
+}
+
+# vim:set ts=4 syntax=sh:
