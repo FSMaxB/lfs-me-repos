@@ -1,0 +1,50 @@
+pkgbuild_version=5
+pkgname=libXrender
+pkgver=0.9.8
+
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+	'fontconfig'
+	'libxcb'
+)
+
+sources=(
+	"http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	0f5c843410029944bd06e19366db4932cf5944fa
+)
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	case "$pkgname" in
+		libXfont)
+			./configure $XORG_CONFIG --disable-devel-docs
+			;;
+		libXt)
+			./configure $XORG_CONFIG \
+				--with-appdefaultdir=/etc/X11/app-defaults
+			;;
+		*)
+			./configure $XORG_CONFIG	
+	esac
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set ts=4 syntax=sh:

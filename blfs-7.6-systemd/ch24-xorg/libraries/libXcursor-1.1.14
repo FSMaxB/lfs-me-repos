@@ -1,0 +1,50 @@
+pkgbuild_version=5
+pkgname=libXcursor
+pkgver=1.1.14
+
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+	'fontconfig'
+	'libxcb'
+)
+
+sources=(
+	"http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	89870756758439f9216ddf5f2d3dca56570fc6b7
+)
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	case "$pkgname" in
+		libXfont)
+			./configure $XORG_CONFIG --disable-devel-docs
+			;;
+		libXt)
+			./configure $XORG_CONFIG \
+				--with-appdefaultdir=/etc/X11/app-defaults
+			;;
+		*)
+			./configure $XORG_CONFIG	
+	esac
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set ts=4 syntax=sh:

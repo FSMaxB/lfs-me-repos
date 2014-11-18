@@ -1,0 +1,50 @@
+pkgbuild_version=5
+pkgname=libXres
+pkgver=1.0.7
+
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+	'fontconfig'
+	'libxcb'
+)
+
+sources=(
+	"http://xorg.freedesktop.org/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	45e09c6b771af5d8c448ce31de65d15bf83b7579
+)
+
+lfs_me_prepare() {
+    tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+    cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	case "$pkgname" in
+		libXfont)
+			./configure $XORG_CONFIG --disable-devel-docs
+			;;
+		libXt)
+			./configure $XORG_CONFIG \
+				--with-appdefaultdir=/etc/X11/app-defaults
+			;;
+		*)
+			./configure $XORG_CONFIG	
+	esac
+}
+
+lfs_me_build() {
+    return
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+    cd "${build_dir}/${pkgname}-${pkgver}"
+    make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set ts=4 syntax=sh:
