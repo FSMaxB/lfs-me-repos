@@ -1,0 +1,43 @@
+pkgbuild_version=5
+pkgname=xorg-build-environment
+pkgver=0
+
+dependencies=(
+	"!$pkgname"
+)
+
+lfs_me_prepare() {
+	return
+}
+
+lfs_me_build() {
+	cd "${build_dir}"
+	cat > xorg.sh << "EOF"
+XORG_PREFIX="/usr"
+XORG_CONFIG="--prefix=$XORG_PREFIX --sysconfdir=/etc --localstatedir=/var --disable-static"
+export XORG_PREFIX XORG_CONFIG
+
+pathappend $XORG_PREFIX/bin             PATH
+pathappend $XORG_PREFIX/lib/pkgconfig   PKG_CONFIG_PATH
+pathappend $XORG_PREFIX/share/pkgconfig PKG_CONFIG_PATH
+
+pathappend $XORG_PREFIX/lib             LIBRARY_PATH
+pathappend $XORG_PREFIX/include         C_INCLUDE_PATH
+pathappend $XORG_PREFIX/include         CPLUS_INCLUDE_PATH
+
+ACLOCAL='aclocal -I $XORG_PREFIX/share/aclocal'
+
+export PATH PKG_CONFIG_PATH ACLOCAL LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH
+EOF
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}"
+	install -v -Dm 644 xorg.sh "${fakeroot_dir}/etc/profile.d/xorg.sh"
+}
+
+# vim:set ts=4 syntax=sh:
