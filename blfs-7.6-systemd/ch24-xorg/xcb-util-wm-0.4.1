@@ -1,0 +1,29 @@
+pkgbuild_version=5
+pkgname=xcb-util-wm
+pkgver=0.4.1
+
+dependencies=(
+	"!$pkgname"
+	'libxcb'
+)
+sources=(
+	"http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	7006c52b961c123355320bfc30477cdf90c8bbb7
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	LD_LIBRARY_PATH="${XORG_PREFIX}/lib" make check
+}
+
+# vim:set ts=4 syntax=sh:
