@@ -1,0 +1,57 @@
+pkgbuild_version=5
+pkgname=Python
+pkgver=2.7.8
+
+overwrite=(
+	'/usr/bin/python'
+)
+dependencies=(
+	"!${pkgname}<3"
+	'libffi'
+	'berkeley-db'
+	'openssl'
+	'sqlite'
+)
+sources=(
+	"http://www.python.org/ftp/python/${pkgver}/${pkgname}-${pkgver}.tar.xz"
+	"http://www.linuxfromscratch.org/patches/blfs/7.6-systemd/${pkgname}-${pkgver}-skip_test_gdb-1.patch"
+	"http://docs.python.org/ftp/python/doc/2.7.8/${pkgname/P/p}-${pkgver}-docs-html.tar.bz2"
+)
+sha1sums=(
+	9c6281eeace0c3646fa556c8087bb1b7e033c9c4
+	4a22cd72fefdbd557d74d31662fe81d42fa798d8
+	d83b8cc59c5fd646344b0a5cae16bd5594624e68
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr       \
+	            --enable-shared     \
+				--with-system-expat \
+				--with-system-ffi   \
+				--enable-unicode=ucs4 
+
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-skip_test_gdb-1.patch" &&
+	make test
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+	chmod -v 755 "${fakeroot_dir}/usr/lib/libpython2.7.so.1.0" &&
+
+	install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname/P/p}-${pkgver}" &&
+	tar --strip-components=1 -C "${fakeroot_dir}/usr/share/doc/${pkgname/P/p}-${pkgver}" \
+	    --no-same-owner -xvf "${sources_dir}/${pkgname/P/p}-${pkgver}-docs-html.tar.bz2"      &&
+	find "${fakeroot_dir}/usr/share/doc/${pkgname/P/p}-${pkgver}" -type d -exec chmod 0755 {} \; &&
+	find "${fakeroot_dir}/usr/share/doc/${pkgname/P/p}-${pkgver}" -type f -exec chmod 0644 {} \;
+}
+
+# vim:set ts=4 syntax=sh:
