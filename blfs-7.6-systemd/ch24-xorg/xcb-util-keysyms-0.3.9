@@ -1,0 +1,29 @@
+pkgbuild_version=5
+pkgname=xcb-util-keysyms
+pkgver=0.3.9
+
+dependencies=(
+	"!$pkgname"
+	'libxcb'
+)
+sources=(
+	"http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	74d9d0eeb13ec0e36b35f4b812e8073d1a09e51c
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	LD_LIBRARY_PATH="${XORG_PREFIX}/lib" make check
+}
+
+# vim:set ts=4 syntax=sh:
