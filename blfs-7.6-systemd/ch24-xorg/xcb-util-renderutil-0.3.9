@@ -1,0 +1,28 @@
+pkgbuild_version=5
+pkgname=xcb-util-renderutil
+pkgver=0.3.9
+
+dependencies=(
+	"!$pkgname"
+	'libxcb'
+)
+sources=(
+	"http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	cb533b1d039f833f070e7d6398c221a31d30d5e2
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
