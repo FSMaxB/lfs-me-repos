@@ -1,0 +1,35 @@
+pkgbuild_version=5
+pkgname=libpng
+pkgver=1.6.13
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+	"http://downloads.sourceforge.net/${pkgname}-apng/${pkgname}-${pkgver}-apng.patch.gz"
+)
+sha1sums=(
+	5ae32b6b99cef6c5c85feab8edf9d619e1773b15
+	7fa69a62f2258279f350e40e8fec7a0aa0facdf1
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	gzip -cd "${sources_dir}/libpng-1.6.13-apng.patch.gz" | patch -p1 &&
+
+	./configure --prefix=/usr --disable-static
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+
+	mkdir -pv "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
+	cp -v README libpng-manual.txt "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set ts=4 syntax=sh:
