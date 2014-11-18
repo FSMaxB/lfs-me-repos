@@ -1,0 +1,24 @@
+pkgbuild_version=5
+pkgname=libvdpau
+pkgver=0.8
+
+dependencies=(
+	"!$pkgname"
+	'xorg-libraries'
+)
+sources=(
+	"http://people.freedesktop.org/~aplattner/vdpau/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	7eefd24a49e96aa87c576c8ac46d04cc5a368a4f
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --sysconfdir=/etc --disable-static
+}
+
+# vim:set ts=4 syntax=sh:
