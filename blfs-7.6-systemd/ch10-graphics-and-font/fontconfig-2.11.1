@@ -1,0 +1,41 @@
+pkgbuild_version=5
+pkgname=fontconfig
+pkgver=2.11.1
+
+dependencies=(
+	"!$pkgname"
+	'freetype'
+)
+sources=(
+	"http://www.freedesktop.org/software/fontconfig/release/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	08565feea5a4e6375f9d8a7435dac04e52620ff2
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr        \
+	            --sysconfdir=/etc    \
+				--localstatedir=/var \
+				--disable-docs       \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+
+	install -v -dm755 "${fakeroot_dir}"/usr/share/{man/man{3,5},doc/"${pkgname}-${pkgver}/${pkgname}-devel"} &&
+	mkdir -pv "${fakeroot_dir}/usr/share/man/man1" &&
+	install -v -m644 fc-*/*.1 "${fakeroot_dir}/usr/share/man/man1" &&
+	install -v -m644 doc/*.3 "${fakeroot_dir}/usr/share/man/man3" &&
+	install -v -m644 doc/fonts-conf.5  "${fakeroot_dir}/usr/share/man/man5" &&
+	install -v -m644 doc/fontconfig-devel/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/${pkgname}-devel" &&
+	install -v -m644 doc/*.{pdf,sgml,txt,html} "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set ts=4 syntax=sh:
