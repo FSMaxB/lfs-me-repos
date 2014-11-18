@@ -9,6 +9,9 @@ dependencies=(
 sources=(
 	"http://www.sudo.ws/sudo/dist/${pkgname}-${pkgver}.tar.gz"
 )
+sha1sums=(
+	ed45b25da17c82e0d2cfed98cb4bfd45617c91d9
+)
 
 lfs_me_prepare() {
 	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
@@ -20,7 +23,7 @@ lfs_me_prepare() {
 				--with-all-insults         \
 				--with-env-editor          \
 				--docdir="/usr/share/doc/${pkgname}-${pkgver}" \
-				--with-passprompt="[sudo] password for %p"
+				--with-passprompt="[sudo] password for %p: "
 }
 
 lfs_me_build() {
