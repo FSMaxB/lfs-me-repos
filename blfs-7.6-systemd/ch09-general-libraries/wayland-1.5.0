@@ -1,0 +1,26 @@
+pkgbuild_version=5
+pkgname=wayland
+pkgver=1.5.0
+
+dependencies=(
+	"!$pkgname"
+	'libffi'
+)
+sources=(
+	"http://wayland.freedesktop.org/releases/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	bace08b4a531ea4b80b4cf4e953320bc48ed7efe
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr    \
+	            --disable-static \
+				--disable-documentation
+}
+
+# vim:set ts=4 syntax=sh:
