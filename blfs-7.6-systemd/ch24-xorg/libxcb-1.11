@@ -1,0 +1,30 @@
+pkgbuild_version=5
+pkgname=libxcb
+pkgver=1.11
+
+dependencies=(
+	"!$pkgname"
+	'libXau'
+	'xcb-proto'
+	'libXdmcp'
+	'xorg-build-environment'
+)
+sources=(
+	"http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2"	
+)
+sha1sums=(
+	8343b417d7eeb2a2c6b6c4a87a03a4fd0fc65c46
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed "s/pthread-stubs//" -i configure &&
+	./configure $XORG_CONFIG    \
+	            --enable-xinput \
+				--docdir='${datadir}'/doc/libxcb-1.11
+}
+
+# vim:set ts=4 syntax=sh:
