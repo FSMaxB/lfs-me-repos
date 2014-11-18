@@ -1,0 +1,24 @@
+pkgbuild_version=5
+pkgname=xcb-proto
+pkgver=1.11
+
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+)
+sources=(
+	"http://xcb.freedesktop.org/dist/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	608bd60663e223464d38acec0183ddb827776401
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+# vim:set ts=4 syntax=sh:
