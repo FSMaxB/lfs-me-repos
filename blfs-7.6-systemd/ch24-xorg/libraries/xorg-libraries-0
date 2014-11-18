@@ -1,0 +1,57 @@
+pkgbuild_version=5
+pkgname=xorg-libraries
+pkgver=0
+
+dependencies=(
+	"!$pkgname"
+	'xtrans'
+	'libX11'
+	'libXext'
+	'libFS'
+	'libICE'
+	'libSM'
+	'libXScrnSaver'
+	'libXt'
+	'libXmu'
+	'libXpm'
+	'libXaw'
+	'libXfixes'
+	'libXcomposite'
+	'libXrender'
+	'libXcursor'
+	'libXdamage'
+	'libfontenc'
+	'libXfont'
+	'libXft'
+	'libXi'
+	'libXinerama'
+	'libXrandr'
+	'libXres'
+	'libXtst'
+	'libXv'
+	'libXvMC'
+	'libXxf86dga'
+	'libXxf86vm'
+	'libdmx'
+	'libpciaccess'
+	'libxkbfile'
+	'libxshmfence'
+)
+
+lfs_me_prepare() {
+	return
+}
+
+lfs_me_build() {
+	return
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
