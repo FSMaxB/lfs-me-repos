@@ -1,0 +1,53 @@
+pkgbuild_version=5
+pkgname=xorg-protocol-headers
+pkgver=0
+
+#This is a dummy package for dependencies
+dependencies=(
+	"!$pkgname"
+	'xorg-build-environment'
+	'bigreqsproto'
+	'compositeproto'
+	'damageproto'
+	'dmxproto'
+	'dri2proto'
+	'dri3proto'
+	'fixesproto'
+	'fontsproto'
+	'glproto'
+	'inputproto'
+	'kbproto'
+	'presentproto'
+	'randrproto'
+	'recordproto'
+	'renderproto'
+	'resourceproto'
+	'scrnsaverproto'
+	'videoproto'
+	'xcmiscproto'
+	'xextproto'
+	'xf86bigfontproto'
+	'xf86dgaproto'
+	'xf86driproto'
+	'xf86vidmodeproto'
+	'xineramaproto'
+	'xproto'
+)
+
+lfs_me_prepare() {
+	return
+}
+
+lfs_me_build() {
+	return
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
