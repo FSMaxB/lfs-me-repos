@@ -1,0 +1,29 @@
+pkgbuild_version=5
+pkgname=elfutils
+pkgver=0.160
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"https://fedorahosted.org/releases/e/l/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	a300a1cd1543b65532e333a6e9f931db76841558
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --program-prefix="eu-"
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	sed -i '/srcdir/ iexit 77\n' tests/run-backtrace-native.sh tests/run-backtrace-native-core.sh
+	make check
+}
+
+# vim:set ts=4 syntax=sh:
