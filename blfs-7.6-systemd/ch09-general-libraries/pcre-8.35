@@ -1,0 +1,31 @@
+pkgbuild_version=5
+pkgname=pcre
+pkgver=8.35
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	a10e0040475644bfc97f7d0c0556988acfc52c6f
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr                     \
+	            --docdir=/usr/share/doc/pcre-8.35 \
+				--enable-unicode-properties       \
+				--enable-pcre16                   \
+				--enable-pcre32                   \
+				--enable-pcregrep-libz            \
+				--enable-pcregrep-libbz2          \
+				--enable-pcretest-libreadline     \
+				--disable-static
+}
+
+# vim:set ts=4 syntax=sh:
