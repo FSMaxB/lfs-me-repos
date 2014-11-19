@@ -1,1 +1,2 @@
 * gpm: don't enable systemd unit
+* dbus: didn't move libraries to /lib
