@@ -1,0 +1,31 @@
+pkgbuild_version=5
+pkgname=cryptsetup
+pkgver=1.6.6
+
+dependencies=(
+	"!$pkgname"
+	'LVM2'
+	'libgcrypt'
+	'popt'
+	'util-linux'
+)
+sources=(
+	"https://www.kernel.org/pub/linux/utils/cryptsetup/v1.6/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	2e7a045cc88491df4f08e0f4023c15fcbdf170d6
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --sbindir=/usr/bin --disable-static --enable-cryptsetup-reencrypt
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
