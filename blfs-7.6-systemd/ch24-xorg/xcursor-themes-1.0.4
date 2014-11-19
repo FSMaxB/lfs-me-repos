@@ -1,0 +1,28 @@
+pkgbuild_version=5
+pkgname=xcursor-themes
+pkgver=1.0.4
+
+dependencies=(
+	"!$pkgname"
+	'xorg-applications'
+)
+sources=(
+	"http://xorg.freedesktop.org/archive/individual/data/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	fb22702607810607ab1b9cde1c9a033430c5f037
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
