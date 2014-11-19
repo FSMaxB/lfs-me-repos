@@ -1,0 +1,44 @@
+pkgbuild_version=5
+pkgname=LVM2
+pkgver=2.02.111
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"ftp://sources.redhat.com/pub/lvm2/${pkgname}.${pkgver}.tgz"
+)
+sha1sums=(
+	2e7b5d48d55aaf4aba1214c3211a194e4c13aa3e
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}.${pkgver}.tgz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}.${pkgver}"
+
+	./configure --prefix=/usr       \
+	            --exec-prefix=      \
+				--with-confdir=/etc \
+				--enable-applib     \
+				--enable-cmdlib     \
+				--enable-pkgconfig  \
+				--enable-udev_sync	\
+				--enable-dmeventd
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}.${pkgver}"
+	make
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}.${pkgver}"
+	make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set ts=4 syntax=sh:
