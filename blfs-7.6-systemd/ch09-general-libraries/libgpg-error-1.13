@@ -1,0 +1,29 @@
+pkgbuild_version=5
+pkgname=libgpg-error
+pkgver=1.13
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	50fbff11446a7b0decbf65a6e6b0eda17b5139fb
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --disable-static
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+	install -v -m644 -D README "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/README"
+}
+
+# vim:set ts=4 syntax=sh:
