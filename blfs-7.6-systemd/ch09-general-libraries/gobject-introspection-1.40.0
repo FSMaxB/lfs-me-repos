@@ -1,0 +1,24 @@
+pkgbuild_version=5
+pkgname=gobject-introspection
+pkgver=1.40.0
+
+dependencies=(
+	"!$pkgname"
+	'glib'
+)
+sources=(
+	"http://ftp.gnome.org/pub/gnome/sources/${pkgname}/1.40/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	6eb5476838650f8b3cdd14100081f3416eebf6b7
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --disable-static
+}
+
+# vim:set ts=4 syntax=sh:
