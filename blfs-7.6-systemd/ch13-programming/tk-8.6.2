@@ -1,0 +1,50 @@
+pkgbuild_version=5
+pkgname=tk
+pkgver=8.6.2
+
+dependencies=(
+	"!$pkgname"
+	'xorg-libraries'
+	'tcl'
+)
+sources=(
+	"http://downloads.sourceforge.net/tcl/${pkgname}${pkgver}-src.tar.gz"
+)
+sha1sums=(
+	138920fb55933a715f0b0ace576120734f771b80
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}${pkgver}-src.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}${pkgver}"
+
+	cd unix &&
+	./configure --prefix=/usr \
+	            --mandir=/usr/share/man \
+				$([ $(uname -m) = x86_64 ] && echo --enable-64bit)
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+	make
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver}/unix"
+
+	sed -e "s@^\(TK_SRC_DIR='\).*@\1/usr/include'@" \
+	    -e "/TK_B/s@='\(-L\)\?.*unix@='\1/usr/lib@" \
+		    -i tkConfig.sh &&
+	make DESTDIR="$fakeroot_dir" install &&
+	make DESTDIR="$fakeroot_dir" install-private-headers &&
+
+	ln -v -sf wish8.6 "${fakeroot_dir}/usr/bin/wish" &&
+	chmod -v 755 "${fakeroot_dir}/usr/lib/libtk8.6.so"
+}
+
+# vim:set ts=4 syntax=sh:
