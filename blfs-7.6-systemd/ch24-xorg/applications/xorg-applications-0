@@ -1,0 +1,68 @@
+pkgbuild_version=5
+pkgname=xorg-applications
+pkgver=0
+
+dependencies=(
+	"!$pkgname"
+	'libpng'
+	'MesaLib'
+	'xbitmaps'
+	'xcb-util'
+	'Linux-PAM'
+	'bdftopcf'
+	'iceauth'
+	'luit'
+	'mkfontdir'
+	'mkfontscale'
+	'sessreg'
+	'setxkbmap'
+	'smproxy'
+	'x11perf'
+	'xauth'
+	'xbacklight'
+	'xcmsdb'
+	'xcursorgen'
+	'xdpyinfo'
+	'xdriinfo'
+	'xev'
+	'xgamma'
+	'xhost'
+	'xinput'
+	'xkbcomp'
+	'xkbevd'
+	'xkbutils'
+	'xkill'
+	'xlsatoms'
+	'xlsclients'
+	'xmessage'
+	'xmodmap'
+	'xpr'
+	'xprop'
+	'xrandr'
+	'xrdb'
+	'xrefresh'
+	'xset'
+	'xsetroot'
+	'xvinfo'
+	'xwd'
+	'xwininfo'
+	'xwud'
+)
+
+lfs_me_prepare() {
+	return
+}
+
+lfs_me_build() {
+	return
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
