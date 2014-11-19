@@ -1,0 +1,23 @@
+pkgbuild_version=5
+pkgname=yaml
+pkgver=0.1.6
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://pyyaml.org/download/libyaml/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	f3d404e11bec3c4efcddfd14c42d46f1aabe0b5d
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --disable-static
+}
+
+# vim:set ts=4 syntax=sh:
