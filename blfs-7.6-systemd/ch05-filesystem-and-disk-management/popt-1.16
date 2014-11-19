@@ -1,0 +1,23 @@
+pkgbuild_version=5
+pkgname=popt
+pkgver=1.16
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://rpm5.org/files/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	cfe94a15a2404db85858a81ff8de27c8ff3e235e
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --disable-static
+}
+
+# vim:set ts=4 syntax=sh:
