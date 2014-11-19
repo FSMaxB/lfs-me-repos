@@ -1,0 +1,48 @@
+pkgbuild_version=5
+pkgname=mozjs
+pkgver=17.0.0
+
+dependencies=(
+	"!$pgkname"
+	'libffi'
+	'nspr'
+	'Python<3'
+	'zip'
+)
+sources=(
+	"http://ftp.mozilla.org/pub/mozilla.org/js/${pkgname}${pkgver}.tar.gz"
+)
+sha1sums=(
+	7805174898c34e5d3c3b256117af9944ba825c89
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}${pkgver}"
+
+	cd js/src &&
+	./configure --prefix=/usr       \
+	            --enable-readline   \
+				--enable-threadsafe \
+				--with-system-ffi   \
+				--with-system-nspr
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver}/js/src"
+	make
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}${pkgver}/js/src"
+	make check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver}/js/src"
+	make DESTDIR="$fakeroot_dir" install &&
+	find "${fakeroot_dir}/usr/include/js-17.0/" "${fakeroot_dir}/usr/lib/lib${pkgname}-17.0.a" "${fakeroot_dir}/usr/lib/pkgconfig/${pkgname}-17.0.pc" -type f -exec chmod -v 644 {} \;
+}
+
+# vim:set ts=4 syntax=sh:
