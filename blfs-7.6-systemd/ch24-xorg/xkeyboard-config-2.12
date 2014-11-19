@@ -1,0 +1,31 @@
+pkgbuild_version=5
+pkgname=xkeyboard-config
+pkgver=2.12
+
+dependencies=(
+	"!$pkgname"
+	'libxslt'
+	'xorg-protocol-headers'
+)
+sources=(
+	"http://xorg.freedesktop.org/archive/individual/data/xkeyboard-config/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	7a85c43b432c0005be7ae9911aee26890792e5f3
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr \
+				--disable-runtime-deps \
+				--with-xkb-rules-symlink=xorg
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
