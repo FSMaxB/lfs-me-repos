@@ -1,0 +1,33 @@
+pkgbuild_version=5
+pkgname=zip
+pkgver=30
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://downloads.sourceforge.net/infozip/${pkgname}${pkgver}.tar.gz"
+)
+sha1sums=(
+	c9f4099ecf2772b53c2dd4a8e508064ce015d182
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}${pkgver}.tar.gz" -C "$build_dir"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}${pkgver}"
+	make -f unix/Makefile generic_gcc
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}${pkgver}"
+	make prefix="${fakeroot_dir}/usr" MANDIR="${fakeroot_dir}/usr/share/man/man1" -f unix/Makefile install
+}
+
+# vim:set ts=4 syntax=sh:
