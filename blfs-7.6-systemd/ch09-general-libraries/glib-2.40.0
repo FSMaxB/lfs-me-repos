@@ -1,0 +1,32 @@
+pkgbuild_version=5
+pkgname=glib
+pkgver=2.40.0
+
+dependencies=(
+	"!$pkgname"
+	'libffi'
+	'Python<3'
+	'pcre'
+	'dbus'
+	'elfutils'
+)
+sources=(
+	"http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.40/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	44e1442ed4d1bf3fa89138965deb35afc1335a65
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --with-pcre=system
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
