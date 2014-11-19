@@ -1,0 +1,86 @@
+pkgbuild_version=5
+pkgname=docbook-xsl
+pkgver=1.78.1
+
+dependencies=(
+	"!$pkgname"
+	'libxml2'
+	'ruby'
+)
+sources=(
+	"http://downloads.sourceforge.net/docbook/${pkgname}-${pkgver}.tar.bz2"
+	"http://downloads.sourceforge.net/docbook/${pkgname}-doc-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	1d668c845bb43c65115d1a1d9542f623801cfb6f
+	bf69dc152a9f983a1af197d9041b8c4dc894dd5d
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	tar -xf "${sources_dir}/${pkgname}-doc-${pkgver}.tar.bz2" --strip-components=1
+}
+
+lfs_me_build() {
+	return
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	install -v -m755 -d "${fakeroot_dir}/usr/share/xml/docbook/${pkgname}-${pkgver}" &&
+
+	cp -v -R VERSION common eclipse epub extensions fo highlighting html \
+		htmlhelp images javahelp lib manpages params profiling \
+		roundtrip slides template tests tools webhelp website \
+		xhtml xhtml-1_1 \
+		"${fakeroot_dir}/usr/share/xml/docbook/${pkgname}-${pkgver}" &&
+
+	ln -s VERSION "${fakeroot_dir}/usr/share/xml/docbook/${pkgname}-${pkgver}/VERSION.xsl" &&
+
+	install -v -m644 -D README "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/README.txt" &&
+	install -v -m644    RELEASE-NOTES* NEWS* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
+
+	cp -v -R doc/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_postinstall() {
+	if [ ! -d /etc/xml ]; then install -v -m755 -d /etc/xml; fi &&
+	if [ ! -f /etc/xml/catalog ]; then
+		xmlcatalog --noout --create /etc/xml/catalog
+	fi &&
+
+	xmlcatalog --noout --add "rewriteSystem" \
+		"http://docbook.sourceforge.net/release/xsl/${pkgver}" \
+		"/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" \
+		/etc/xml/catalog &&
+
+	xmlcatalog --noout --add "rewriteURI" \
+		"http://docbook.sourceforge.net/release/xsl/${pkgver}" \
+		"/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" \
+		/etc/xml/catalog &&
+
+	xmlcatalog --noout --add "rewriteSystem" \
+		"http://docbook.sourceforge.net/release/xsl/current" \
+		"/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" \
+		/etc/xml/catalog &&
+
+	xmlcatalog --noout --add "rewriteURI" \
+		"http://docbook.sourceforge.net/release/xsl/current" \
+		"/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" \
+		/etc/xml/catalog
+}
+
+lfs_me_preremove() {
+	xmlcatalog --noout --del "/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" etc/xml/catalog &&
+	xmlcatalog --noout --del "/usr/share/xml/docbook" etc/xml/catalog &&
+	xmlcatalog --noout --del "file:///etc/xml/docbook" etc/xml/catalog
+}
+
+# vim:set ts=4 syntax=sh:
