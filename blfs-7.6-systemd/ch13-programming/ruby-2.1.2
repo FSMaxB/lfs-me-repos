@@ -1,0 +1,34 @@
+pkgbuild_version=5
+pkgname=ruby
+pkgver=2.1.2
+
+dependencies=(
+	"!$pkgname"
+	'berkeley-db'
+	'openssl'
+	'tk'
+	'yaml'
+)
+sources=(
+	"http://cache.ruby-lang.org/pub/${pkgname}/2.1/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	29a615966c7feb6554be736e7dcd590c770ee692
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr \
+				--enable-shared \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make test
+}
+
+# vim:set ts=4 syntax=sh:
