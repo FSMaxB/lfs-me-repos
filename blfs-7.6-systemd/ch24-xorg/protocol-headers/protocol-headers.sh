@@ -79,5 +79,9 @@ do
 
 		#install the package
 		as_root "$pkgmanager" install "${packagedir}.pkg"
+		if [[ ! $? -eq 0 ]]; then
+			echo "ERROR: Non zero exit status"
+			exit 1
+		fi
 	fi
 done
