@@ -1,0 +1,65 @@
+pkgbuild_version=5
+pkgname=MesaLib
+pkgver=10.2.7
+
+dependencies=(
+	"!$pkgname"
+	'libdrm'
+	'Python<3'
+	'xorg-libraries'
+)
+sources=(
+	"ftp://ftp.freedesktop.org/pub/mesa/${pkgver}/${pkgname}-${pkgver}.tar.bz2"
+	"http://www.linuxfromscratch.org/patches/blfs/7.6-systemd/${pkgname}-${pkgver}-upstream_fixes-1.patch"
+	"http://www.linuxfromscratch.org/patches/blfs/7.6-systemd/${pkgname}-${pkgver}-add_xdemos-1.patch"
+)
+sha1sums=(
+	f8bfea45c8ef09431e6cccbee68ca2c517e6cbbc
+	d1624c545cb6c8131e50d901f659032506e5e9d8
+	0bed9cbd1f1b39e39815e8815a896636876ceb82
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname/Lib/}-${pkgver}"
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-add_xdemos-1.patch"
+
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-upstream_fixes-1.patch" &&
+
+	./autogen.sh CFLAGS="-O2" CXXFLAGS="-O2" \
+	            --prefix=/usr                \
+				--sysconfdir=/etc            \
+				--disable-gallium-egl        \
+				--enable-texture-float       \
+				--enable-gles1               \
+				--enable-gles2               \
+				--enable-osmesa              \
+				--enable-xa                  \
+				--enable-gbm                 \
+				--enable-glx-tls             \
+				--with-egl-platforms="drm,x11,wayland" \
+				--with-gallium-drivers="nouveau,r300,r600,radeonsi,svga,swrast"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname/Lib/}-${pkgver}"
+	make &&
+	make -C xdemos DEMOS_PREFIX=/usr
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname/Lib/}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+
+	make DESTDIR="$fakeroot_dir" -C xdemos DEMOS_PREFIX=/usr install &&
+	install -v -dm755 "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
+	cp -rfv docs/* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set ts=4 syntax=sh:
