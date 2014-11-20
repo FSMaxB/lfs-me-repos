@@ -34,15 +34,15 @@ lfs_me_check() {
 
 lfs_me_install() {
 	cd "${build_dir}/${pkgname}-${pkgver}"
-	install -v -m755 -d "${fakeroot_dir}/usr/share/xml/docbook/${pkgname}-${pkgver}" &&
+	install -v -m755 -d "${fakeroot_dir}/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" &&
 
 	cp -v -R VERSION common eclipse epub extensions fo highlighting html \
 		htmlhelp images javahelp lib manpages params profiling \
 		roundtrip slides template tests tools webhelp website \
 		xhtml xhtml-1_1 \
-		"${fakeroot_dir}/usr/share/xml/docbook/${pkgname}-${pkgver}" &&
+		"${fakeroot_dir}/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" &&
 
-	ln -s VERSION "${fakeroot_dir}/usr/share/xml/docbook/${pkgname}-${pkgver}/VERSION.xsl" &&
+	ln -s VERSION "${fakeroot_dir}/usr/share/xml/docbook/xsl-stylesheets-${pkgver}/VERSION.xsl" &&
 
 	install -v -m644 -D README "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}/README.txt" &&
 	install -v -m644    RELEASE-NOTES* NEWS* "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
@@ -51,6 +51,7 @@ lfs_me_install() {
 }
 
 lfs_me_postinstall() {
+	echo Updating catalog
 	if [ ! -d /etc/xml ]; then install -v -m755 -d /etc/xml; fi &&
 	if [ ! -f /etc/xml/catalog ]; then
 		xmlcatalog --noout --create /etc/xml/catalog
@@ -78,9 +79,9 @@ lfs_me_postinstall() {
 }
 
 lfs_me_preremove() {
-	xmlcatalog --noout --del "/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" etc/xml/catalog &&
-	xmlcatalog --noout --del "/usr/share/xml/docbook" etc/xml/catalog &&
-	xmlcatalog --noout --del "file:///etc/xml/docbook" etc/xml/catalog
+	xmlcatalog --noout --del "/usr/share/xml/docbook/xsl-stylesheets-${pkgver}" /etc/xml/catalog &&
+	xmlcatalog --noout --del "/usr/share/xml/docbook" /etc/xml/catalog &&
+	xmlcatalog --noout --del "file:///etc/xml/docbook" /etc/xml/catalog
 }
 
 # vim:set ts=4 syntax=sh:

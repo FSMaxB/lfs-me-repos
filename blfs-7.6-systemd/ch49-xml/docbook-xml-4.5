@@ -32,58 +32,59 @@ lfs_me_install() {
 	cd "${build_dir}/${pkgname}-${pkgver}"
 	install -v -d -m755 "${fakeroot_dir}/usr/share/xml/docbook/xml-dtd-${pkgver}" &&
 	install -v -d -m755 "${fakeroot_dir}/etc/xml" &&
-	cp -v -af docbook.cat *.dtd ent/ *.mod "${fakeroot_dir}/usr/share/xml/docbook/xml-dtd-${pkgver}"
-}
+	cp -v -af docbook.cat *.dtd ent/ *.mod "${fakeroot_dir}/usr/share/xml/docbook/xml-dtd-${pkgver}" &&
 
-lfs_me_postinstall() {
-	if [ ! -e /etc/xml/docbook ]; then
-		xmlcatalog --noout --create /etc/xml/docbook
+	if [ ! -e "${fakeroot_dir}/etc/xml/docbook" ]; then
+		xmlcatalog --noout --create "${fakeroot_dir}/etc/xml/docbook"
 	fi &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//DTD DocBook XML V${pkgver}//EN" \
 		"http://www.oasis-open.org/docbook/xml/${pkgver}/docbookx.dtd" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//DTD DocBook XML CALS Table Model V${pkgver}//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/calstblx.dtd" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//DTD XML Exchange Table Model 19990315//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/soextblx.dtd" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//ELEMENTS DocBook XML Information Pool V${pkgver}//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/dbpoolx.mod" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//ELEMENTS DocBook XML Document Hierarchy V${pkgver}//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/dbhierx.mod" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//ELEMENTS DocBook XML HTML Tables V${pkgver}//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/htmltblx.mod" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//ENTITIES DocBook XML Notations V${pkgver}//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/dbnotnx.mod" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//ENTITIES DocBook XML Character Entities V${pkgver}//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/dbcentx.mod" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "public" \
 		"-//OASIS//ENTITIES DocBook XML Additional General Entities V${pkgver}//EN" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}/dbgenent.mod" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "rewriteSystem" \
 		"http://www.oasis-open.org/docbook/xml/${pkgver}" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}" \
-		/etc/xml/docbook &&
+		"${fakeroot_dir}/etc/xml/docbook" &&
 	xmlcatalog --noout --add "rewriteURI" \
 		"http://www.oasis-open.org/docbook/xml/${pkgver}" \
 		"file:///usr/share/xml/docbook/xml-dtd-${pkgver}" \
-		/etc/xml/docbook
+		"${fakeroot_dir}/etc/xml/docbook"
+}
 
+lfs_me_postinstall() {
+	echo Updating catalog
 	if [ ! -e /etc/xml/catalog ]; then
 		xmlcatalog --noout --create /etc/xml/catalog
 	fi &&
