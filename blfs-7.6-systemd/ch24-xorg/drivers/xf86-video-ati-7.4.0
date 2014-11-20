@@ -1,0 +1,28 @@
+pkgbuild_version=5
+pkgname=xf86-video-ati
+pkgver=7.4.0
+
+dependencies=(
+	"!$pkgname"
+	'xorg-server'
+)
+sources=(
+	"http://xorg.freedesktop.org/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	65ebadef558608beba878d64fc3d10c5a3c706e7
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
