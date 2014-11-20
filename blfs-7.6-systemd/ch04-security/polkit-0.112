@@ -1,0 +1,72 @@
+pkgbuild_version=5
+pkgname=polkit
+pkgver=0.112
+
+dependencies=(
+	"!$pkgname"
+	'glib'
+	'mozjs'
+	'Linux-PAM'
+	'gobject-introspection'
+	'docbook-xml'
+	'docbook-xsl'
+	'libxslt'
+	'systemd'
+)
+sources=(
+	"http://www.freedesktop.org/software/${pkgname}/releases/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	374397f1c32fa1290be0fce378fe9bab541ee4bf
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	sed -i "s:/sys/fs/cgroup/systemd/:/sys:g" configure
+	./configure --prefix=/usr        \
+	            --sysconfdir=/etc    \
+				--localstatedir=/var \
+				--disable-static
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make
+
+cat > polkit-1 << "EOF"
+# Begin /etc/pam.d/polkit-1
+
+auth     include        system-auth
+account  include        system-account
+password include        system-password
+session  include        system-session
+
+# End /etc/pam.d/polkit-1
+EOF
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+	install -v -Dm 644 polkit-1 "${fakeroot_dir}/etc/pam.d/polkit-1"
+}
+
+lfs_me_postinstall() {
+	groupadd -fg 27 polkitd &&
+	useradd -c "PolicyKit Daemon Owner" -d /etc/polkit-1 -u 27 \
+			-g polkitd -s /bin/false polkitd
+}
+
+lfs_me_postremove() {
+	userdel polkitd
+	grouptdel polkitd
+}
+
+# vim:set ts=4 syntax=sh:
