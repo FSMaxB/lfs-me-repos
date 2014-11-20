@@ -1,0 +1,93 @@
+pkgbuild_version=5
+pkgname=systemd
+pkgver=216
+
+dependencies=(
+	"!$pkgname"
+	'glib'
+	'gobject-introspection'
+	'Linux-PAM'
+	'polkit'
+	'curl'
+	'elfutils'
+	'libgcrypt'
+	'libidn'
+	'Python>3'
+	'cryptsetup'
+	'libxslt'
+	'docbook-xml'
+	'docbook-xsl'
+)
+sources=(
+	"http://www.freedesktop.org/software/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+	"http://www.linuxfromscratch.org/patches/downloads/${pkgname}/${pkgname}-${pkgver}-compat-1.patch"
+)
+sha1sums=(
+	0d933a2f76db5d30f52429e9b172323bc6abd49a
+	a541716c3ab62a6fae35d6bdb27767b569a942ba
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-compat-1.patch" &&
+
+	cc_cv_CFLAGS__flto=no              \
+	./configure --prefix=/usr          \
+	            --sysconfdir=/etc      \
+				--localstatedir=/var   \
+				--enable-split-usr     \
+				--disable-firstboot    \
+				--disable-ldconfig     \
+				--disable-sysusers     \
+				--docdir="/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	cat >> system-session-addition << "EOF"
+# Begin Systemd addition
+
+session   required    pam_loginuid.so
+-session   optional    pam_systemd.so
+
+# End Systemd addition
+EOF
+
+cat > systemd-user << "EOF"
+# Begin /etc/pam.d/systemd-user
+
+account  required pam_access.so
+account  include  system-account
+
+session  required pam_env.so
+session  required pam_limits.so
+session  include  system-session
+
+auth     required pam_deny.so
+password required pam_deny.so
+
+# End /etc/pam.d/systemd-user
+EOF
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+
+	rm -rfv "${fakeroot_dir}/usr/lib/rpm" &&
+
+	install -v -dm 755 "${fakeroot_dir}/etc/pam.d" &&
+	install -v -m 644 system-session-addition systemd-user "${fakeroot_dir}/etc/pam.d/"
+}
+
+lfs_me_postinstall() {
+	sed -i "s:0775 root lock:0755 root root:g" /usr/lib/tmpfiles.d/legacy.conf
+}
+
+# vim:set ts=4 syntax=sh:
