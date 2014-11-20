@@ -1,0 +1,27 @@
+pkgbuild_version=5
+pkgname=mtdev
+pkgver=1.1.5
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://bitmath.org/code/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	15267fbde0ed466f8474db1bbdf2d6989846f415
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
