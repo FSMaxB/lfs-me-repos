@@ -1,0 +1,40 @@
+pkgbuild_version=5
+pkgname=pciutils
+pkgver=3.2.1
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://ftp.kernel.org/pub/software/utils/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	2009c441bfb78811c2991bde03b88c043654c195
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make PREFIX=/usr              \
+		SHAREDIR=/usr/share/misc \
+		SHARED=yes
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make PREFIX="${fakeroot_dir}/usr"              \
+		SHAREDIR="${fakeroot_dir}/usr/share/misc" \
+		SHARED=yes               \
+		install install-lib &&
+	chmod -v 755 "${fakeroot_dir}/usr/lib/libpci.so"
+}
+
+# vim:set ts=4 syntax=sh:
