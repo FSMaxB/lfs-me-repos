@@ -1,0 +1,49 @@
+pkgbuild_version=5
+pkgname=xorg-server
+pkgver=1.16.0
+
+dependencies=(
+	"!$pkgname"
+	'openssl'
+	'nettle'
+	'libgcrypt'
+	'pixman'
+	'xorg-fonts'
+	'xkeyboard-config'
+	'libepoxy'
+	'wayland'
+	'systemd'
+)
+sources=(
+	"http://xorg.freedesktop.org/archive/individual/xserver/${pkgname}-${pkgver}.tar.bz2"
+	"http://www.linuxfromscratch.org/patches/blfs/7.6-systemd/${pkgname}-${pkgver}-upstream_glamor_fix-1.patch"
+	"http://www.linuxfromscratch.org/patches/blfs/7.6-systemd/${pkgname}-${pkgver}-add_prime_support-2.patch"
+)
+sha1sums=(
+	0b5ce3868c1c617c21e19ce863aab1ede6e154c4
+	cdcfda184333187fb2eded7bf0bd9a5e5db2262b
+	42a23a23fa8085e7dac410beed4f75024b9e25a7
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-upstream_glamor_fix-1.patch"
+	patch -Np1 -i "${sources_dir}/${pkgname}-${pkgver}-add_prime_support-2.patch"
+
+	sed -i "/scrnintstr/i #include <xorg-server.h>" exa/exa.h glamor/glamor.h &&
+	./configure $XORG_CONFIG                    \
+				--with-xkb-output=/var/lib/xkb   \
+				--enable-dmx                     \
+				--enable-glamor                  \
+				--enable-suid-wrapper 
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install&&
+	mkdir -pv "${fakeroot_dir}/etc/X11/xorg.conf.d"
+}
+
+# vim:set ts=4 syntax=sh:
