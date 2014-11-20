@@ -1,0 +1,31 @@
+pkgbuild_version=5
+pkgname=libepoxy
+pkgver=1.2
+
+dependencies=(
+	"!$pkgname"
+	'MesaLib'
+	'Python>3'
+)
+sources=(
+	"http://crux.nu/files/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	e700520711b9e4fa07c286aa36e431d8ad4133f5
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	
+	./autogen.sh --prefix=/usr
+}
+
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make -k check
+}
+
+# vim:set ts=4 syntax=sh:
