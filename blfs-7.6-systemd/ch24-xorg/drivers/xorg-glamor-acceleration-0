@@ -1,0 +1,46 @@
+pkgbuild_version=5
+pkgname=xorg-glamor-acceleration
+pkgver=0
+
+dependencies=(
+	"!$pkgname"
+	"MesaLib"
+)
+
+lfs_me_prepare() {
+	return
+}
+
+lfs_me_build() {
+	cd "${build_dir}"
+cat >> glamor.conf << "EOF"
+Section "Module"
+	Load "dri2"
+	Load "glamoregl"
+EndSection
+
+Section "Device"
+	Identifier "intel"
+	Driver "intel"
+	Option "AccelMethod" "glamor"
+EndSection
+
+
+Section "Device"
+	Identifier "radeon"
+	Driver "radeon"
+	Option "AccelMethod" "glamor"
+EndSection
+EOF
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}"
+	install -v -D glamor.conf "${fakeroot_dir}/etc/X11/xorg.conf.d/glamor.conf"
+}
+
+# vim:set ts=4 syntax=sh:
