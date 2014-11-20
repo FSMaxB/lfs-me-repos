@@ -35,7 +35,7 @@ export LFS LFS_TGT log_dir index_dir
 install=(
 	'binutils-pass1-2.24'
 	'gcc-pass1-4.9.1'
-	'linux-headers-3.16.5'
+	'linux-headers-3.16.7'
 	'glibc-2.20'
 	'libstdc++-4.9.1'
 	'binutils-pass2-2.24'
@@ -76,7 +76,7 @@ install=(
 	'curl-7.37.1'
 	'git-2.1.0'
 	'bc-1.06.95'
-	'lfs-me-3.1.0'
+	'lfs-me-3.1.2'
 	'groff-1.22.2'
 	'less-458'
 	'libpipeline-1.3.0'

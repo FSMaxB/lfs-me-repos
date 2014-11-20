@@ -1,2 +1,5 @@
 * gpm: don't enable systemd unit
 * dbus: didn't move libraries to /lib
+* systemd: 
+	- without --rootlibdir=/lib and --rootprefix=
+	- installed system-session-additions instead of adding to system-session
