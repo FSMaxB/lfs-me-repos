@@ -1,0 +1,31 @@
+pkgbuild_version=5
+pkgname=xf86-video-intel
+pkgver=2.99.916
+
+dependencies=(
+	"!$pkgname"
+	'xorg-server'
+	'xcb-util'
+)
+sources=(
+	"http://xorg.freedesktop.org/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	ad5fee90ceaed8daf36aecb1d5e68aeb5e0a070a
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG \
+			--enable-kms-only \
+			--disable-dri3
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
