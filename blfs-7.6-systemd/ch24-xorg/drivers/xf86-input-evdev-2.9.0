@@ -1,0 +1,30 @@
+pkgbuild_version=5
+pkgname=xf86-input-evdev
+pkgver=2.9.0
+
+dependencies=(
+	"!$pkgname"
+	'xorg-server'
+	'libevdev'
+	'mtdev'
+)
+sources=(
+	"http://xorg.freedesktop.org/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	e5e196719c09a02ca275b8eab534753408518e05
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
