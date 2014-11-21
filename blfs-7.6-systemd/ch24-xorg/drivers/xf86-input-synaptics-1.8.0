@@ -1,0 +1,30 @@
+pkgbuild_version=5
+pkgname=xf86-input-synaptics
+pkgver=1.8.0
+
+dependencies=(
+	"!$pkgname"
+	'xorg-server'
+	'libevdev'
+)
+sources=(
+	"http://xorg.freedesktop.org/archive/individual/driver/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	8b92d9990dfc4b5dc923a4405623024d623d75b1
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed -i "/unistd/i #include <xorg-server.h>" src/synproto.h &&
+	./configure $XORG_CONFIG
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
