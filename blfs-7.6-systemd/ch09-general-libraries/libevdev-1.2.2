@@ -1,0 +1,25 @@
+pkgbuild_version=5
+pkgname=libevdev
+pkgver=1.2.2
+
+dependencies=(
+	"!$pkgname"
+	'Python<3'
+	'check'
+)
+sources=(
+	"http://www.freedesktop.org/software/${pkgname}/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	6c07a7e33d305f6e88b10ab6aa8c33df449b70d5
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --disable-static
+}
+
+# vim:set ts=4 syntax=sh:
