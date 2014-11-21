@@ -1,0 +1,55 @@
+pkgbuild_version=5
+pkgname=xterm
+pkgver=310
+
+dependencies=(
+	"!$pkgname"
+	'xorg-applications'
+)
+sources=(
+	"ftp://invisible-island.net/${pkgname}/${pkgname}-${pkgver}.tgz"
+)
+sha1sums=(
+	1787d8525d7361aa225348be3da5bc48cd290ecd
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tgz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed -i '/v0/{n;s/new:/new:kb=^?:/}' termcap &&
+	printf '\tkbs=\\177,\n' >> terminfo &&
+
+	TERMINFO=/usr/share/terminfo \
+	./configure $XORG_CONFIG     \
+	    --with-app-defaults=/etc/X11/app-defaults
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make &&
+	cat >> XTerm << "EOF"
+*VT100*locale: true
+*VT100*faceName: Monospace
+*VT100*faceSize: 10
+*backarrowKeyIsErase: true
+*ptyInitialErase: true
+EOF
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+	make DESTDIR="$fakeroot_dir" install-ti &&
+	install -v -D XTerm "${fakeroot_dir}/etc/X11/app-defaults/XTerm" &&
+
+	#prevent conflict with ncurses
+	rm -rf "${fakeroot_dir}/usr/share/terminfo"
+}
+
+# vim:set ts=4 syntax=sh:
