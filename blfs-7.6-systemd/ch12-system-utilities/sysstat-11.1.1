@@ -1,0 +1,43 @@
+pkgbuild_version=5
+pkgname=sysstat
+pkgver=11.1.1
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+	"http://perso.wanadoo.fr/sebastien.godard/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	ab45580cc67478eff78d8a5c89a8d291a8c34403
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sa_lib_dir=/usr/lib/sa    \
+	sa_dir=/var/log/sa        \
+	conf_dir=/etc/sysconfig   \
+	./configure --prefix=/usr \
+	            --disable-man-group
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+	install -v -Dm644 sysstat.service "${fakeroot_dir}/usr/lib/systemd/system/sysstat.service"
+}
+
+# vim:set ts=4 syntax=sh:

@@ -3,3 +3,4 @@
 * systemd: 
 	- without --rootlibdir=/lib and --rootprefix=
 	- installed system-session-additions instead of adding to system-session
+* sysstat: install systemd unit to /usr/lib/systemd/system
