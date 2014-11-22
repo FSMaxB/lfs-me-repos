@@ -1,0 +1,39 @@
+pkgbuild_version=5
+pkgname=icu
+pkgver=53.1
+
+dependencies=(
+	"!$pkgname"
+	'llvm'
+)
+sources=(
+	"http://download.icu-project.org/files/${pkgname}4c/${pkgver}/${pkgname}4c-${pkgver/\./_}-src.tgz"
+)
+sha1sums=(
+	7eca017fdd101e676d425caaf28ef862d3655e0f
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}4c-${pkgver/\./_}-src.tgz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}/source"
+
+	./configure --prefix=/usr
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}/source"
+	make
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}/source"
+	make check
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}/source"
+	make DESTDIR="$fakeroot_dir" install
+}
+
+# vim:set ts=4 syntax=sh:
