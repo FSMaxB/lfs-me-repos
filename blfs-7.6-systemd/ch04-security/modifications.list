@@ -4,3 +4,4 @@
 	- didn't move libraries to /lib
 * shadow: didn't move passwd to /bin
 * sudo: changed text to "[sudo] password for %p: "
+* libcap: install to /usr/lib
