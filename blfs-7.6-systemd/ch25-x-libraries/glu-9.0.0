@@ -1,0 +1,28 @@
+pkgbuild_version=5
+pkgname=glu
+pkgver=9.0.0
+
+dependencies=(
+	"!$pkgname"
+	'MesaLib'
+)
+sources=(
+	"ftp://ftp.freedesktop.org/pub/mesa/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	c2814bbaf1e60e28a75ec80f4646047c0da742bd
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
