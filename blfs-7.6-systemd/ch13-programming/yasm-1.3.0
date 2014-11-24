@@ -1,0 +1,25 @@
+pkgbuild_version=5
+pkgname=yasm
+pkgver=1.3.0
+
+dependencies=(
+	"!$pkgname"
+	'Python'
+)
+sources=(
+	"http://www.tortall.net/projects/${pkgname}/releases/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	b7574e9f0826bedef975d64d3825f75fbaeef55e
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed -i 's#) ytasm.*#)#' Makefile.in &&
+	./configure --prefix=/usr
+}
+
+# vim:set ts=4 syntax=sh:
