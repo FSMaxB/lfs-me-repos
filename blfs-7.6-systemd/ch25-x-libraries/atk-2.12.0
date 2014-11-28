@@ -1,0 +1,29 @@
+pkgbuild_version=5
+pkgname=atk
+pkgver=2.12.0
+
+dependencies=(
+	"!$pkgname"
+	'glib'
+	'gobject-introspection'
+)
+sources=(
+	"http://ftp.gnome.org/pub/gnome/sources/atk/2.12/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	3ad6fc3c530b3c848cd2cad38a7c68191426baae
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./configure --prefix=/usr
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
