@@ -1,0 +1,39 @@
+pkgbuild_version=5
+pkgname=cairo
+pkgver=1.12.16
+
+dependencies=(
+	"!$pkgname"
+	'libpng'
+	'glib'
+	'pixman'
+	'fontconfig'
+	'MesaLib'
+	'xorg-libraries'
+	'libdrm'
+	'lzo'
+)
+sources=(
+	"http://cairographics.org/releases/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	4f6e337d5d3edd7ea79d1426f575331552b003ec
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	CFLAGS="$CFLAGS -O2 -g -ffat-lto-objects" \
+	./configure --prefix=/usr    \
+				--enable-gl      \
+				--enable-tee     \
+				--disable-static
+}
+
+lfs_me_check() {
+	return
+}
+
+# vim:set ts=4 syntax=sh:
