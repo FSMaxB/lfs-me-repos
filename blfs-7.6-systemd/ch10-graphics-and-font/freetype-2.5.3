@@ -1,0 +1,49 @@
+pkgbuild_version=5
+pkgname=freetype
+pkgver=2.5.3
+
+dependencies=(
+	"!$pkgname"
+	'which'
+	'libpng'
+	'harfbuzz'
+)
+sources=(
+	"http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.bz2"
+	"http://downloads.sourceforge.net/${pkgname}/${pkgname}-doc-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	d3c26cc17ec7fe6c36f4efc02ef92ab6aa3f4b46
+	81d38137f2d16260391aac7a65cd44e3ed0dc253
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	tar -xf "${sources_dir}/${pkgname}-doc-${pkgver}.tar.bz2" --strip-components=2 -C docs &&
+
+	sed -i  -e "/AUX.*.gxvalid/s@^# @@" \
+	        -e "/AUX.*.otvalid/s@^# @@" \
+			        modules.cfg                        &&
+
+	sed -ri -e 's:.*(#.*SUBPIXEL.*) .*:\1:' \
+		include/config/ftoption.h          &&
+
+	./configure --prefix=/usr --disable-static
+}
+
+lfs_me_check() {
+	return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make DESTDIR="$fakeroot_dir" install &&
+
+	install -v -m755 -d "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}" &&
+	cp -v -R docs/*     "${fakeroot_dir}/usr/share/doc/${pkgname}-${pkgver}"
+}
+
+# vim:set ts=4 syntax=sh:
