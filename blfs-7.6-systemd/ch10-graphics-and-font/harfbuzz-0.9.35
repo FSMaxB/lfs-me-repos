@@ -1,0 +1,30 @@
+pkgbuild_version=5
+pkgname=harfbuzz
+pkgver=0.9.35
+
+dependencies=(
+	"!$pkgname"
+	'glib'
+	'icu'
+	'freetype'
+	'cairo'
+	'gobject-introspection'
+	'graphite2'
+)
+sources=(
+	"http://www.freedesktop.org/software/harfbuzz/release/${pkgname}-${pkgver}.tar.bz2"
+)
+sha1sums=(
+	6f4401af396069214be2ba15b884361ef540e501
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.bz2" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed -i "s:tests/arabic-fallback-shaping.tests::g" test/shaping/Makefile.in &&
+	./configure --prefix=/usr --with-gobject --with-graphite2
+}
+
+# vim:set ts=4 syntax=sh:
