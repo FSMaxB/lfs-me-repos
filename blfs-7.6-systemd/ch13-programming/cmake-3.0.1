@@ -1,0 +1,33 @@
+pkgbuild_version=5
+pkgname=cmake
+pkgver=3.0.1
+
+dependencies=(
+	"!$pkgname"
+	'curl'
+	'libarchive'
+)
+sources=(
+	"http://www.cmake.org/files/v3.0/${pkgname}-${pkgver}.tar.gz"
+)
+sha1sums=(
+	b7e4acaa7fc7adf54c1b465c712e5ea473b8b74f
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.gz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	./bootstrap --prefix=/usr       \
+	            --system-libs       \
+				--mandir=/share/man \
+				--docdir="/share/doc/${pkgname}-${pkgver}"
+}
+
+lfs_me_check() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	bin/ctest
+}
+
+# vim:set ts=4 syntax=sh:
