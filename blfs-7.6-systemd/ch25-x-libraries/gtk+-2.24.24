@@ -1,0 +1,35 @@
+pkgbuild_version=5
+pkgname=gtk+
+pkgver=2.24.24
+
+dependencies=(
+	"!$pkgname"
+	'atk'
+	'gdk-pixbuf'
+	'pango'
+	'hicolor-icon-theme'
+	'gobject-introspection'
+)
+sources=(
+	"http://ftp.gnome.org/pub/gnome/sources/${pkgname}/2.24/${pkgname}-${pkgver}.tar.xz"
+)
+sha1sums=(
+	c43eb248b3d30c6b49937692b4c4bfa10b96201e
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tar.xz" -C "$build_dir"
+
+	cd "${build_dir}/${pkgname}-${pkgver}"
+
+	sed -i 's#l \(gtk-.*\).sgml#& -o \1#' docs/{faq,tutorial}/Makefile.in &&
+	sed -i 's#.*@man_#man_#' docs/reference/gtk/Makefile.in               &&
+	sed -i -e 's#pltcheck.sh#$(NULL)#g' gtk/Makefile.in                   &&
+	./configure --prefix=/usr --sysconfdir=/etc      
+}
+
+lfs_me_postinstall() {
+	gtk-query-immodules-2.0 --update-cache
+}
+
+# vim:set ts=4 syntax=sh:
