@@ -1,6 +1,6 @@
 pkgbuild_version=5
 pkgname=linux
-pkgver=3.16.7
+pkgver=3.18.4
 
 #fix: disable logs to make nconfig work. This is just a hack, don't do this in your PKGBUILD!
 do_logs=false
@@ -16,7 +16,7 @@ dependencies=(
 )
 sources=( "http://www.kernel.org/pub/${pkgname}/kernel/v3.x/${pkgname}-${pkgver}.tar.xz" )
 sha1sums=(
-	75eba50b7b0ce14cb17b2cbd2546e3ebfeea4109
+    cea4059c931a32857ae20b223f9b24842a28b215
 )
 
 lfs_me_prepare() {

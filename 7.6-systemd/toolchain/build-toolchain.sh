@@ -35,7 +35,7 @@ export LFS LFS_TGT log_dir index_dir
 install=(
 	'binutils-pass1-2.24'
 	'gcc-pass1-4.9.1'
-	'linux-headers-3.16.7'
+	'linux-headers-3.18.4'
 	'glibc-2.20'
 	'libstdc++-4.9.1'
 	'binutils-pass2-2.24'

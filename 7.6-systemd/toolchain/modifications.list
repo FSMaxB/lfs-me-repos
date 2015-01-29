@@ -1,6 +1,6 @@
 This is a list of all modifications I remember making to what's written in the book:
 
-* linux-headers-3.16.5 instead of 3.16.2
+* linux-headers-3.18.4 instead of 3.16.2
 * Install additional packages:
 	'fakeroot-1.18.4'
 	'nano-2.3.6'
