@@ -15,6 +15,7 @@ export LFS
 ! mount -vt tmpfs none "${LFS}/run" && ( umount -v "${LFS}/sys"; umount -v "${LFS}/proc"; umount -v "${LFS}/dev/pts"; umount -v "${LFS}/dev"; exit 1 )
 
 #copy resolv.conf so that internet works
+rm -v "${LFS}/etc/resolv.conf"
 cp -v -L /etc/resolv.conf "${LFS}/etc/"
 
 if [ -d "${LFS}/tools" ]
