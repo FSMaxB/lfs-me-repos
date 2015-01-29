@@ -23,7 +23,9 @@ This is a list of all modifications I remember making to what's written in the b
 * inetutils: didn't move binaries to /bin and /sbin
 * perl: didn't create /etc/hosts
 * findutils: didn't move binaries to /bin
-* xz: didn't move binaries and libraries to /bin | /lib
+* xz: 
+	- didn't move binaries and libraries to /bin | /lib
+	- use 5.2.0 for parrallel compression support
 * gzip: without --bindir and didn't move binaries
 * kmod: without --bindir and --with-rootlibdir also didn't create symlinks
 * systemd:

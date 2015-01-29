@@ -1,6 +1,7 @@
 This is a list of all modifications I remember making to what's written in the book:
 
 * linux-headers-3.18.4 instead of 3.16.2
+* xz-5.2.0 for parrallel compression support
 * Install additional packages:
 	'fakeroot-1.18.4'
 	'nano-2.3.6'
