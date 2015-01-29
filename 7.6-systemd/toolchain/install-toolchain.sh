@@ -64,7 +64,7 @@ install=(
 	'tar-1.28'
 	'texinfo-5.2'
 	'util-linux-2.25.1'
-	'xz-5.0.5'
+	'xz-5.2.0'
 	'fakeroot-1.18.4'
 	'nano-2.3.6'
 	'rsync-3.1.1'
