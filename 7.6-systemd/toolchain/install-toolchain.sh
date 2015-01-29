@@ -82,6 +82,7 @@ install=(
 	'libpipeline-1.3.0'
 	'gdbm-1.11'
 	'man-db-2.6.7.1'
+	'toolchain-0'
 )
 
 mkdir -v pkg
