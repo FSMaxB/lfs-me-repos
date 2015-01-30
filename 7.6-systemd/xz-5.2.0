@@ -1,6 +1,6 @@
 pkgbuild_version=5
 pkgname=xz
-pkgver=5.0.5
+pkgver=5.2.0
 
 dependencies=(
     "!$pkgname"
@@ -11,7 +11,7 @@ sources=(
 )
 
 sha1sums=(
-	56f1d78117f0c32bbb1cfd40117aa7f55bee8765
+    586e4a49330b3a483d95965bac295120bd2e8917
 )
 
 lfs_me_prepare() {
