@@ -1,6 +1,6 @@
 pkgbuild_version=5
 pkgname=openssl
-pkgver=1.0.1j
+pkgver=1.0.1l
 
 dependencies=(
     "!$pkgname"
@@ -12,7 +12,7 @@ sources=(
     "http://www.linuxfromscratch.org/patches/blfs/7.6-systemd/${pkgname}-${pkgver/[a-z]/i}-fix_parallel_build-1.patch"
 )
 sha1sums=(
-    cff86857507624f0ad42d922bb6f77c4f1c2b819
+    4547a0b4269acf76b1f9e7d188896867d6fc8c18
     0236daae8cf60962242685d64eb0f06d434d4124
 )
 

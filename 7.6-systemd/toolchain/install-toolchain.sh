@@ -68,7 +68,7 @@ install=(
 	'fakeroot-1.18.4'
 	'nano-2.3.6'
 	'rsync-3.1.1'
-	'openssl-1.0.1j'
+	'openssl-1.0.1l'
 	'wget-1.15'
 	'libevent-2.0.21'
 	'tmux-1.9a'
