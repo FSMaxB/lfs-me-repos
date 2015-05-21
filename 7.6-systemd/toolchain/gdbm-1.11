@@ -8,7 +8,7 @@ dependencies=(
 	'glibc'
 )
 sources=(
-    "http://ftp.gnu.org/gnu/${pgkname}/${pkgname}-${pkgver}.tar.gz"
+    "http://ftp.gnu.org/gnu/${pkgname}/${pkgname}-${pkgver}.tar.gz"
 )
 sha1sums=(
     ce433d0f192c21d41089458ca5c8294efe9806b4
