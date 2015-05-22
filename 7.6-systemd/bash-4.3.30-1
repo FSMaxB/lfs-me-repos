@@ -1,7 +1,7 @@
 pkgbuild_version=5
 pkgname=bash
-_basever=4.3
-_patch=7
+_basever=4.3.30
+_patch=1
 pkgver="${_basever}-${_patch}"
 
 overwrite=(
@@ -18,8 +18,8 @@ sources=(
 )
 
 sha1sums=(
-	45ac3c5727e7262334f4dfadecdf601b39434e84
-	69f1cc8e0a95a4505d95fdc8ca9afcd76edef27c
+    33b1bcc5dca1b72f28b2baeca6efa0d422097964
+    e2aa7ce41639827cae51c7bcaa224536cc25a280
 )
 
 lfs_me_prepare() {
