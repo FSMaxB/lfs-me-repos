@@ -1,0 +1,34 @@
+pkgbuild_version=5
+pkgname=tree
+pkgver=1.7.0
+
+dependencies=(
+	"!$pkgname"
+)
+sources=(
+    "http://mama.indstate.edu/users/ice/${pkgname}/src/${pkgname}-${pkgver}.tgz"
+)
+
+sha1sums=(
+    35bd212606e6c5d60f4d5062f4a59bb7b7b25949
+)
+
+lfs_me_prepare() {
+	tar -xf "${sources_dir}/${pkgname}-${pkgver}.tgz" -C "$build_dir"
+}
+
+lfs_me_build() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make
+}
+
+lfs_me_check() {
+    return
+}
+
+lfs_me_install() {
+	cd "${build_dir}/${pkgname}-${pkgver}"
+	make prefix="${fakeroot_dir}/usr" MANDIR=${fakeroot_dir}/usr/share/man/man1 install
+}
+
+# vim:set ts=4 syntax=sh:
